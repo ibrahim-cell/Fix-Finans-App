@@ -1,0 +1,1 @@
+Fix Finans 13.3.06 — Akıllı Finans Merkezi mobil kullanım kolaylığı ve responsive okunabilirlik güncellemesi.
