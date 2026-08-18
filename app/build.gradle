@@ -11,7 +11,7 @@ android {
         minSdk 23
         targetSdk 35
         versionCode 1
-        versionName '13.3.07'
+        versionName '13.3.08'
     }
 
     buildTypes {
@@ -28,5 +28,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.2'
+    implementation 'androidx.browser:browser:1.10.0'
 }
