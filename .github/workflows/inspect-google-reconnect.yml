@@ -1,0 +1,31 @@
+name: Inspect Google reconnect
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect Google login code
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          print('INDEX_SIZE', len(s))
+          for m in re.finditer(r'Google', s, flags=re.I):
+              a=max(0,m.start()-700); b=min(len(s),m.end()+1200)
+              print('\n--- GOOGLE MATCH ---\n'+s[a:b])
+      - name: Upload source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: fix-finans-index-inspect
+          path: index.html
+          retention-days: 1
