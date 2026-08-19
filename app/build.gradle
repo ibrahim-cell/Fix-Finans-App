@@ -9,9 +9,9 @@ android {
     defaultConfig {
         applicationId 'com.fixfinans.app'
         minSdk 23
-        targetSdk 35
+        targetSdk 36
         versionCode 1
-        versionName '13.3.09'
+        versionName '13.3.10'
     }
 
     signingConfigs {
@@ -29,7 +29,9 @@ android {
         }
         release {
             minifyEnabled false
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // TEST BUILD ONLY: replace with a real private release keystore before Play Store publishing.
         }
     }
 
