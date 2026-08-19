@@ -1,0 +1,588 @@
+===== logout @ 21327 =====
+v{height:55px;min-width:0}
+.add{width:58px;height:58px}
+@media (max-width:360px){.brand{font-size:17px}.brand img{width:28px;height:28px}.page{padding-left:12px;padding-right:12px}.quick button{font-size:8px}.qicon{width:46px;height:46px}.amount{font-size:30px}.bottom{height:76px}.add{width:55px;height:55px;font-size:29px}}
+
+.catlabel{display:flex;align-items:center;gap:5px;min-width:0}.caticon{width:16px;height:16px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;background:#10152a}.donut-center{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px}.donut-center small{font-size:7px;opacity:.72}.donut-center b{font-size:12px}
+.profile-top{grid-template-columns:42px 1fr 42px!important}.profile-top .subtitle{text-align:center}.profile-gear{justify-self:end}.profile-card{padding:14px 13px}.profilepic{border:1px solid #252c45;box-shadow:0 8px 24px #0005}.settings{padding:0 13px}.setting{min-height:49px;align-items:center}.setting-main{display:flex;align-items:center;gap:10px}.setting-main i{font-style:normal;width:22px;text-align:center;font-size:17px;color:#d8d6e8}.setting-main span{font-size:10px}.logout{margin-top:7px;border-top:1px solid #2b1824;border-radius:11px;background:#100d16;padding:13px 10px}.logout .setting-main i,.logout .danger{color:#ff5063!important}.profile-card+.settings{margin-top:10px}.edit-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.edit-btn,.delete-btn{height:46px;border-radius:12px;font-weight:700;border:1px solid}.edit-btn{background:#12182b;color:#fff;border-color:#28314f}.delete-btn{background:rgba(255,70,90,.08);color:#ff5265;border-color:rgba(255,70,90,.35)}.detail-meta{display:grid;gap:7px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}.detail-meta div{display:flex;justify-content:space-between;font-size:10px}.detail-meta span{color:var(--muted)}
+/* 13.2.88 — Bildirimler: Temizle + Kapat aynı hizada */
+.notification-sheet .notification-head{align-items:center!important;gap:10px!important}
+.notification-sheet .notification-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.notification-sheet .notification-clear{height:36px;min-height:36px!important;padding:0 12px!important;display:inline-flex;align-items:center;justify-content:center;margin:0!important}
+.notification-sheet .notification-close{position:static;width:36px;height:36px;border:1px solid #292f4c;background:#10152a;color:#b9bdcc;border-radius:9px;font-size:23px;line-height:1;display:grid;place-items:center;padding:0;cursor:pointer}
+.notification-sheet .notification-close:active{transform:scale(.96)}
+
+/* 13.3.03 — Akıllı Finans Merkezi mobil responsive polish */
+.smart-center-head,.smart-card,.smart-grid,.smart-section-title,.smart-advice,.smart-metrics,.smart-metric,.smart-mini{min-width:0}
+.smart-center-head{gap:10px;padding:2px 0 12px}
+.smart-center-head h1{font-size:clamp(19px,5.2vw,24px);letter-spacing:-.45px;max-width:100%;overflow-wrap:anywhere}
+.smart-center-head p{max-width:100%;font-size:9px;line-height:1.45}
+.smart-orb{flex-basis:42px;width:42px;height:42px;border-radius:13px}
+.smart-card{overflow:hidden}
+.smart-section-title{gap:8px;margin-bottom:9px}
+.smart-section-title>b{font-size:12px;min-width:0}
+.smart-section-title span{font-size:8px;white-space:nowrap}
+.smart-metrics{grid-template-columns:repe
+
+===== Google @ 81128 =====
+b16 100%);display:grid;place-items:center;overflow:hidden;padding:24px 18px;color:#f4f2ff}
+.fix-welcome.hidden{display:none}
+.fix-welcome-inner{position:relative;z-index:2;width:min(100%,390px);min-height:min(760px,calc(100dvh - 48px));display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px 18px 22px;border:1px solid rgba(102,74,171,.35);border-radius:28px;background:linear-gradient(145deg,rgba(12,16,33,.90),rgba(7,10,20,.94));box-shadow:0 30px 80px rgba(0,0,0,.48),0 0 48px rgba(102,58,220,.10);backdrop-filter:blur(18px)}
+.fix-welcome-brand{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:28px}
+.fix-welcome-brand img{width:78px;height:78px;object-fit:contain;filter:drop-shadow(0 10px 28px rgba(116,60,255,.24))}
+.fix-welcome-brand-name{font-size:24px;font-weight:800;letter-spacing:-.5px}
+.fix-welcome-copy h1{margin:0;font-size:31px;line-height:1.12;letter-spacing:-1.1px;font-weight:800}
+.fix-welcome-copy h1 span{color:#a875ff}
+.fix-welcome-copy p{margin:14px auto 0;max-width:300px;color:#8c91a5;font-size:13px;line-height:1.55}
+.fix-welcome-actions{width:100%;max-width:310px;margin-top:34px}
+.fix-welcome-google{width:100%;height:50px;border:1px solid rgba(133,92,239,.72);border-radius:14px;background:linear-gradient(135deg,#5a23de,#7a40ff);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 14px 28px rgba(88,35,211,.28),0 0 22px rgba(116,60,255,.14)}
+.fix-welcome-google:active{transform:scale(.985)}
+.fix-google-mark{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#4285f4;font-size:14px;font-weight:900}
+.fix-welcome-guest{width:100%;height:46px;margin-top:10px;border:1px solid #202744;border-radius:14px;background:#0b1020;color:#e3e5ef;font-size:13px;font-weight:700;cursor:pointer}
+.fix-welcome-guest:active{transform:scale(.985)}
+.fix-welcome-note{margin-top:12px;color:#666c80;font-size:10px}
+.fix-welcome-glow{position:absolute;border-radius:50%;filter:blur(40px);pointer-events:none}
+.fix-welcome .glow-a{width:260px;height:260px;background:rgba(112,53,240,.12);top:-110px;left:-70px}
+.fix-welcome .glow-b{width:220px;height:220px;background:rgba(79,34,171,.08);right:-80px;bottom:-70px}
+@media(max-height:640px){.fix-welcome-inner{min-height:calc(100dvh - 28px);padding-top:18px;padding-bottom:18px}.fix-welcome-brand{margin-bottom:16px}.fix-welcome-brand img{width:62px;height:62px}.fix-welcome-copy h1{font-size:27px}.fix-welcome-actions{margin-top:22px}}
+@media(max-width:380px){.fix-welcome-inner{padding-left:16px;padding-right:16px}.fix-welcome-copy h1{font-size:28px}.fix-welcome-actions{max-width:292px}}
+</style>
+<style id="smart-finance-center-13301">
+.smart-teaser{background:linear-gradient(145deg,rgba(18,20,36,.96),rgba(10,12,24,.98));border:1px solid rgba(129,86,225,.18);box-shadow:0 8px 28px rgba(0,0,0,.18),0 0 24px rgba(116,74,224,.05)}
+.smart-teaser-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.smart-kicker{font-size:9px;letter-spacing:1.6px;color:#9a72ff;font-weight:800;margin-bottom:4px}.smart-teaser-head b{display:block;font-size:15px}.smart-teaser-head small{display:block;color:#7f8498;font-size:10px;margin-top:4px}.smart-open{border:1px solid rgba(145,100,255,.38);background:rgba(117,70,235,.12);color:#
+
+===== Google @ 449521 =====
++7ma0W3QS0cWpU0/ypkt518N6S5J/KkDXIybCrgaI3VNgCU4WHWCTDmIY1P/OpmYlSvfwW1pFmdrOAetA+pUQxxdskK1oSu3D+Zds8ggTxHVPCGLId/GWRUZByzy1yF1WeCJQq22MMKCzbz4sp4IFIQlvJ5pB/mV8D6wxDKnv/4+Bjr6+vt8OjxBcjq/40G4DNDBdDucDI60HUNHOQcfuOf3/jnN/75jX9+458vzH9ivDxbJmLVpJ+7BP03ddr/t74BWNUM/Dzg3iqyvMPXAACWyyU8OT6pKsQLdFBD/hubUdwBCx332yXf3MCacmcZqza7OzFENoIlWwtERhdaiBIrXq4JWEBhyI7Ck8r3IfZuC18YjFgsDP0ryJ5GFKiyHhi9vdU39iom9goWtoykn2LWPHoHWSewwkcCmXSlIx2B9ZhoHSRbSJ0+a6mvChRrLQ0CAIOiwOzl7X1aUQehz1ohjQKGLlWzu7gjubKBeS2fdUwoVVmBH4zQdzVoWLmqitEkPHLia6bw7JMhK9Zm9tGx+fOWayKja2ZJuDBmYuB1RzstywrVS4VOMAqdV5jJ3L7ZO2Do5vuvhib+/+3dQQqDMBAF0NTU+1/MM/m7qEqUIJR2YeU9EPchmUxGh2wtdemUBkunw7XTOfrorbV2nR3+5ntXXYZdrDlMs933zG3t1VLK3LSyzvOuFby32R/K++XOJX4JwGcJQW2m+mkmmMSgAVxlMzu5ba854a93nOXu5X2+TwqG5anTNI1Jnstb4gRwIWuMTjImqU38Fq9VAH6eHBgEgD+oAAAAAAAAAAAAAAAAAAAAAABc3QtSTffXWSH9BQAAAABJRU5ErkJggg==" alt="Fix Finans">
+      <div class="fix-welcome-brand-name">Fix Finans</div>
+    </div>
+    <div class="fix-welcome-copy">
+      <h1>Finansını kontrol et,<br><span>geleceğini yönet.</span></h1>
+      <p>Gelirlerini, giderlerini ve bütçeni tek yerden yönet.</p>
+    </div>
+    <div class="fix-welcome-actions">
+      <button class="fix-welcome-google" type="button" onclick="signInWithGoogle()">
+        <span class="fix-google-mark">G</span>
+        <span>Google ile Devam Et</span>
+      </button>
+      <button class="fix-welcome-guest" type="button" onclick="continueAsGuest()">Misafir olarak devam et</button>
+      <div class="fix-welcome-note">Google hesabınla güvenli giriş</div>
+    </div>
+  </div>
+</div>
+<div class="app"><header class="top" id="topHeader"></header><main class="page" id="page"></main><nav class="bottom"><button class="nav active" data-page="home"><span class="nav-icon">⌂</span><small>Ana Sayfa</small></button><button class="nav" data-page="transactions"><span class="nav-icon">☷</span><small>İşlemler</small></button><button class="add" id="add">＋</button><button class="nav" data-page="reports"><span class="nav-icon">▥</span><small>Raporlar</small></button><button class="nav" data-page="profile"><span class="nav-icon">♙</span><small>Profil</small></button></nav></div><div class="modal hidden" id="modal"></div>
+<script>
+
+const logoData='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABVsAAAW8CAYAAAA0GFFGAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAEAAElEQVR42uz96ZocR3Ylii4z94icRwyJxDwRAwsgCLLEKlWVVC217vnO/dRPUP0EpSdQP4H6CaQnqH4C9el79eN+53ZJqpFisTgVZxIECIKYgcSQmeFm54fP7ja7eUQkaFtiBTLCB5tt72V7r00QJEiQIEGCBAniKIQQcM6Lf1NKwRjL/o5q16bXMXDOQQgBIaT4Pn9GN6EAgJmZGYxGIyRJUnxPCcX+/fv/fv/+/f8QxWk5KaVFGfLyUEpr5auWk9L0+VEUFddW78v/PRzGxd/V9+TPqd6fP7PZDtX2ULWN6Pq8/eXX0Fr/2QtT/mrSl7JrquNJfi+plb35KWo7UTvJyuTSJtXnqurQ/M30XfXnsU735+0n69f2M5lwnrmKqH/cxqF+bVKtE9LRzZj0Xs55a375Hv/6tmDOdeec19ac+nXp9+W6KZYoirz1v12/5b9zb+9Urw/UuD+nSThPam1oO7dE9dWtWTZrmuxa83JST+0krmcfa5HfdU09Hvuevz7Xf9f6q9ZP/f1Rx/e7je+i9SiVXM9a+pu4ntS5bD6kWnzx/KXqPqaNPZ/X19lWDXijvZAodTp9+zFJu1HtekAIQZLsFvVkjAE8rW+SMIxGI2xvb+PJkyf4/PPPyOOtx5ju1SRIkCBBggQJMoXKfvGvAjyyVQpThYe2PlNFmmQGRf13QiIQwpEkSQtYS0GKKFOGElBKceDAgZ8fOnToH1eW17C0tISNjQ0
+
+===== auth @ 1225725 =====
+z97eXzNkHkqTWxqxG+0BoMkHDMafipP8JJgjB++Y7xuse/5PgqASJH08TKUYb7j+PO82z9jD04RTnj6HnwTwT+6dTS+AwOjuWFs+fBHX8CgKfWxle6g93zoLc1vo8ywvwkSDyHMaXuIEsL164/+Io9eAUO9n05a6XN5VKuy1SX6VLn221+u0zLt9ttfn+f8c+//qndvs3x/m2O9/dvMV9KbNf2YAIINgdoYN6jK1DbNjk7sZlS+ANWCrLFiQuZ8zHXlgYy0fJ9qwWlYHimI0kJEIJSC+9OBhA9p5+hQUCUsKyecxLp/WaXdfa8hUfMoluyC3DKEkpssjMAQIFZrlKltt3gAEIlullNN+vp3YhiKGByPMaUh3MdVSJ2wVroQUV1+j3XiyWfww45Yq/zd/p9ZSml0+Bj1TPmDGEvhQBAsNBCcO4U+6Fgj/Ml0bgtjHsmpHrCoQNWBljpz+2fbNlZkW2F1s93jwaWQJauUQg0lDJj9HYAGfqUXRm+xV2zABoLPXRRnKeJkIoseRCH95l/TIjRJxIq2GCxTzfnm3ESF6PfQFIRR5vkgEeR2oo8l570fII4Z3RtwHBsDm/aPQgce2bDLuaThhVfigDDFURRQUOLkjGhFYiW4GFbSXuRlZVyiwZPfImvaumjm3QAmNNf+jlqn3wLcB5mOHe0ljqYR7Ms2wxnpmC6Jdp2vPut4SwgPIZgjZEfcFKK6xM1e+4mGO8nAUrDQ7WXZAgpu5FyMsv/d2bHwtRX9yvO68X1VJ9J/w91AyuL/RtgB5HiUStQn6UDeeIeqV1YuWjqolibP0/yZNHjsZ2DbcRTcmVRco3HVb0xuznGIQWMFRb3Awr+DAzG8zu8uI/Hfz/E6fFF18QY9wN7sPsh3LAc5jvjHY4bFnzHKxMl153lx89THb8ayUAcS1iVINTeK/3vQGGWFL7hB/83FrToYMJuqH+4tHAEB/5PX67Ot21+Ikw8sgZfgYOz7uAgNngffz+bIV0/Tf5XLD1nIRtzRtvjIYTp0NZoKBogYRhfpG6BtkzXTGms83RjXW7zcnl7vy5v7zd7u90yqvn2Htc59QZLqSgJYXOhTWSHQgWGMJFZbNdgBoA+VRbsZUGv4EGDkOcOtDoJ5TtqnVQrlGZCtFLMSFkJFO/ZwDQoV9pjkeh9YrKc3J3MPoGkgiMgk8G73a706P+maZT1FVauth6MmAVzBIzQyrLd/uLwil2RT2k90FoBiOOGWieFmm3P90fCfyYFqVoD7XgDPdLM0Sljh6Cuq5OStg+MVWEyMlBXf/YOhb7aNDMhtqbHkDP6fjY6mXeh18gDQKTIkIAJ0VRIausEyPa78X782N2wgYZt9a/1EEy0mcyEooD0XqJiDIAiIQoKh/1D6/4CuQKme6B0lgiCSraCbm2BGrvqK3dKBQ3wcpi9AoGSky+CDdKAOOn94DDMhyhpx6G4KPj+s4AefbwqNmHePX0vjpMvpeKAev1+lBAevc1wn78eBzAKlNJ6DPRgg3yAwL5Nhb+YTMc6X0/dG+nnwSjFeGxn/TQOVZV9Hxr/z3N74Jmm33bx0r2wnYBDvkfQn0SNCb4eUhKERhSlx1qyV23fXR9Psc4ANPXrLrPY9/c5MWXAKxCVBIKlDQfGspUMBjh4bo/MBUPdjJOGDfPwLyGqVgKTnOu6T6gphHwSOL7qrEh3JADYRIt8xC5cvO/H9gCwdvbhGRi8HvdPZkbALlL8gcLr0eERKwlXuvd2IeLhdRY8eAYJK68v0NMdrgU3Hi+sM0goxA0Y3gi7Y+L9077+0XFmEfbx0xLDz3wPfjZ+Jkw8jz/hFcwc4OBkp/z+KrZ5/rTfZA8mLj/RHcxLezK0Ofytn3SPh01aWN8KyVIut1rfr7d5fv/l8v5+W95vt/r27U2/vL/FdZpVloJ5XoS5r/xR0gTJDtInr1umAlPNd3Y/6NE+XY8gcrd+rqWgFaLWQisF01I032os7RrLEriuqNF8mdfFTU4qAq1ECw/SVFdG+CpUQ5YgHjIsJhuhOwLQgFYRNW/csSHPXOsA6BR7GzVcgSsiZKaakUulEXBwtRAcYWbEsGs+ttnp6YZy9BtoOom2AFDR6X7PMgQK02ZJQp/X3AsIKjy72QlDd96TFVFtXw0GlAZHJRmR6L2Iq7JTwWiGkCJiywzoJYrNG6GXF7pRUp9ZizTKBghoVT8fLFI0oQQ9LAoKRGd4xJFFCRwZh14yiKLSQc4eNNSUDEDW0xvIiCaWFkLQvHbAFN1k6tgGuf8+NBMSGQUyBdP0GGo7aFcPicrYah/P/9gm23acLV+MER8tMtDFec7zMeWBFRXd0ziqA0yTLH0xEqylTjZBbUIgcmcEEhz4aWXeCIDWW1ZHbDIBoH5mCNhS4Oge6DBCQO0dGr1M5MdOjgFQACuewMz3rIhRXiCKnKZnldZx8jsKLr0Lc4Guq/j0vK/jqUvfT7RM6xiT7PNEPnwQjm6M8YU2YsXA7E1kee2Z8CLeOTUL/qRTeICAggoe48MR+ugthJMKA58FqNu2jyoHZBtLdvBE4Djm2NoyA40F1B/JsxiTbk76u+7gkS29uh/8Fo4H+EfSF4Er7mxaVPkDP2CclHLFFB2+DnWa9VXGwr7d17oEV97JL7jj48nkDABegYMW389Wy7+bt/DnM3vwf8V3/s/+81dhTOc3sHct/AeAX3of9NkQ6XLeT2cPkjF4O/yc41MQ023CEj+2x3LlW/Gsfh2eB/nbHRcsiGHSIycWoJaHeVzt9uZlrtNUL8vy7TYtt2udfvl20dvb4pfLVdfLTZdp1jLPmFExz9sXl06QUelsKOM2Wuu28MXoyR8sgmCFVckqVLg3ogISZNZUZ/hlMTw+JsWM+FgesSyMjx+sdZrKfPE54q65IXxCQOYcQUp1ckUELEggMmdYLKVADMUj15Z2ViaMT6b/W6ASjJjkuMNUaWVCU6A4wN66t3YqsKKXKWwlUCDvpYDBROTMPk7X6TXpWTJJMhMJmAKgAYHVqoFuKfYUEVaymY4jL6D3qqcmgBj3PaYkMqntAJqGM2GuFksUtOKH0sXo4EBfBR2ZDCJbH1p2KsRhEa7gHgm8jn1IdDX0Rr2Ns2hj+8M5H4Uc9ILDfWvjJEzBpkwkTGti2/QYgrBqZy86tEAQZdDmYwXeyx4RgdIoWggxZAl90t0/fStrzyuwflWMm+2uQ8nHz9R50mWM4KoUhgWQpZXTeyUsKycHynsXQAreV9dHoafDOoDq2xc3OaP20z1u4eocz1jlt75HtqIsESSnkOdmXIv79Zg6gSaHxGo8BjiNZYD5FGPb/XnZqcHeJPxq7OWFLZfgqcA1XuM49jbDksLCA1MSIEKqXYsHSXm1sb0Q78X6pG9PNAAg3RVzki/q02xeg52Q2ADOfA
+
+===== firebase @ 1532783 =====
+.debts.unshift([type,Math.abs(num),name,note]);persist();closeModal();render()}
+function deleteDebt(i){if(confirm('Bu borç/alacak kaydını silmek istiyor musun?')){state.debts.splice(i,1);persist();render()}}
+function getProfilePhoto(){
+  const raw=localStorage.getItem('fix_profile_photo')||'';
+  if(!raw || !/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(raw)){
+    if(raw) localStorage.removeItem('fix_profile_photo');
+    return '';
+  }
+  return raw;
+}
+function profile(){
+  const pname=localStorage.getItem('fix_profile_name')||'Yılmaz İbrahim';
+  const pmail=localStorage.getItem('fix_profile_mail')||'yilmaz.ibrahim@gmail.com';
+  const paletteNames={purple:'Mor',blue:'Mavi',green:'Yeşil',amber:'Altın',cyan:'Turkuaz',rose:'Pembe',red:'Kırmızı',slate:'Gümüş'};
+  const currentPalette=localStorage.getItem('fix_palette')||'purple';
+  const items=[['♙','Hesap Bilgileri','accountInfo()'],['⚙','Ayarlar','profileSettings()'],['◴','Yedekle / Geri Yükle','openBackupRestore()'],['⇩','Veri Dışa Aktar (Excel)','exportExcel()'],['◐',`Tema & Renk · ${paletteNames[currentPalette]||'Mor'}`,'openThemes()'],['ⓘ','Yardım & Destek','showHelp()']];
+  const photo=getProfilePhoto();
+  const user=window.fixFirebaseUser||null;
+  const authHtml=user
+    ? `<span class="firebase-connected">✓ Google bağlı</span>`
+    : `<button class="google-connect" onclick="signInWithGoogle()"><span class="google-g">G</span><span>Google ile Bağlan</span></button>`;
+  return `<section class="card profile profile-card">
+    <div class="profilepic">${photo?`<img src="${photo}" alt="" loading="eager" onerror="this.onerror=null;this.remove();localStorage.removeItem('fix_profile_photo')">`:'👤'}</div>
+    <div class="profile-info">
+      <div class="pname">${esc(pname)}</div>
+      <div class="pmail">${esc(pmail)}</div>
+      <div class="firebase-auth-state">${authHtml}</div>
+    </div>
+  </section>
+  <section class="card settings profile-menu">${items.map(([icon,name,action])=>`<button class="setting setting-button" onclick="${action}"><span class="setting-main"><i>${icon}</i><span>${name}</span></span><span>${name.startsWith('Tema & Renk')?'<b class="current-palette">'+(paletteNames[currentPalette]||'Mor')+'</b> ›':'›'}</span></button>`).join('')}<button class="setting logout setting-button" onclick="logoutProfile()"><span class="setting-main"><i>⎋</i><span class="danger">${user?'Google Bağlantısını Kes':'Çıkış Yap'}</span></span><span>›</span></button></section>`;
+}
+
+function goHome(){state.page='home';render()}
+function toggleBalanceVisibility(){const hidden=localStorage.getItem('fix_balance_hidden')==='1';localStorage.setItem('fix_balance_hidden',hidden?'0':'1');render()}
+function focusTransactionSearch(){state.searchOpen=true;render();requestAnimationFrame(function(){const input=document.getElementById('txSearch');if(input){input.focus();input.scrollIntoView({behavior:'auto',block:'nearest'});}});}
+function closeTransactionSearch(){state.searchOpen=false;state.txSearch='';render()}
+function toggleQuickTheme(){const next=(localStorage.getItem('fix_theme')||'dark')==='dark'?'light':'dark';localStorage.setItem('fix_theme',next);render()}
+function notificationData(){
+  if(localStorage.getItem('fix_notifications_cleared')==='1') return [];
+  const t=txMonthTotals();
+  const items=[];
+  const todayCount=state.transactions.filter(x=>String(x[6]||'2026-08-17')==='2026-08-17').length;
+  if(todayCount
+
+===== logout @ 1568641 =====
+63,255,.52))}
+.light .top .currency-pill{background:transparent!important;border:0!important;box-shadow:none!important;color:#263247!important}
+.light .top .currency-pill svg{stroke:#263247!important}
+.light .top .ai-finance-btn{background:transparent!important;border:0!important;box-shadow:none!important;color:#6f40d9!important}
+</style>
+</head><body>$
+
+
+{table}
+
+
+
+
+
+
+</body></html>`],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fix-finans-islemler.xls';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
+}
+function showHelp(){document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>Yardım & Destek</h2><div class="settings-sub">Fix Finans kullanım alanları</div><div class="quick-settings"><button>＋ İşlem eklemek için ortadaki + butonunu kullan.</button><button>▥ Raporlar ekranında gelir, gider ve kategori dağılımını takip et.</button><button>₺ Borç / Alacak ekranından kayıtlarını yönet.</button><button>☰ Üst bardaki menü ile Ana Sayfa'ya dönebilirsin.</button></div></div>`}
+function logoutProfile(){
+  confirmAction('Google Bağlantısını Kes','Google hesabının Fix Finans bağlantısını kesmek istiyor musun?',async()=>{
+    try{
+      if(window.firebase?.auth && window.fixFirebaseReady){
+        await firebase.auth().signOut();
+      }
+      window.fixFirebaseUser=null;
+      sessionStorage.removeItem('fix_guest_session');
+      localStorage.removeItem('fix_welcome_completed');
+      render();
+      syncWelcomeGate();
+      showToast('Google bağlantısı kesildi.');
+    }catch(e){
+      console.error(e);
+      showToast('Google bağlantısı kesilemedi.');
+    }
+  });
+}
+function showToast(message){let t=document.getElementById('fixToast');if(!t){t=document.createElement('div');t.id='fixToast';t.className='fix-toast';document.body.appendChild(t)}t.textContent=message;t.classList.add('show');clearTimeout(window.__fixToast);window.__fixToast=setTimeout(()=>t.classList.remove('show'),2200)}
+
+
+function closeWelcome(){const w=document.getElementById('fixWelcome');if(w)w.classList.add('hidden')}
+function openWelcome(){const w=document.getElementById('fixWelcome');if(w)w.classList.remove('hidden')}
+try{if(localStorage.getItem('fix_welcome_completed')==='1')closeWelcome();}catch(e){}
+function continueAsGuest(){
+  sessionStorage.setItem('fix_guest_session','1');
+  sessionStorage.setItem('fix_welcome_gate_version','2');
+  localStorage.setItem('fix_welcome_completed','1');
+  closeWelcome();
+  render();
+}
+function syncWelcomeGate(){
+  // Once the user has completed the welcome flow, keep it hidden across refreshes.
+  if(localStorage.getItem('fix_welcome_completed')==='1'){
+    closeWelcome();
+    return;
+  }
+  if(window.fixFirebaseUser){
+    sessionStorage.removeItem('fix_guest_session');
+    closeWelcome();
+    return;
+  }
+  if(sessionStorage.getItem('fix_guest_session')==='1'){
+    closeWelcome();
+    return;
+  }
+  openWelcome();
+}
+
+function render(){
+  const savedTheme=localStorage.getItem('fix_theme')||'dark';
+  document.body.classList.toggle('light',savedTheme==='light');
+  document.body.dataset.palette=localStorage.getItem('fix_palette')||'purple';
+  header();nav();
+  document.getElementById('page').innerHTML=state.page==='home'?home():state.page==='transactions'
+
+===== firebase @ 1570291 =====
+oast('Google bağlantısı kesildi.');
+    }catch(e){
+      console.error(e);
+      showToast('Google bağlantısı kesilemedi.');
+    }
+  });
+}
+function showToast(message){let t=document.getElementById('fixToast');if(!t){t=document.createElement('div');t.id='fixToast';t.className='fix-toast';document.body.appendChild(t)}t.textContent=message;t.classList.add('show');clearTimeout(window.__fixToast);window.__fixToast=setTimeout(()=>t.classList.remove('show'),2200)}
+
+
+function closeWelcome(){const w=document.getElementById('fixWelcome');if(w)w.classList.add('hidden')}
+function openWelcome(){const w=document.getElementById('fixWelcome');if(w)w.classList.remove('hidden')}
+try{if(localStorage.getItem('fix_welcome_completed')==='1')closeWelcome();}catch(e){}
+function continueAsGuest(){
+  sessionStorage.setItem('fix_guest_session','1');
+  sessionStorage.setItem('fix_welcome_gate_version','2');
+  localStorage.setItem('fix_welcome_completed','1');
+  closeWelcome();
+  render();
+}
+function syncWelcomeGate(){
+  // Once the user has completed the welcome flow, keep it hidden across refreshes.
+  if(localStorage.getItem('fix_welcome_completed')==='1'){
+    closeWelcome();
+    return;
+  }
+  if(window.fixFirebaseUser){
+    sessionStorage.removeItem('fix_guest_session');
+    closeWelcome();
+    return;
+  }
+  if(sessionStorage.getItem('fix_guest_session')==='1'){
+    closeWelcome();
+    return;
+  }
+  openWelcome();
+}
+
+function render(){
+  const savedTheme=localStorage.getItem('fix_theme')||'dark';
+  document.body.classList.toggle('light',savedTheme==='light');
+  document.body.dataset.palette=localStorage.getItem('fix_palette')||'purple';
+  header();nav();
+  document.getElementById('page').innerHTML=state.page==='home'?home():state.page==='transactions'?transactions():state.page==='reports'?reports():state.page==='profile'?profile():state.page==='smartCenter'?smartCenter():debts();
+  const logo=document.getElementById('logo');if(logo)logo.src=logoData;
+}
+document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>{state.page=b.dataset.page;render()}));document.getElementById('add').onclick=()=>openModal();
+function categoryOptions(type){if(type==='Gider')return [['🍽️','Yemek'],['⛽','Yakıt'],['🛒','Alışveriş'],['☕','Kahve'],['🛍️','Market'],['🎮','Eğlence']];if(type==='Transfer')return [['⇄','Transfer']];return [['💼','Maaş'],['🛵','Kurye Geliri'],['💻','Freelance'],['📈','Yatırım'],['💰','Diğer Gelirler']];}
+function openModal(type){state.type=type||'Gelir';const opts=categoryOptions(state.type);state.selectedCat=state.selectedCat||opts[0][1];if(!opts.some(x=>x[1]===state.selectedCat))state.selectedCat=opts[0][1];document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet add-sheet"><button class="close" onclick="closeModal()">×</button><h2>İşlem Ekle</h2><div class="type">${['Gelir','Gider','Transfer'].map(x=>`<button class="${state.type===x?'active':''}" onclick="state.selectedCat=null;openModal('${x}')">${x}</button>`).join('')}</div><div class="form"><label>Toplam</label><input id="amount" inputmode="decimal" placeholder="₺0,00"><label>Kategori</label><button class="category-picker" onclick="openCategoryPicker()"><span id="selectedCatLabel">${esc(state.selectedCat)}</span><span>⌄</span></button><label>Tarih</label><input id="txDate" type="date" value="2026-08-17"><label>Not (isteğe bağlı)</label><inp
+
+===== firebase @ 1578963 =====
+%),
+    linear-gradient(145deg,#090b1a 0%,#0a0a18 55%,#0d0a22 100%)!important;
+  border:1px solid rgba(92,76,145,.58)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.36), 0 0 18px rgba(91,48,180,.07)!important;
+}
+.balance.card:after{
+  right:-20px!important; top:42px!important; width:250px!important; height:175px!important;
+  background:radial-gradient(ellipse at 52% 50%,
+    rgba(111,58,220,.18) 0%,
+    rgba(82,42,165,.08) 42%,
+    transparent 73%)!important;
+  filter:blur(14px)!important;
+}
+.balance-line .wallet-real-img{
+  filter:drop-shadow(0 8px 12px rgba(57,25,125,.30))!important;
+}
+.balance-line .wallet::before{
+  width:88px!important; height:68px!important;
+  background:radial-gradient(ellipse at center,
+    rgba(132,76,255,.20) 0%,
+    rgba(116,60,255,.10) 38%,
+    rgba(116,60,255,.035) 60%,
+    transparent 78%)!important;
+  filter:blur(10px)!important; opacity:.78!important;
+}
+.metrics{
+  border-top-color:rgba(74,70,104,.30)!important;
+}
+@media(max-width:380px){
+  .balance.card:after{right:-24px!important;top:38px!important;width:220px!important;height:150px!important}
+  .balance-line .wallet::before{width:74px!important;height:58px!important}
+}
+</style>
+
+
+<style id="fix-firebase-google-auth">
+/* 13.2.99 — Welcome one-time persistence + Google auth */
+.profile-info{min-width:0;flex:1}
+.firebase-auth-state{margin-top:6px;min-height:24px;display:flex;align-items:center}
+.google-connect{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 10px;border:1px solid #293252;border-radius:9px;background:#0b1020;color:#e9ebf5;font-size:10px;font-weight:700;cursor:pointer}
+.google-connect:active{transform:scale(.98)}
+.google-g{display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#fff;color:#4285f4;font-size:11px;font-weight:900}
+.firebase-connected{display:inline-flex;align-items:center;gap:5px;color:#58d89a;font-size:9px;font-weight:700}
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script id="fix-firebase-google-auth-init">
+(function(){
+  const firebaseConfig={
+    apiKey:"AIzaSyCJOSOG4mopGFngR7TeBMYVmDNlmLpbiiw",
+    authDomain:"fix-finans.firebaseapp.com",
+    projectId:"fix-finans",
+    storageBucket:"fix-finans.firebasestorage.app",
+    messagingSenderId:"399902784452",
+    appId:"1:399902784452:web:f74512f90a538794c68291",
+    measurementId:"G-893J1N1MC1"
+  };
+  window.fixFirebaseReady=false;
+  window.fixFirebaseUser=null;
+  // Clear stale guest-session state left by earlier welcome-screen builds once.
+  try{
+    if(sessionStorage.getItem('fix_welcome_gate_version')!=='2'){
+      sessionStorage.removeItem('fix_guest_session');
+      sessionStorage.setItem('fix_welcome_gate_version','2');
+    }
+  }catch(e){}
+  async function finishGoogleUser(user){
+    if(!user)return;
+    window.fixFirebaseUser=user;
+    if(user.displayName)localStorage.setItem('fix_profile_name',user.displayName);
+    if(user.email)localStorage.setItem('fix_profile_mail',user.email);
+    if(user.photoURL){
+      try{
+        const photo=await fetch(user.photoURL,{mode:'cors'}).then(r=>r.blob());
+        if(photo.type.startsWith('image/')){
+          const reader=new FileReader();
+          reader.onload=()=>{localStorage.setItem('fix_profile_photo',reader.result);render();};
+         
+
+===== Google @ 1580639 =====
+:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#fff;color:#4285f4;font-size:11px;font-weight:900}
+.firebase-connected{display:inline-flex;align-items:center;gap:5px;color:#58d89a;font-size:9px;font-weight:700}
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script id="fix-firebase-google-auth-init">
+(function(){
+  const firebaseConfig={
+    apiKey:"AIzaSyCJOSOG4mopGFngR7TeBMYVmDNlmLpbiiw",
+    authDomain:"fix-finans.firebaseapp.com",
+    projectId:"fix-finans",
+    storageBucket:"fix-finans.firebasestorage.app",
+    messagingSenderId:"399902784452",
+    appId:"1:399902784452:web:f74512f90a538794c68291",
+    measurementId:"G-893J1N1MC1"
+  };
+  window.fixFirebaseReady=false;
+  window.fixFirebaseUser=null;
+  // Clear stale guest-session state left by earlier welcome-screen builds once.
+  try{
+    if(sessionStorage.getItem('fix_welcome_gate_version')!=='2'){
+      sessionStorage.removeItem('fix_guest_session');
+      sessionStorage.setItem('fix_welcome_gate_version','2');
+    }
+  }catch(e){}
+  async function finishGoogleUser(user){
+    if(!user)return;
+    window.fixFirebaseUser=user;
+    if(user.displayName)localStorage.setItem('fix_profile_name',user.displayName);
+    if(user.email)localStorage.setItem('fix_profile_mail',user.email);
+    if(user.photoURL){
+      try{
+        const photo=await fetch(user.photoURL,{mode:'cors'}).then(r=>r.blob());
+        if(photo.type.startsWith('image/')){
+          const reader=new FileReader();
+          reader.onload=()=>{localStorage.setItem('fix_profile_photo',reader.result);render();};
+          reader.readAsDataURL(photo);
+        }
+      }catch(e){}
+    }
+    sessionStorage.removeItem('fix_guest_session');
+    localStorage.setItem('fix_welcome_completed','1');
+    if(typeof render==='function')render();
+    closeWelcome();
+  }
+  function setGoogleButtonBusy(busy){
+    const btn=document.querySelector('.fix-welcome-google');
+    if(btn){btn.disabled=!!busy;btn.style.opacity=busy?'0.72':'1';btn.querySelector('span:last-child').textContent=busy?'Google açılıyor…':'Google ile Devam Et';}
+  }
+  window.signInWithGoogle=async function(){
+    setGoogleButtonBusy(true);
+    if(!window.firebase||!firebase.auth){
+      setGoogleButtonBusy(false);
+      showToast('Firebase bağlantısı hazır değil.');
+      return;
+    }
+    try{
+      const auth=firebase.auth();
+      const provider=new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({prompt:'select_account'});
+      // GitHub Pages gibi Firebase Hosting dışındaki alan adlarında popup,
+      // redirect akışındaki üçüncü taraf depolama kısıtlarından daha güvenilirdir.
+      const result=await auth.signInWithPopup(provider);
+      if(result&&result.user){
+        await finishGoogleUser(result.user);
+        showToast('Google hesabı bağlandı.');
+      }
+    }catch(e){
+      console.error('Firebase Google sign-in:',e);
+      setGoogleButtonBusy(false);
+      if(e?.code==='auth/popup-blocked'){
+        showToast('Google penceresi engellendi. Tarayıcı açılır pencerelerine izin ver.');
+      }else if(e?.code==='auth/popup-closed-by-user'){
+        showToast('Google bağlantısı iptal edildi.');
+      }else if(e?.code==='auth/unauthorized-domain'){
+        showToast('GitHub Pages ala
+
+===== auth @ 1582252 =====
+ileReader();
+          reader.onload=()=>{localStorage.setItem('fix_profile_photo',reader.result);render();};
+          reader.readAsDataURL(photo);
+        }
+      }catch(e){}
+    }
+    sessionStorage.removeItem('fix_guest_session');
+    localStorage.setItem('fix_welcome_completed','1');
+    if(typeof render==='function')render();
+    closeWelcome();
+  }
+  function setGoogleButtonBusy(busy){
+    const btn=document.querySelector('.fix-welcome-google');
+    if(btn){btn.disabled=!!busy;btn.style.opacity=busy?'0.72':'1';btn.querySelector('span:last-child').textContent=busy?'Google açılıyor…':'Google ile Devam Et';}
+  }
+  window.signInWithGoogle=async function(){
+    setGoogleButtonBusy(true);
+    if(!window.firebase||!firebase.auth){
+      setGoogleButtonBusy(false);
+      showToast('Firebase bağlantısı hazır değil.');
+      return;
+    }
+    try{
+      const auth=firebase.auth();
+      const provider=new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({prompt:'select_account'});
+      // GitHub Pages gibi Firebase Hosting dışındaki alan adlarında popup,
+      // redirect akışındaki üçüncü taraf depolama kısıtlarından daha güvenilirdir.
+      const result=await auth.signInWithPopup(provider);
+      if(result&&result.user){
+        await finishGoogleUser(result.user);
+        showToast('Google hesabı bağlandı.');
+      }
+    }catch(e){
+      console.error('Firebase Google sign-in:',e);
+      setGoogleButtonBusy(false);
+      if(e?.code==='auth/popup-blocked'){
+        showToast('Google penceresi engellendi. Tarayıcı açılır pencerelerine izin ver.');
+      }else if(e?.code==='auth/popup-closed-by-user'){
+        showToast('Google bağlantısı iptal edildi.');
+      }else if(e?.code==='auth/unauthorized-domain'){
+        showToast('GitHub Pages alan adı Firebase yetkili alanlarına eklenmeli.');
+      }else{
+        showToast('Google bağlantısı kurulamadı: '+(e?.code||'bilinmeyen hata'));
+      }
+    }
+  };
+  try{
+    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+    window.fixFirebaseReady=true;
+    // Firebase kararını beklerken karşılama kapalı kalır.
+    // onAuthStateChanged sonucu geldikten sonra yalnızca gerçek anlamda yeni
+    // kullanıcıda açılır; böylece mevcut oturumlarda ekranda kısa bir flash olmaz.
+    closeWelcome();
+    const auth=firebase.auth();
+    auth.onAuthStateChanged(function(user){
+      window.fixFirebaseUser=user||null;
+      if(user){
+        finishGoogleUser(user);
+      }else{
+        if(typeof render==='function')render();
+        syncWelcomeGate();
+      }
+    });
+    auth.getRedirectResult().then(function(result){
+      if(result&&result.user){
+        finishGoogleUser(result.user);
+        showToast('Google hesabı bağlandı.');
+      }
+    }).catch(function(e){
+      console.error('Firebase redirect result:',e);
+      setGoogleButtonBusy(false);
+      if(e?.code==='auth/unauthorized-domain') showToast('Bu alan adı Firebase yetkili alan adlarında değil.');
+      else if(e?.code && e.code!=='auth/no-auth-event') showToast('Google bağlantısı tamamlanamadı.');
+    });
+  }catch(e){
+    console.error('Firebase init:',e);
+    window.fixFirebaseReady=false;
+    setGoogleButtonBusy(false);
+  }
+})();
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+<style id="fix-smart-13304">
+/* 13.3.04 — Akıllı Finans Merkezi: sıkı mobil kart yerleşimi */
+.smart-center-head{padding:1px 0 10px;gap:8px}
+.smart-center-
+
+===== Google @ 1583768 =====
+Toast('Google penceresi engellendi. Tarayıcı açılır pencerelerine izin ver.');
+      }else if(e?.code==='auth/popup-closed-by-user'){
+        showToast('Google bağlantısı iptal edildi.');
+      }else if(e?.code==='auth/unauthorized-domain'){
+        showToast('GitHub Pages alan adı Firebase yetkili alanlarına eklenmeli.');
+      }else{
+        showToast('Google bağlantısı kurulamadı: '+(e?.code||'bilinmeyen hata'));
+      }
+    }
+  };
+  try{
+    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+    window.fixFirebaseReady=true;
+    // Firebase kararını beklerken karşılama kapalı kalır.
+    // onAuthStateChanged sonucu geldikten sonra yalnızca gerçek anlamda yeni
+    // kullanıcıda açılır; böylece mevcut oturumlarda ekranda kısa bir flash olmaz.
+    closeWelcome();
+    const auth=firebase.auth();
+    auth.onAuthStateChanged(function(user){
+      window.fixFirebaseUser=user||null;
+      if(user){
+        finishGoogleUser(user);
+      }else{
+        if(typeof render==='function')render();
+        syncWelcomeGate();
+      }
+    });
+    auth.getRedirectResult().then(function(result){
+      if(result&&result.user){
+        finishGoogleUser(result.user);
+        showToast('Google hesabı bağlandı.');
+      }
+    }).catch(function(e){
+      console.error('Firebase redirect result:',e);
+      setGoogleButtonBusy(false);
+      if(e?.code==='auth/unauthorized-domain') showToast('Bu alan adı Firebase yetkili alan adlarında değil.');
+      else if(e?.code && e.code!=='auth/no-auth-event') showToast('Google bağlantısı tamamlanamadı.');
+    });
+  }catch(e){
+    console.error('Firebase init:',e);
+    window.fixFirebaseReady=false;
+    setGoogleButtonBusy(false);
+  }
+})();
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+<style id="fix-smart-13304">
+/* 13.3.04 — Akıllı Finans Merkezi: sıkı mobil kart yerleşimi */
+.smart-center-head{padding:1px 0 10px;gap:8px}
+.smart-center-head h1{font-size:clamp(17px,4.6vw,21px);line-height:1.12;max-width:calc(100% - 48px)}
+.smart-center-head p{font-size:8px;line-height:1.35;max-width:100%;margin-top:5px}
+.smart-orb{flex:0 0 38px;width:38px;height:38px;border-radius:12px}
+.smart-card{margin-bottom:8px;padding:10px!important}
+.smart-section-title{gap:6px;margin-bottom:7px;min-height:20px}
+.smart-section-title>b{font-size:11px;line-height:1.15}
+.smart-section-title span{font-size:7px;line-height:1.1;white-space:normal;text-align:right;overflow-wrap:anywhere}
+.smart-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.smart-metric{padding:7px 6px;border-radius:10px;min-width:0}
+.smart-metric small{font-size:7px;line-height:1.15;white-space:normal;overflow-wrap:anywhere}
+.smart-metric b{font-size:clamp(10px,3.2vw,13px);line-height:1.1;margin-top:4px;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+.smart-metric span{font-size:6.5px;line-height:1.15;margin-top:3px;white-space:normal;overflow-wrap:anywhere}
+.smart-advice{gap:6px;min-width:0}
+.smart-advice-icon{flex:0 0 24px;width:24px;height:24px;border-radius:8px}
+.smart-advice-icon svg{width:12px;height:12px}
+.smart-advice b{font-size:8.5px;line-height:1.3;overflow-wrap:anywhere}
+.smart-advice small{font-size:6.8px;line-height:1.2;margin-top:3px;overflow-wrap:anywhere}
+.smart-progress-row{font-size:7px;line-height:1.2;align-items:flex-start}
+.smart-progress-row span{max-width:75%}
+.smart-progress-row b{font-size:7px;white-space:nowrap}
+.smart-progress{height:
