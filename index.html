@@ -1259,9 +1259,11 @@ document.addEventListener('touchend',e=>{if(!pullStartY)return;const dy=e.change
       const auth=firebase.auth();
       const provider=new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({prompt:'select_account'});
-      // GitHub Pages gibi Firebase Hosting dışındaki alan adlarında popup,
-      // redirect akışındaki üçüncü taraf depolama kısıtlarından daha güvenilirdir.
-      const result=await auth.signInWithPopup(provider);
+      // TWA/Chrome Custom Tab içinde popup akışı takılabildiği için Google
+      // kimlik doğrulamasını redirect ile tamamla ve dönüşte getRedirectResult
+      // ile oturumu işle.
+      await auth.signInWithRedirect(provider);
+      return;
       if(result&&result.user){
         await finishGoogleUser(result.user);
         showToast('Google hesabı bağlandı.');
