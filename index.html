@@ -1240,9 +1240,12 @@ document.addEventListener('touchend',e=>{if(!pullStartY)return;const dy=e.change
       }catch(e){}
     }
     sessionStorage.removeItem('fix_guest_session');
+    sessionStorage.removeItem('fix_google_redirect_pending');
     localStorage.setItem('fix_welcome_completed','1');
-    if(typeof render==='function')render();
     closeWelcome();
+    // Google karşılama ekranından başarılı giriş sonrası doğrudan Ana Sayfa'ya dön.
+    if(typeof state==='object' && state) state.page='home';
+    if(typeof render==='function')render();
   }
   function setGoogleButtonBusy(busy){
     const btn=document.querySelector('.fix-welcome-google');
@@ -1257,6 +1260,11 @@ document.addEventListener('touchend',e=>{if(!pullStartY)return;const dy=e.change
     }
     try{
       const auth=firebase.auth();
+      // Redirect dönüşünde Firebase kısa süreliğine null dönebilir.
+      // Bu arada karşılama ekranının tekrar açılmasını engelle.
+      sessionStorage.setItem('fix_google_redirect_pending','1');
+      localStorage.setItem('fix_welcome_completed','1');
+      closeWelcome();
       const provider=new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({prompt:'select_account'});
       // TWA/Chrome Custom Tab içinde popup akışı takılabildiği için Google
@@ -1296,7 +1304,8 @@ document.addEventListener('touchend',e=>{if(!pullStartY)return;const dy=e.change
         finishGoogleUser(user);
       }else{
         if(typeof render==='function')render();
-        syncWelcomeGate();
+        // Redirect işlemi devam ediyorsa karşılama ekranını açma.
+        if(sessionStorage.getItem('fix_google_redirect_pending')!=='1') syncWelcomeGate();
       }
     });
     auth.getRedirectResult().then(function(result){
