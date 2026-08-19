@@ -1193,7 +1193,7 @@ document.addEventListener('touchend',e=>{if(!pullStartY)return;const dy=e.change
 
 
 <style id="fix-firebase-google-auth">
-/* 13.2.99 — Welcome one-time persistence + Google auth */
+/* 13.3.11 — Welcome + Google redirect auth fix */
 .profile-info{min-width:0;flex:1}
 .firebase-auth-state{margin-top:6px;min-height:24px;display:flex;align-items:center}
 .google-connect{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 10px;border:1px solid #293252;border-radius:9px;background:#0b1020;color:#e9ebf5;font-size:10px;font-weight:700;cursor:pointer}
@@ -1263,38 +1263,20 @@ document.addEventListener('touchend',e=>{if(!pullStartY)return;const dy=e.change
       const provider=new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({prompt:'select_account'});
 
-      // Önce normal tarayıcı akışında popup ile giriş yap.
-      // TWA/Chrome Custom Tab popup'ı engellerse redirect'e düş.
-      try{
-        const result=await auth.signInWithPopup(provider);
-        if(result&&result.user){
-          sessionStorage.removeItem('fix_google_redirect_pending');
-          await finishGoogleUser(result.user);
-          showToast('Google hesabı bağlandı.');
-          return;
-        }
-      }catch(popupError){
-        console.warn('Google popup akışı başarısız, redirect deneniyor:',popupError);
-        const code=popupError?.code||'';
-        if(code!=='auth/popup-blocked' && code!=='auth/popup-closed-by-user' && code!=='auth/operation-not-supported-in-this-environment'){
-          // Yetkisiz alan adı gibi gerçek yapılandırma hatalarında doğrudan bildir.
-          if(code==='auth/unauthorized-domain') throw popupError;
-        }
-      }
-
+      // Fix Finans Android TWA + Chrome akışında popup kullanma.
+      // Popup bazı Chrome/TWA durumlarında promise'i açık bırakıp butonu
+      // "Google açılıyor…" durumunda kilitleyebiliyor. Doğrudan redirect
+      // kullanıyoruz; dönüşte getRedirectResult gerçek kullanıcıyı tamamlıyor.
       sessionStorage.setItem('fix_google_redirect_pending','1');
-      // Başarılı kullanıcı gelmeden kalıcı tamamlandı işareti verme.
       await auth.signInWithRedirect(provider);
     }catch(e){
-      console.error('Firebase Google sign-in:',e);
+      console.error('Firebase Google redirect sign-in:',e);
       sessionStorage.removeItem('fix_google_redirect_pending');
       setGoogleButtonBusy(false);
       if(e?.code==='auth/unauthorized-domain'){
         showToast('GitHub Pages alan adı Firebase yetkili alanlarına eklenmeli.');
-      }else if(e?.code==='auth/popup-blocked'){
-        showToast('Google penceresi engellendi.');
-      }else if(e?.code==='auth/popup-closed-by-user'){
-        showToast('Google bağlantısı iptal edildi.');
+      }else if(e?.code==='auth/operation-not-supported-in-this-environment'){
+        showToast('Google girişi bu ortamda desteklenmiyor.');
       }else{
         showToast('Google bağlantısı kurulamadı: '+(e?.code||'bilinmeyen hata'));
       }
