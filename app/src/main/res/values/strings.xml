@@ -2,5 +2,5 @@
 <resources>
     <string name="app_name">Fix Finans</string>
     <string name="provider_authority">com.fixfinans.app.fileprovider</string>
-    <string name="asset_statements">[{"include":"https://ibrahim-cell.github.io/.well-known/assetlinks.json"}]</string>
+    <string name="asset_statements">[{"include":"https://ibrahim-cell.github.io/Fix-Finans-App/.well-known/assetlinks.json"}]</string>
 </resources>
