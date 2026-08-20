@@ -897,12 +897,11 @@ function debts(){
   const active=state.debtTab==='Alacak'?'Alacak':'Borç';
   const list=active==='Borç'?borc:alacak;
   const listTitle=active==='Borç'?'Borçlarım':'Alacaklarım';
-  const installmentRows=active==='Borç'?`<div class="debt-item"><span class="avatar b">▣</span><div><div class="rname">Telefon Taksiti</div><div class="rsub">Kalan: 8 taksit</div></div><div class="rval">${money(650)} / 12</div></div><div class="debt-item"><span class="avatar b">▣</span><div><div class="rname">Bilgisayar Taksiti</div><div class="rsub">Kalan: 5 taksit</div></div><div class="rval">${money(1250)} / 12</div></div>`:'';
   return `<div class="title"><h1>Borç / Alacak</h1></div>
   <div class="debt-tabs"><button class="${active==='Borç'?'active':''}" onclick="state.debtTab='Borç';render()">▣ Borçlar</button><button class="${active==='Alacak'?'active':''}" onclick="state.debtTab='Alacak';render()">Alacaklar</button></div>
   <div class="debt-sum"><div class="debtbox"><small>🔴 Toplam Borç</small><b class="red">${money(tb)}</b></div><div class="debtbox"><small>🟢 Toplam Alacak</small><b class="green">${money(ta)}</b></div></div>
   <section class="card section"><div class="list-head"><b>${listTitle}</b><button class="detail" onclick="openDebtModal('${active}')">＋ Ekle</button></div>${list.length?list.map(debtRow).join(''):'<div class="empty">Henüz kayıt yok.</div>'}</section>
-  ${active==='Borç'?`<section class="card section"><div class="section-title">Taksitlerim</div>${installmentRows}</section>`:''}`
+}`
 }
 function debtRow(d,i){return `<div class="debt-item" onclick="deleteDebt(${state.debts.indexOf(d)})"><span class="avatar ${d[0]==='Borç'?'p':'g'}">${d[0]==='Borç'?'₺':'↗'}</span><div><div class="rname">${esc(d[2])}</div><div class="rsub">${esc(d[3]||'Kayıtlı')}</div></div><div class="rval ${d[0]==='Borç'?'red':'green'}">${money(d[1])}</div></div>`}
 function openDebtModal(type){const t=type||'Borç';document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>Borç / Alacak Ekle</h2><div class="type">${['Borç','Alacak'].map(x=>`<button class="${t===x?'active':''}" onclick="openDebtModal('${x}')">${x}</button>`).join('')}</div><div class="form"><label>Tutar</label><input id="debtAmount" inputmode="decimal" placeholder="₺0,00"><label>Kişi / Kurum</label><input id="debtName" placeholder="Örn. Ahmet"><label>Not</label><input id="debtNote" placeholder="İsteğe bağlı"></div><button class="save" onclick="saveDebt('${t}')">Kaydet</button></div>`}
@@ -1202,6 +1201,47 @@ body{overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scro
 
 
 
+
+<style>
+/* 13.3.27 — Theme-safe action buttons + modern profile gear */
+.detail,.mini-add,.smart-open,.head-add{
+  color:var(--theme-accent)!important;
+  border:1px solid color-mix(in srgb,var(--theme-accent) 42%,#242b47)!important;
+  background:color-mix(in srgb,var(--theme-accent) 14%,#080b16)!important;
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--theme-accent) 5%,transparent)!important;
+}
+.detail:active,.mini-add:active,.smart-open:active,.head-add:active{
+  background:color-mix(in srgb,var(--theme-accent) 24%,#080b16)!important;
+}
+.empty-action span{
+  background:color-mix(in srgb,var(--theme-accent) 22%,#0b1020)!important;
+  color:var(--theme-accent)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 35%,transparent)!important;
+}
+/* Profil ayar ikonu: kutuya gömülü değil, temiz modern çizgi ikon */
+.profile-top .profile-gear{
+  width:34px!important;height:34px!important;min-width:34px!important;
+  margin-right:4px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--theme-accent)!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+.profile-top .profile-gear svg{
+  width:22px!important;height:22px!important;
+  stroke:currentColor!important;
+  stroke-width:1.9!important;
+  filter:drop-shadow(0 0 5px color-mix(in srgb,var(--theme-accent) 35%,transparent));
+}
+.profile-top .profile-gear:active{transform:scale(.92)!important;background:transparent!important}
+.light .detail,.light .mini-add,.light .smart-open,.light .head-add{
+  color:var(--theme-accent)!important;
+  background:color-mix(in srgb,var(--theme-accent) 10%,white)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 30%,#dfe4ee)!important;
+}
+</style>
 </body></html>`],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fix-finans-islemler.xls';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
 }
 function showHelp(){document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>Yardım & Destek</h2><div class="settings-sub">Fix Finans kullanım alanları</div><div class="quick-settings"><button>＋ İşlem eklemek için ortadaki + butonunu kullan.</button><button>▥ Raporlar ekranında gelir, gider ve kategori dağılımını takip et.</button><button>₺ Borç / Alacak ekranından kayıtlarını yönet.</button><button>☰ Üst bardaki menü ile Ana Sayfa'ya dönebilirsin.</button></div></div>`}
@@ -1489,6 +1529,47 @@ document.addEventListener('pointerdown',function(e){
   closeModal();
 },true);
 </script>
+
+<style>
+/* 13.3.27 — Theme-safe action buttons + modern profile gear */
+.detail,.mini-add,.smart-open,.head-add{
+  color:var(--theme-accent)!important;
+  border:1px solid color-mix(in srgb,var(--theme-accent) 42%,#242b47)!important;
+  background:color-mix(in srgb,var(--theme-accent) 14%,#080b16)!important;
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--theme-accent) 5%,transparent)!important;
+}
+.detail:active,.mini-add:active,.smart-open:active,.head-add:active{
+  background:color-mix(in srgb,var(--theme-accent) 24%,#080b16)!important;
+}
+.empty-action span{
+  background:color-mix(in srgb,var(--theme-accent) 22%,#0b1020)!important;
+  color:var(--theme-accent)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 35%,transparent)!important;
+}
+/* Profil ayar ikonu: kutuya gömülü değil, temiz modern çizgi ikon */
+.profile-top .profile-gear{
+  width:34px!important;height:34px!important;min-width:34px!important;
+  margin-right:4px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--theme-accent)!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+.profile-top .profile-gear svg{
+  width:22px!important;height:22px!important;
+  stroke:currentColor!important;
+  stroke-width:1.9!important;
+  filter:drop-shadow(0 0 5px color-mix(in srgb,var(--theme-accent) 35%,transparent));
+}
+.profile-top .profile-gear:active{transform:scale(.92)!important;background:transparent!important}
+.light .detail,.light .mini-add,.light .smart-open,.light .head-add{
+  color:var(--theme-accent)!important;
+  background:color-mix(in srgb,var(--theme-accent) 10%,white)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 30%,#dfe4ee)!important;
+}
+</style>
 </body></html>
 
 
