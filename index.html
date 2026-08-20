@@ -760,6 +760,65 @@ body{--theme-accent:var(--purple)!important;--theme-accent-2:var(--purple2)!impo
 .light .category-manage-row{background:#fff!important;border-color:#dce2ec!important;color:#151827!important}
 </style>
 
+
+<style>
+/* 13.3.37 — Borç/Alacak compact actions + mobile polish */
+.debt-head-add{
+  width:34px!important;height:34px!important;min-width:34px!important;
+  padding:0!important;display:grid!important;place-items:center!important;
+  border-radius:10px!important;
+  background:color-mix(in srgb,var(--theme-accent) 6%,#0b1020)!important;
+  border:1px solid color-mix(in srgb,var(--theme-accent) 22%,#242b47)!important;
+  color:var(--theme-accent)!important;box-shadow:none!important;
+}
+.debt-head-add svg{width:18px!important;height:18px!important;stroke-width:1.9!important}
+.debt-head-add:active{transform:scale(.94)!important;background:color-mix(in srgb,var(--theme-accent) 11%,transparent)!important}
+.debt-empty-action{
+  min-height:112px!important;width:100%!important;padding:20px 12px!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;
+  align-items:center!important;gap:7px!important;
+  border:1px dashed color-mix(in srgb,var(--theme-accent) 20%,#20284a)!important;
+  border-radius:15px!important;background:linear-gradient(180deg,#0a0f1e,#080c18)!important;
+}
+.debt-empty-action:before{display:none!important;content:none!important}
+.debt-empty-plus{
+  width:34px!important;height:34px!important;display:grid!important;place-items:center!important;
+  border-radius:10px!important;
+  background:color-mix(in srgb,var(--theme-accent) 6%,#0b1020)!important;
+  border:1px solid color-mix(in srgb,var(--theme-accent) 22%,#242b47)!important;
+  color:var(--theme-accent)!important;
+}
+.debt-empty-plus svg{width:18px!important;height:18px!important;stroke-width:1.9!important}
+.debt-empty-text{font-size:11px!important;color:var(--muted)!important}
+/* Profil ayarları: Akıllı Finans ile aynı hafif mini kutu dili */
+.profile-top .profile-gear{
+  width:34px!important;height:34px!important;min-width:34px!important;
+  margin:0!important;border:1px solid color-mix(in srgb,var(--theme-accent) 22%,#3a3f55)!important;
+  border-radius:10px!important;background:color-mix(in srgb,var(--theme-accent) 5%,transparent)!important;
+  color:var(--theme-accent)!important;box-shadow:none!important;
+}
+.profile-top .profile-gear svg{width:19px!important;height:19px!important;stroke-width:1.9!important}
+.profile-top .profile-gear:active{transform:scale(.94)!important;background:color-mix(in srgb,var(--theme-accent) 10%,transparent)!important}
+/* Mobil: tek sütun, kenarlardan nefes alan ve dokunması rahat düzen */
+@media (max-width:430px){
+  .app{width:100%!important;min-width:0!important}
+  .page{width:100%!important;max-width:430px!important;margin:0 auto!important;padding-left:12px!important;padding-right:12px!important}
+  .card,.debt-tabs,.debt-sum,.tabs{width:100%!important}
+  .section{padding:13px!important}
+  .debt-sum{gap:8px!important}
+  .debtbox{min-width:0!important;padding:11px 10px!important}
+  .debtbox b{font-size:14px!important;white-space:nowrap}
+  .debt-head-add,.debt-empty-plus{width:34px!important;height:34px!important}
+  .bottom{width:100%!important}
+}
+@media (max-width:360px){
+  .page{padding-left:10px!important;padding-right:10px!important}
+  .debt-tabs button{font-size:10px!important}
+  .debtbox small{font-size:7.5px!important}
+  .debtbox b{font-size:13px!important}
+  .debt-empty-action{min-height:106px!important}
+}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -937,7 +996,7 @@ function debts(){
   return `<div class="title"><h1>Borç / Alacak</h1></div>
   <div class="debt-tabs"><button class="${active==='Borç'?'active':''}" onclick="state.debtTab='Borç';render()">${iconSvg('debt')} Borçlar</button><button class="${active==='Alacak'?'active':''}" onclick="state.debtTab='Alacak';render()">Alacaklar</button></div>
   <div class="debt-sum"><div class="debtbox"><small>🔴 Toplam Borç</small><b class="red">${money(tb)}</b></div><div class="debtbox"><small>🟢 Toplam Alacak</small><b class="green">${money(ta)}</b></div></div>
-  <section class="card section"><div class="list-head"><b>${listTitle}</b><button class="detail debt-head-add" aria-label="${active} ekle" title="${active} ekle" onclick="openDebtModal('${active}')">${iconSvg('plus')}</button></div>${list.length?list.map(debtRow).join(''):`<button type="button" class="empty empty-clickable" onclick="openDebtModal('${active}')" aria-label="${active} ekle">Henüz kayıt yok.</button>`}</section>`
+  <section class="card section"><div class="list-head"><b>${listTitle}</b><button class="detail debt-head-add" aria-label="${active} ekle" title="${active} ekle" onclick="openDebtModal('${active}')">${iconSvg('plus')}</button></div>${list.length?list.map(debtRow).join(''):`<button type="button" class="empty empty-clickable debt-empty-action" onclick="openDebtModal('${active}')" aria-label="${active} ekle"><span class="debt-empty-plus">${iconSvg('plus')}</span><span class="debt-empty-text">Henüz kayıt yok.</span></button>`}</section>`
 }
 function debtRow(d){const idx=state.debts.indexOf(d);const date=d[4]||'';return `<button type="button" class="debt-item debt-item-button" onclick="openDebtDetail(${idx})"><span class="avatar ${d[0]==='Borç'?'p':'g'}">${d[0]==='Borç'?'₺':'↗'}</span><div><div class="rname">${esc(d[2])}</div><div class="rsub">${esc(d[3]||'Kayıtlı')}${date?' · '+esc(formatDateTR(date)):''}</div></div><div class="rval ${d[0]==='Borç'?'red':'green'}">${money(d[1])}</div></button>`}
 function openDebtModal(type){const t=type||'Borç';const today=localDateISO();document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>Borç / Alacak Ekle</h2><div class="type">${['Borç','Alacak'].map(x=>`<button class="${t===x?'active':''}" onclick="openDebtModal('${x}')">${x}</button>`).join('')}</div><div class="form"><label>Tutar</label><input id="debtAmount" inputmode="decimal" placeholder="₺0,00"><label>Kişi / Kurum</label><input id="debtName" placeholder="Örn. Ahmet"><label>Tarih</label><input id="debtDate" type="date" value="${today}"><label>Not</label><input id="debtNote" placeholder="İsteğe bağlı"><button class="save debt-save" onclick="saveDebt('${t}')">Kaydet</button></div></div>`}
