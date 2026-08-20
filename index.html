@@ -1605,3 +1605,14 @@ document.addEventListener('pointerdown',function(e){
   .smart-mini span{font-size:6.8px}
 }
 </style>
+<style id="fix-profile-top-13326">
+/* 13.3.26 — Profil üst bar: dengeli hizalama + belirgin kompakt ayar ikonu */
+.profile-top{padding-left:12px!important;padding-right:18px!important}
+.profile-top .subactions{gap:4px!important;transform:translateX(-2px)!important}
+.profile-top .subactions .ai-finance-btn{width:36px!important;height:36px!important;min-width:36px!important}
+.profile-top .profile-gear{width:34px!important;height:34px!important;min-width:34px!important;margin-right:0!important;border:1px solid color-mix(in srgb,var(--theme-accent) 55%,#3a3f55)!important;border-radius:9px!important;background:transparent!important;color:var(--theme-accent)!important;box-shadow:none!important}
+.profile-top .profile-gear svg{width:20px!important;height:20px!important;stroke-width:2.15!important}
+.profile-top .profile-gear:active{transform:scale(.94)!important;background:color-mix(in srgb,var(--theme-accent) 10%,transparent)!important}
+.light .profile-top .profile-gear{background:transparent!important;border-color:color-mix(in srgb,var(--theme-accent) 55%,#cbd2df)!important;color:var(--theme-accent)!important;box-shadow:none!important}
+@media(max-width:380px){.profile-top{padding-right:15px!important}.profile-top .subactions{transform:translateX(-1px)!important}.profile-top .profile-gear{width:33px!important;height:33px!important}.profile-top .profile-gear svg{width:19px!important;height:19px!important}}
+</style>
