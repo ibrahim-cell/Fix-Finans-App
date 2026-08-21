@@ -1399,9 +1399,9 @@ function profileSettings(){
   const fontSize=localStorage.getItem('fix_font_size')||'normal';
   document.getElementById('modal').innerHTML=`<div class="sheet settings-sheet"><button class="close" onclick="closeModal()">×</button><h2>Ayarlar</h2><div class="settings-sub">Fix Finans deneyimini buradan kişiselleştir.</div><div class="feature-grid compact-feature-grid">
   <button class="feature-card feature-action ai-settings-card" onclick="openSmartCenter()"><span class="fi">✦</span><span class="feature-copy"><b>Akıllı Finans AI</b><small>Finansını yorumla, öne çıkan noktaları keşfet.</small></span><span class="feature-arrow">›</span></button>
-  <button class="feature-card feature-action" onclick="openSecurityInfo()"><span class="fi">🛡️</span><span class="feature-copy"><b>%100 Güvenli</b><small>Verilerinin nasıl saklandığını gör.</small></span><span class="feature-arrow">›</span></button>
-  <button class="feature-card feature-action" onclick="openMultiDeviceInfo()"><span class="fi">▣</span><span class="feature-copy"><b>Çoklu Cihaz</b><small>Yedekle ve cihazlar arasında taşı.</small></span><span class="feature-arrow">›</span></button>
-  <button class="feature-card feature-action" onclick="exportExcel()"><span class="fi">📊</span><span class="feature-copy"><b>Excel Desteği</b><small>Finans kayıtlarını hemen dışa aktar.</small></span><span class="feature-arrow">›</span></button>
+  <button class="feature-card feature-action" onclick="openSecurityInfo()"><span class="fi">🛡️</span><span class="feature-copy"><b>%100 Güvenli</b><small>Verilerin cihazında güvende saklanır.</small></span><span class="feature-arrow">›</span></button>
+  <button class="feature-card feature-action" onclick="openMultiDeviceInfo()"><span class="fi">▣</span><span class="feature-copy"><b>Çoklu Cihaz</b><small>Yedekle ve cihazlar arasında senkronize et.</small></span><span class="feature-arrow">›</span></button>
+  <button class="feature-card feature-action" onclick="exportExcel()"><span class="fi">📊</span><span class="feature-copy"><b>Excel Desteği</b><small>Finans kayıtlarını Excel uyumlu dışa aktar.</small></span><span class="feature-arrow">›</span></button>
   <button class="feature-card feature-action" onclick="openQuickEntry()"><span class="fi">⚡</span><span class="feature-copy"><b>Hızlı & Basit</b><small>Yeni gelir kaydını saniyeler içinde başlat.</small></span><span class="feature-arrow">›</span></button>
   </div><div class="font-size-card compact-setting-card"><div class="font-size-title">Yazı Boyutu</div><div class="font-size-sub">Uygulamadaki metinlerin boyutunu ayarla.</div><div class="font-size-options"><button class="font-size-option ${fontSize==='small'?'active':''}" onclick="setFontSize('small')"><span class="sample small">A</span><b>Küçük</b><small>${fontSize==='small'?'Seçili':''}</small></button><button class="font-size-option ${fontSize==='normal'?'active':''}" onclick="setFontSize('normal')"><span class="sample normal">A</span><b>Normal</b><small>${fontSize==='normal'?'Seçili':''}</small></button><button class="font-size-option ${fontSize==='large'?'active':''}" onclick="setFontSize('large')"><span class="sample large">A</span><b>Büyük</b><small>${fontSize==='large'?'Seçili':''}</small></button></div></div><div class="quick-settings compact-setting-card"><div class="setting-note">Tema</div><div class="theme-mode-grid"><button class="theme-mode-btn ${mode==='light'?'active':''}" onclick="setTheme('light')">☀️<b>Açık</b><small>${mode==='light'?'Seçili':''}</small></button><button class="theme-mode-btn ${mode==='dark'?'active':''}" onclick="setTheme('dark')">🌙<b>Koyu</b><small>${mode==='dark'?'Seçili':''}</small></button><button class="theme-mode-btn ${mode==='system'?'active':''}" onclick="setTheme('system')">🌓<b>Sistemi takip et</b><small>${mode==='system'?'Seçili':''}</small></button></div><button class="excel-row" onclick="toggleExcelSetting()">Excel Desteği <span class="setting-toggle ${excel?'on':''}"></span></button></div><div class="setting-note">Tema tercihi bu cihazda korunur. Sistem seçildiğinde telefonunun açık/koyu tercihi takip edilir.</div></div>`;
 }
@@ -2569,6 +2569,56 @@ body.font-size-large .page .section-title,body.font-size-large .page .rname,body
 @keyframes ffAiSpark{0%,100%{transform:scale(.7) rotate(0);opacity:.25}50%{transform:scale(1.2) rotate(18deg);opacity:1}}
 .theme-mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.theme-mode-btn{min-height:58px;border:1px solid #242b47;background:#080d19;color:#dfe2ef;border-radius:12px;padding:8px 5px;text-align:center;font:inherit}.theme-mode-btn b{display:block;font-size:9px;margin-top:5px}.theme-mode-btn small{display:block;color:#777c91;font-size:7px;margin-top:2px}.theme-mode-btn.active{border-color:var(--theme-accent);background:color-mix(in srgb,var(--theme-accent) 12%,#080d19);box-shadow:0 0 0 1px color-mix(in srgb,var(--theme-accent) 18%,transparent)}.light .theme-mode-btn{background:#fff;color:#151827;border-color:#dce2ec}.light .theme-mode-btn small{color:#687084}.light .theme-mode-btn.active{background:color-mix(in srgb,var(--theme-accent) 8%,white)}
 @media (prefers-reduced-motion:reduce){.ai-settings-card .fi,.ai-settings-card:after{animation:none!important}}
+/* 13.3.60 — Ayarlar referans görseli: premium merkez modal */
+.settings-sheet{
+  width:calc(100vw - 58px)!important;
+  max-width:390px!important;
+  max-height:76dvh!important;
+  align-self:center!important;
+  margin:0 auto!important;
+  padding:18px 15px calc(18px + env(safe-area-inset-bottom))!important;
+  border-radius:24px!important;
+  border:1px solid #26314a!important;
+  background:linear-gradient(145deg,#0a1020 0%,#080d1a 100%)!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.58),0 0 0 1px rgba(255,255,255,.015) inset!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  --settings-accent:#f7b92c;
+}
+.settings-sheet h2{font-size:20px!important;line-height:1.15!important;margin:0 0 5px!important;color:#f7f7fb!important}
+.settings-sheet .settings-sub{font-size:9px!important;line-height:1.35!important;margin:0 0 13px!important;color:#9da3b5!important}
+.settings-sheet>.close{right:12px!important;top:9px!important;width:34px!important;height:34px!important;display:grid!important;place-items:center!important;color:var(--settings-accent)!important;font-size:31px!important;font-weight:300!important;line-height:1!important}
+.settings-sheet .compact-feature-grid{gap:10px!important;margin-bottom:12px!important}
+.settings-sheet .feature-action{min-height:78px!important;padding:11px 10px!important;grid-template-columns:40px minmax(0,1fr) 18px!important;gap:10px!important;border-radius:13px!important;border:1px solid #1b2740!important;background:linear-gradient(145deg,#0b1122,#090e1b)!important}
+.settings-sheet .feature-action .fi{width:40px!important;height:40px!important;border-radius:11px!important;font-size:21px!important;background:linear-gradient(145deg,#111a2d,#0c1325)!important;border:1px solid #2b3650!important;color:#dce4f4!important;box-shadow:0 4px 12px rgba(0,0,0,.18)!important}
+.settings-sheet .ai-settings-card .fi{color:var(--settings-accent)!important;border-color:rgba(247,185,44,.35)!important;background:linear-gradient(145deg,rgba(247,185,44,.10),#0c1325)!important;box-shadow:0 0 14px rgba(247,185,44,.12)!important}
+.settings-sheet .feature-copy b{font-size:10px!important;line-height:1.2!important;margin:0 0 4px!important;color:#f4f4f8!important}
+.settings-sheet .feature-copy small{font-size:8px!important;line-height:1.35!important;color:#9aa0b1!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
+.settings-sheet .feature-arrow{font-size:24px!important;line-height:1!important;color:var(--settings-accent)!important}
+.settings-sheet .compact-setting-card{margin-top:0!important;padding:13px!important;border-radius:14px!important;border:1px solid #1d2941!important;background:linear-gradient(145deg,#0b1121,#090e1b)!important}
+.settings-sheet .font-size-card{margin-top:0!important;margin-bottom:10px!important}
+.settings-sheet .font-size-title{font-size:11px!important;margin-bottom:7px!important;color:#f4f4f8!important}
+.settings-sheet .font-size-sub{font-size:8px!important;margin-bottom:10px!important;color:#9aa0b1!important}
+.settings-sheet .font-size-options{gap:8px!important}
+.settings-sheet .font-size-option{min-height:62px!important;border-radius:13px!important;padding:7px 4px!important;border:1px solid #263149!important;background:#090f1e!important;color:#e8e9f0!important}
+.settings-sheet .font-size-option .sample.small{font-size:18px!important}.settings-sheet .font-size-option .sample.normal{font-size:21px!important}.settings-sheet .font-size-option .sample.large{font-size:24px!important}
+.settings-sheet .font-size-option b{font-size:9px!important;margin-top:6px!important;color:#f1f1f5!important}.settings-sheet .font-size-option small{font-size:0!important;height:0!important;margin:0!important}
+.settings-sheet .font-size-option.active{border-color:var(--settings-accent)!important;background:linear-gradient(145deg,rgba(247,185,44,.08),rgba(247,185,44,.03))!important;box-shadow:0 0 0 1px rgba(247,185,44,.22),0 0 18px rgba(247,185,44,.11)!important;position:relative}
+.settings-sheet .font-size-option.active:after{content:'✓';position:absolute;right:7px;top:6px;width:14px;height:14px;border-radius:50%;display:grid;place-items:center;background:var(--settings-accent);color:#111;font-size:9px;font-weight:900}
+.settings-sheet .quick-settings{margin-top:0!important;gap:0!important}
+.settings-sheet .quick-settings .setting-note{font-size:11px!important;font-weight:800!important;color:#f4f4f8!important;margin:0 0 9px!important}
+.settings-sheet .theme-mode-grid{gap:8px!important;margin-top:0!important}
+.settings-sheet .theme-mode-btn{min-height:58px!important;border-radius:13px!important;padding:7px 4px!important;border:1px solid #263149!important;background:#090f1e!important;color:#e8e9f0!important}
+.settings-sheet .theme-mode-btn b{font-size:9px!important;margin-top:5px!important;color:#e7e8ee!important}.settings-sheet .theme-mode-btn small{font-size:0!important;height:0!important;margin:0!important}
+.settings-sheet .theme-mode-btn.active{border-color:var(--settings-accent)!important;background:linear-gradient(145deg,rgba(247,185,44,.08),rgba(247,185,44,.03))!important;box-shadow:0 0 0 1px rgba(247,185,44,.22),0 0 18px rgba(247,185,44,.11)!important;position:relative}
+.settings-sheet .theme-mode-btn.active:after{content:'✓';position:absolute;right:7px;top:6px;width:14px;height:14px;border-radius:50%;display:grid;place-items:center;background:var(--settings-accent);color:#111;font-size:9px;font-weight:900}
+.settings-sheet .excel-row{height:40px!important;margin-top:11px!important;border:1px solid #263149!important;border-radius:13px!important;background:#0a1020!important;color:#f4f4f8!important;font-size:10px!important;font-weight:800!important;padding:0 12px!important}
+.settings-sheet .excel-row .setting-toggle{right:10px!important;top:9px!important;width:38px!important;height:22px!important;background:#30394d!important}
+.settings-sheet .excel-row .setting-toggle.on{background:var(--settings-accent)!important;box-shadow:0 0 10px rgba(247,185,44,.18)!important}
+.settings-sheet .excel-row .setting-toggle:after{width:18px!important;height:18px!important;top:2px!important;left:2px!important}.settings-sheet .excel-row .setting-toggle.on:after{left:18px!important}
+.settings-sheet>.setting-note{font-size:8px!important;line-height:1.45!important;color:#777e92!important;margin:10px 12px 0!important}
+@media(max-width:380px){.settings-sheet{width:calc(100vw - 36px)!important;max-height:78dvh!important;padding:15px 12px calc(15px + env(safe-area-inset-bottom))!important}.settings-sheet .feature-action{min-height:74px!important;grid-template-columns:36px minmax(0,1fr) 16px!important;gap:8px!important;padding:9px!important}.settings-sheet .feature-action .fi{width:36px!important;height:36px!important;font-size:19px!important}.settings-sheet .feature-copy b{font-size:9px!important}.settings-sheet .feature-copy small{font-size:7px!important}.settings-sheet .font-size-option{min-height:58px!important}.settings-sheet .theme-mode-btn{min-height:54px!important}}
+
 </style>
 
 <script>
