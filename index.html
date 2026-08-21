@@ -1441,28 +1441,43 @@ function profileSettings(){
 function setFontSize(size){const allowed=['small','large','system'];const v=allowed.includes(size)?size:'system';localStorage.setItem('fix_font_size',v);closeModal();applyFontSize();render()}
 function applyFontSize(){
   const v=localStorage.getItem('fix_font_size')||'system';
+  const previousScale=Number(window.__ffAppliedFontScale)||1;
+  const scale=v==='small'?.90:v==='large'?1.12:1;
   document.body.classList.remove('font-size-small','font-size-large','font-size-system');
   document.body.classList.add('font-size-'+v);
-  const scale=v==='small'?.92:v==='large'?1.08:1;
   document.documentElement.style.setProperty('--ff-font-scale',String(scale));
   document.documentElement.style.setProperty('-webkit-text-size-adjust',v==='system'?'auto':'100%');
+
   const root=document.body;
   root.querySelectorAll('*').forEach(el=>{
+    const tag=el.tagName;
+    const cls=typeof el.className==='string'?el.className:'';
+    if(['SCRIPT','STYLE','SVG','PATH','CIRCLE','RECT','LINE','POLYLINE','POLYGON'].includes(tag)) return;
+    if(/(^|\s)(icon|premium-icon|theme-premium-icon|sample|badge|qicon|nav-icon)(\s|$)/i.test(cls)) return;
+
+    const directText=Array.from(el.childNodes).some(n=>n.nodeType===Node.TEXT_NODE && n.textContent.trim());
+    if(!directText) return;
+
+    // Keep a true CSS/base size so repeated render() calls never compound scaling.
     if(!el.dataset.ffBaseFontSize){
-      const tag=el.tagName;
-      const cls=typeof el.className==='string'?el.className:'';
-      if(['SCRIPT','STYLE','SVG','PATH','CIRCLE','RECT','LINE','POLYLINE','POLYGON'].includes(tag)) return;
-      if(/(^|\s)(icon|premium-icon|theme-premium-icon|sample|badge|qicon|nav-icon)(\s|$)/i.test(cls)) return;
-      const directText=Array.from(el.childNodes).some(n=>n.nodeType===Node.TEXT_NODE && n.textContent.trim());
-      if(!directText) return;
       const px=parseFloat(getComputedStyle(el).fontSize);
-      if(Number.isFinite(px)&&px>0) el.dataset.ffBaseFontSize=String(px);
+      if(Number.isFinite(px)&&px>0){
+        const base=previousScale!==1 ? px/previousScale : px;
+        el.dataset.ffBaseFontSize=String(base);
+      }
     }
+
     const base=parseFloat(el.dataset.ffBaseFontSize);
     if(!Number.isFinite(base)) return;
-    if(v==='system') el.style.removeProperty('font-size');
-    else el.style.fontSize=(base*scale).toFixed(2)+'px';
+
+    if(v==='system'){
+      el.style.removeProperty('font-size');
+    }else{
+      el.style.fontSize=(base*scale).toFixed(2)+'px';
+    }
   });
+
+  window.__ffAppliedFontScale=scale;
 }
 function setTheme(theme){localStorage.setItem('fix_theme',['light','dark','system'].includes(theme)?theme:'dark');closeModal();render()}
 function toggleExcelSetting(){localStorage.setItem('fix_excel_enabled',localStorage.getItem('fix_excel_enabled')==='0'?'1':'0');profileSettings()}
@@ -2806,9 +2821,9 @@ body[data-palette="slate"]{--theme-accent:#94a3b8!important;--theme-accent-2:#64
 /* 13.3.58 — Yazı boyutu: Fix Finans kart dili */
 .font-size-card{margin-top:12px;padding:12px;border:1px solid #171f39;border-radius:14px;background:linear-gradient(145deg,#0c1021,#080c18)}
 .font-size-card .font-size-title{font-size:11px;font-weight:800;color:#fff;margin-bottom:8px}.font-size-card .font-size-sub{font-size:8px;color:#777c91;margin-bottom:9px}
-.font-size-options{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.font-size-option{position:relative;min-height:62px;border:1px solid #202845;background:#090e1b;color:#dfe2ef;border-radius:12px;padding:7px 4px;text-align:center;font:inherit;transition:.2s ease}.font-size-option .sample{display:block;font-weight:800;line-height:1}.font-size-option .sample.small{font-size:15px}.font-size-option .sample.normal{font-size:18px}.font-size-option .sample.large{font-size:21px}.font-size-option .sample.system{font-size:19px}.font-size-option b{display:block;font-size:9px;margin-top:6px}.font-size-option small{display:block;color:#777c91;font-size:7px;margin-top:2px}.font-size-option.active{border-color:var(--theme-accent);background:color-mix(in srgb,var(--theme-accent) 12%,#080d19);box-shadow:0 0 0 1px color-mix(in srgb,var(--theme-accent) 18%,transparent),0 0 14px color-mix(in srgb,var(--theme-accent) 12%,transparent)}.font-size-option.active:after,.theme-mode-btn.active:after{content:'✓';position:absolute;right:7px;top:7px;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:var(--theme-accent);color:#fff;font-size:10px;font-weight:900;box-shadow:0 0 10px color-mix(in srgb,var(--theme-accent) 35%,transparent)}
+.font-size-options{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.font-size-option{position:relative;min-height:62px;border:1px solid #202845;background:#090e1b;color:#dfe2ef;border-radius:12px;padding:7px 4px;text-align:center;font:inherit;transition:.2s ease}.font-size-option .sample{display:block;font-weight:800;line-height:1}.font-size-option .sample.small{font-size:15px}.font-size-option .sample.normal{font-size:18px}.font-size-option .sample.large{font-size:22px}.font-size-option .sample.system{font-size:19px}.font-size-option b{display:block;font-size:9px;margin-top:6px}.font-size-option small{display:block;color:#777c91;font-size:7px;margin-top:2px}.font-size-option.active{border-color:var(--theme-accent);background:color-mix(in srgb,var(--theme-accent) 12%,#080d19);box-shadow:0 0 0 1px color-mix(in srgb,var(--theme-accent) 18%,transparent),0 0 14px color-mix(in srgb,var(--theme-accent) 12%,transparent)}.font-size-option.active:after,.theme-mode-btn.active:after{content:'✓';position:absolute;right:7px;top:7px;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:var(--theme-accent);color:#fff;font-size:10px;font-weight:900;box-shadow:0 0 10px color-mix(in srgb,var(--theme-accent) 35%,transparent)}
 .light .font-size-card{background:#fff;border-color:#dfe4ee}.light .font-size-option{background:#fff;color:#151827;border-color:#dce2ec}.light .font-size-option small{color:#687084}.light .font-size-option.active{background:color-mix(in srgb,var(--theme-accent) 8%,white)}
-body.font-size-small{--ff-font-scale:.92}body.font-size-large{--ff-font-scale:1.08}body.font-size-system{--ff-font-scale:1}body.font-size-system .app{font-size:inherit}
+body.font-size-small{--ff-font-scale:.90}body.font-size-large{--ff-font-scale:1.12}body.font-size-system{--ff-font-scale:1}body.font-size-system .app{font-size:inherit}
 @media(max-width:360px){.font-size-options{gap:5px}.font-size-option{min-height:58px}.font-size-option b{font-size:8px}}
 
 /* 13.3.57 — Ayarlar AI + Sistem Teması */
