@@ -1504,6 +1504,33 @@ function syncWelcomeGate(){
   openWelcome();
 }
 
+function bindHomeTabSwipe(){
+  const page=document.getElementById('page');
+  if(!page || state.page!=='home' || page.dataset.homeSwipeBound==='1') return;
+  page.dataset.homeSwipeBound='1';
+  let startX=0,startY=0,tracking=false;
+  page.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1) return;
+    startX=e.touches[0].clientX;
+    startY=e.touches[0].clientY;
+    tracking=true;
+  },{passive:true});
+  page.addEventListener('touchend',e=>{
+    if(!tracking || !e.changedTouches.length) return;
+    tracking=false;
+    const dx=e.changedTouches[0].clientX-startX;
+    const dy=e.changedTouches[0].clientY-startY;
+    if(Math.abs(dx)<65 || Math.abs(dx)<=Math.abs(dy)*1.25) return;
+    const order=['home','reports','upcoming'];
+    const current=order.indexOf(state.page);
+    const next=dx<0 ? Math.min(order.length-1,current+1) : Math.max(0,current-1);
+    if(next!==current){
+      state.page=order[next];
+      render();
+    }
+  },{passive:true});
+}
+
 function render(){
   const savedTheme=localStorage.getItem('fix_theme')||'dark';
   document.body.classList.toggle('light',savedTheme==='light');
@@ -1511,6 +1538,7 @@ function render(){
   header();nav();
   document.getElementById('page').innerHTML=state.page==='home'?home():state.page==='transactions'?transactions():state.page==='reports'?reports():state.page==='profile'?profile():state.page==='smartCenter'?smartCenter():state.page==='upcoming'?upcoming():debts();
   const logo=document.getElementById('logo');if(logo)logo.src=logoData;
+  bindHomeTabSwipe();
 }
 document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>{state.page=b.dataset.page;render()}));document.getElementById('add').onclick=()=>openModal();
 function categoryOptions(type){let base;if(type==='Gider')base=[['🍽️','Yemek'],['⛽','Yakıt'],['🛒','Alışveriş'],['☕','Kahve'],['🛍️','Market'],['🎮','Eğlence']];else if(type==='Transfer')return [['⇄','Transfer']];else base=[['💼','Maaş'],['🛵','Kurye Geliri'],['💻','Freelance'],['📈','Yatırım'],['💰','Diğer Gelirler']];const custom=(state.customCategories&&state.customCategories[type])||[];return base.concat(custom.map(x=>{const item=typeof x==='string'?{name:x,icon:null}:x;return [item.icon||categoryIcon(item.name,type),item.name]}));}
@@ -2123,6 +2151,11 @@ body[data-palette="slate"]{--theme-accent:#94a3b8!important;--theme-accent-2:#64
   .profile-top .profile-gear svg{width:18px!important;height:18px!important}
   .quick{gap:5px!important}.qicon{width:44px!important;height:44px!important}
 }
+
+/* 13.3.45 — Ana Sayfa tab swipe */
+.reference-tabs{touch-action:pan-y;}
+.reference-tabs button{transition:transform .18s ease,background .18s ease,box-shadow .18s ease;}
+@media (prefers-reduced-motion: reduce){.reference-tabs button{transition:none!important;}}
 </style>
 <script>
 (function(){
