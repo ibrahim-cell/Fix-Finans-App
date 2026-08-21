@@ -1186,7 +1186,7 @@ function openExpenseDetails(){
   document.getElementById('modal').innerHTML=`<div class="sheet expense-detail-sheet"><button class="close" onclick="closeModal()">×</button><div class="expense-detail-head"><div><div class="smart-kicker">HARCAMA ANALİZİ</div><h2>Harcama Detayları</h2><small>Kategori bazında giderlerinin dağılımı.</small></div><div class="expense-total"><small>Toplam</small><b>${money(total)}</b></div></div><div class="expense-detail-list">${rows}</div></div>`;
 }
 
-function openSmartCenter(){state.page='smartCenter';render();}
+function openSmartCenter(){closeModal();state.page='smartCenter';render();}
 function smartCenter(){
   const t=totals();
   const count=state.transactions.length;
