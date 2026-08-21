@@ -1435,7 +1435,20 @@ function openCurrencyRates(){
 function renderCurrencySheet(){const last=marketRates.updated?new Date(marketRates.updated).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'—';const busy=marketRates.loading?'Güncelleniyor…':(marketRates.updated?'Son güncelleme '+last:'Veri bekleniyor');document.getElementById('modal').innerHTML=`<div class="sheet market-sheet"><button class="close" onclick="closeModal()">×</button><h2>Piyasa</h2><div class="settings-sub">BTC, altın, gümüş ve dolar canlı verileri · otomatik yenileme 5 dk</div><div class="currency-list"><div><span><b>₿ Bitcoin</b><small>BTC / TRY</small></span><strong>${rateMoney(marketRates.btc)}</strong></div><div><span><b>🥇 Altın</b><small>XAU / ons</small></span><strong>${rateMoney(marketRates.gold)}</strong></div><div><span><b>🥈 Gümüş</b><small>XAG / ons</small></span><strong>${rateMoney(marketRates.silver)}</strong></div><div><span><b>💵 Dolar</b><small>USD / TRY</small></span><strong>${rateMoney(marketRates.usdtry)}</strong></div></div><div class="market-status">${busy}</div><button class="wide" onclick="fetchMarketRates()">↻ Şimdi Güncelle</button></div>`}
 
 setInterval(()=>{if(document.visibilityState==='visible')fetchMarketRates()},300000);
-function confirmAction(title,message,onYes){document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet confirm-sheet"><button class="close" onclick="closeModal()">×</button><h2>${title}</h2><div class="settings-sub">${message}</div><div class="confirm-actions"><button class="filter-clear" onclick="closeModal()">İptal</button><button class="filter-apply" onclick="closeModal();(${onYes.toString()})()">Tamam</button></div></div>`}
+let pendingConfirmAction = null;
+
+function confirmAction(title,message,onYes){
+    pendingConfirmAction = typeof onYes === 'function' ? onYes : null;
+    document.getElementById('modal').classList.remove('hidden');
+    document.getElementById('modal').innerHTML=`<div class="sheet confirm-sheet"><button class="close" onclick="closeModal();pendingConfirmAction=null">×</button><h2>${title}</h2><div class="settings-sub">${message}</div><div class="confirm-actions"><button class="filter-clear" onclick="closeModal();pendingConfirmAction=null">İptal</button><button class="filter-apply" onclick="executeConfirmAction()">Tamam</button></div></div>`;
+}
+
+function executeConfirmAction(){
+    const action = pendingConfirmAction;
+    pendingConfirmAction = null;
+    closeModal();
+    if (typeof action === 'function') action();
+}
 
 function openBackupRestore(){
   const count=state.transactions.length,debtCount=state.debts.length;
