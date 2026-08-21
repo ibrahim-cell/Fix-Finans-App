@@ -1100,6 +1100,106 @@ body.font-size-large .theme-mode-grid{gap:calc(8px * var(--ff-ui-gap))}
 body.font-size-small .font-size-option .sample{font-size:27px!important}
 body.font-size-large .font-size-option .sample{font-size:34px!important}
 </style>
+
+<style id="fix-13-3-83-transactions-history">
+/* 13.3.83 — İşlemler: kompakt günlük özet + aç/kapa geçmiş */
+.tx-type-tabs{
+  display:grid!important;grid-template-columns:repeat(4,1fr);gap:8px;
+  margin:4px 0 10px;
+}
+.tx-type-tab{
+  height:38px;border:1px solid #1d2540!important;border-radius:12px!important;
+  background:#090e1b!important;color:var(--muted)!important;font-weight:700!important;
+  font-size:12px!important;
+}
+.tx-type-tab.active{
+  color:#fff!important;background:color-mix(in srgb,var(--theme-accent) 78%,#10162a)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 70%,#242b47)!important;
+  box-shadow:0 0 16px color-mix(in srgb,var(--theme-accent) 22%,transparent)!important;
+}
+.tx-summary-new{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border:1px solid #1d2540;border-radius:16px;background:linear-gradient(145deg,#0b1020,#080c17);
+  overflow:hidden;margin:0 0 10px;
+}
+.tx-summary-cell{padding:12px 10px;border-right:1px solid #1a223a;min-width:0}
+.tx-summary-cell:last-child{border-right:0}
+.tx-summary-cell small{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}
+.tx-summary-cell b{display:block;font-size:15px;white-space:nowrap}
+.tx-range-tabs{
+  display:flex;align-items:center;gap:7px;overflow:auto;scrollbar-width:none;margin:0 0 12px;
+}
+.tx-range-tabs::-webkit-scrollbar{display:none}
+.tx-range-tab{
+  flex:0 0 auto;height:34px;padding:0 13px;border:1px solid #1d2540!important;
+  border-radius:11px!important;background:#090e1b!important;color:var(--muted)!important;
+  font-size:11px!important;font-weight:700!important;
+}
+.tx-range-tab.active{
+  color:#fff!important;border-color:color-mix(in srgb,var(--theme-accent) 65%,#242b47)!important;
+  background:color-mix(in srgb,var(--theme-accent) 18%,#090e1b)!important;
+  box-shadow:0 0 12px color-mix(in srgb,var(--theme-accent) 12%,transparent)!important;
+}
+.tx-calendar-btn{
+  flex:0 0 36px;width:36px;height:34px;border:1px solid #1d2540!important;
+  border-radius:11px!important;background:#090e1b!important;color:var(--muted)!important;
+  display:grid;place-items:center!important;
+}
+.tx-calendar-btn svg{width:17px;height:17px}
+.tx-history-wrap{padding:0!important}
+.tx-history-head{
+  display:flex;justify-content:space-between;align-items:end;
+  padding:5px 2px 10px;color:var(--muted);
+}
+.tx-history-head b{display:block;color:#f4f5fb;font-size:15px}
+.tx-history-head small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.tx-history-head>span{font-size:10px}
+.tx-day-card{
+  border:1px solid #1b2440;border-radius:16px;background:linear-gradient(145deg,#0b1020,#080d19);
+  margin-bottom:10px;overflow:hidden;box-shadow:0 7px 20px rgba(0,0,0,.12);
+}
+.tx-day-summary{
+  width:100%;border:0!important;background:transparent!important;color:inherit!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto auto;gap:9px;align-items:center;
+  text-align:left!important;padding:13px 13px 9px!important;
+}
+.tx-day-date b{display:block;color:#f2f3f8;font-size:14px}
+.tx-day-date small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+.tx-day-result{font-size:13px;font-weight:800;white-space:nowrap}
+.tx-day-count{font-size:9px;color:var(--muted);white-space:nowrap;text-align:right}
+.tx-day-count i{font-style:normal;display:inline-grid;place-items:center;width:22px;height:22px;margin-left:5px;
+  border:1px solid #222b48;border-radius:8px;color:var(--theme-accent);font-size:13px}
+.tx-day-metrics{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:0;padding:4px 13px 8px;
+}
+.tx-day-metrics span{min-width:0}
+.tx-day-metrics small{display:block;color:var(--muted);font-size:8px;margin-bottom:2px}
+.tx-day-metrics b{font-size:11px}
+.tx-day-bar{display:flex;gap:2px;height:4px;margin:0 13px 5px;background:#151b2d;border-radius:99px;overflow:hidden}
+.tx-day-bar i{display:block;height:100%;border-radius:99px}
+.tx-day-bar .income-bar{background:#45d9a4}
+.tx-day-bar .expense-bar{background:#ff4f68}
+.tx-day-items{border-top:1px solid #171e35}
+.tx-day-items .txrow{margin:0!important;border-bottom:1px solid #151c31!important;min-height:61px!important;padding:9px 13px!important}
+.tx-day-items .txrow:last-child{border-bottom:0!important}
+.tx-more{
+  width:100%;height:34px;border:0!important;border-top:1px solid #171e35!important;
+  background:color-mix(in srgb,var(--theme-accent) 5%,#080d19)!important;color:var(--theme-accent)!important;
+  font-size:10px!important;font-weight:700!important;
+}
+.tx-more span{font-size:15px;margin-left:4px}
+.tx-more.subtle{color:var(--muted)!important}
+.tx-day-card:not(.expanded) .tx-day-items .txrow:nth-child(n+3){display:none}
+@media(max-width:370px){
+  .tx-type-tabs{gap:5px}
+  .tx-type-tab{font-size:11px!important}
+  .tx-day-summary{grid-template-columns:minmax(0,1fr) auto!important}
+  .tx-day-count{grid-column:2;grid-row:2}
+}
+.light .tx-type-tab,.light .tx-range-tab,.light .tx-calendar-btn{background:#fff!important;border-color:#dfe4ee!important}
+.light .tx-summary-new,.light .tx-day-card{background:#fff;border-color:#dfe4ee}
+.light .tx-day-items .txrow{border-color:#edf0f5!important}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -1149,7 +1249,7 @@ let storedDebts=[];try{const rawDebts=localStorage.getItem(DEBT_KEY);storedDebts
 if(Array.isArray(storedDebts)){const before=storedDebts.length;storedDebts=storedDebts.filter(d=>!(String(d[0]||'')==='Borç' && ((String(d[2]||'').trim()==='Telefon Taksiti' && Number(d[1])===650) || (String(d[2]||'').trim()==='Bilgisayar Taksiti' && Number(d[1])===1250))));if(storedDebts.length!==before)localStorage.setItem(DEBT_KEY,JSON.stringify(storedDebts));}
 const storedUpcoming=JSON.parse(localStorage.getItem('fix_upcoming')||'[]');
 function localDateISO(){const d=new Date();const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
-const state={page:'home',type:'Gelir',debtTab:'Borç',transactions:Array.isArray(stored)?stored:[],debts:Array.isArray(storedDebts)?storedDebts:[],upcoming:Array.isArray(storedUpcoming)?storedUpcoming:[],filters:{from:'',to:'',category:'Tümü'},selectedMonth:'2026-08',reportPeriod:'month',searchOpen:false,txSearch:'',customCategories:(()=>{try{const x=JSON.parse(localStorage.getItem('fix_custom_categories')||'{}');const norm=v=>(Array.isArray(v)?v:[]).map(item=>typeof item==='string'?{name:item,icon:null}:{name:String(item?.name||''),icon:item?.icon||null}).filter(item=>item.name);return {Gelir:norm(x.Gelir),Gider:norm(x.Gider)}}catch(e){return {Gelir:[],Gider:[]}}})(),categoryDraftIcon:null};
+const state={page:'home',type:'Gelir',debtTab:'Borç',transactions:Array.isArray(stored)?stored:[],debts:Array.isArray(storedDebts)?storedDebts:[],upcoming:Array.isArray(storedUpcoming)?storedUpcoming:[],filters:{from:'',to:'',category:'Tümü'},selectedMonth:'2026-08',reportPeriod:'month',searchOpen:false,txSearch:'',txTypeFilter:'Tümü',txRange:'month',txExpandedDays:{},,customCategories:(()=>{try{const x=JSON.parse(localStorage.getItem('fix_custom_categories')||'{}');const norm=v=>(Array.isArray(v)?v:[]).map(item=>typeof item==='string'?{name:item,icon:null}:{name:String(item?.name||''),icon:item?.icon||null}).filter(item=>item.name);return {Gelir:norm(x.Gelir),Gider:norm(x.Gider)}}catch(e){return {Gelir:[],Gider:[]}}})(),categoryDraftIcon:null};
 const money=n=>'₺'+Number(Math.abs(n)).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const totals=()=>{const income=state.transactions.filter(t=>t[1]>0).reduce((a,t)=>a+Number(t[1]),0);const expense=Math.abs(state.transactions.filter(t=>t[1]<0).reduce((a,t)=>a+Number(t[1]),0));return {income,expense,net:income-expense};};
 const walletTotals=()=>{let cash=0;state.transactions.forEach(t=>{const type=t[4]||'';if(type==='Transfer'&&t[7]==='Transfer'){const amount=Math.abs(Number(t[10])||0),from=t[8]||'Banka',to=t[9]||'Nakit';if(from==='Nakit')cash-=amount;if(to==='Nakit')cash+=amount;return;}const v=Number(t[1])||0;if(t[7]==='Nakit')cash+=v;});const net=totals().net;return {cash,bank:net-cash};};
@@ -1236,13 +1336,150 @@ function txTimeLabel(t){
 }
 
 function monthLabel(ym){const [y,m]=ym.split('-');return new Date(Number(y),Number(m)-1,1).toLocaleDateString('tr-TR',{month:'long'}).replace(/^./,c=>c.toUpperCase())}
-function monthFilteredTransactions(){const ym=state.selectedMonth||'2026-08';return state.transactions.filter(t=>txDateValue(t).slice(0,7)===ym)}
-function filteredTransactions(){const q=(state.txSearch||'').toLocaleLowerCase('tr-TR').trim();return monthFilteredTransactions().filter(t=>{const name=String(t[0]||'').toLocaleLowerCase('tr-TR');const kind=String(t[4]||'').toLocaleLowerCase('tr-TR');const d=txDateValue(t);const f=state.filters||{};return (!q||`${name} ${kind}`.includes(q)) && (!f.from||d>=f.from) && (!f.to||d<=f.to) && (!f.category||f.category==='Tümü'||String(t[0]||'')===f.category);});}
-function txMonthTotals(){const list=monthFilteredTransactions();const income=list.filter(t=>Number(t[1])>0).reduce((a,t)=>a+Number(t[1]),0);const expense=Math.abs(list.filter(t=>Number(t[1])<0).reduce((a,t)=>a+Number(t[1]),0));return {income,expense,net:income-expense};}
-function openMonthPicker(){const now=new Date(2026,7,1);const months=[];for(let i=0;i<12;i++){const d=new Date(now.getFullYear(),i,1);const ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;months.push(`<button class="month-choice ${state.selectedMonth===ym?'active':''}" onclick="state.selectedMonth='${ym}';state.filters={from:'',to:'',category:'Tümü'};closeModal();render()"><span>${d.getFullYear()}</span><b>${d.toLocaleDateString('tr-TR',{month:'long'})}</b></button>`)}document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet month-picker-sheet"><button class="close" onclick="closeModal()">×</button><h2>Ay Seç</h2><div class="month-picker-grid">${months.join('')}</div></div>`}
-function transactions(){const t=txMonthTotals();const list=filteredTransactions();const activeFilter=(state.filters?.from||state.filters?.to||state.filters?.category&&state.filters.category!=='Tümü');const search=state.searchOpen?`<div class="tx-search-wrap"><div class="tx-search-box">${iconSvg('search')}<input id="txSearch" value="${esc(state.txSearch||'')}" placeholder="İşlem ara..." oninput="filterTx(this.value)"><button aria-label="Aramayı kapat" onclick="closeTransactionSearch()">×</button></div></div>`:'';const grouped=list.length?transactionDayGroups(list):'<button type="button" class="empty empty-clickable" onclick="openModal()" aria-label="İşlem ekle">Filtreye uygun işlem bulunamadı.</button>';return `<div class="tx-filter-state">${activeFilter?'Filtre aktif':''}</div><div class="tx-summary"><button class="monthbox monthbox-btn" onclick="openMonthPicker()">2026<br><b>${monthLabel(state.selectedMonth)}⌄</b></button><div class="sum">Gelir<b class="green">${t.income.toLocaleString('tr-TR',{minimumFractionDigits:2})}</b></div><div class="sum">Gider<b class="red">${t.expense.toLocaleString('tr-TR',{minimumFractionDigits:2})}</b></div><div class="sum">Net<b>${t.net.toLocaleString('tr-TR',{minimumFractionDigits:2})}</b></div></div>${search}<div id="txList" class="card section"><div class="date"><span>${monthLabel(state.selectedMonth)} 2026</span><span>${list.length}/${monthFilteredTransactions().length} işlem</span></div>${grouped}<button class="wide" onclick="openModal()">＋ İşlem Ekle</button></div>`}
-
-function refreshTxList(){const input=document.getElementById('txSearch');const list=filteredTransactions();const box=document.getElementById('txList');if(!box)return;const grouped=list.length?transactionDayGroups(list):'<div class="empty">Filtreye uygun işlem bulunamadı.</div>';box.innerHTML=`<div class="date"><span>${monthLabel(state.selectedMonth)} 2026</span><span>${list.length}/${monthFilteredTransactions().length} işlem</span></div>${grouped}<button class="wide" onclick="openModal()">＋ İşlem Ekle</button>`;if(input){const fresh=document.getElementById('txSearch');if(fresh){fresh.focus();fresh.setSelectionRange(fresh.value.length,fresh.value.length)}}}
+function monthFilteredTransactions(){
+  const ym=state.selectedMonth||'2026-08';
+  return state.transactions.filter(t=>txDateValue(t).slice(0,7)===ym);
+}
+function txRangeList(){
+  const base=state.transactions.slice();
+  const now=new Date();
+  const today=localDateISO();
+  const day=(now.getDay()+6)%7;
+  const weekStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()-day);
+  const weekStartISO=`${weekStart.getFullYear()}-${String(weekStart.getMonth()+1).padStart(2,'0')}-${String(weekStart.getDate()).padStart(2,'0')}`;
+  if(state.txRange==='today') return base.filter(t=>txDateValue(t)===today);
+  if(state.txRange==='week') return base.filter(t=>txDateValue(t)>=weekStartISO && txDateValue(t)<=today);
+  if(state.txRange==='all') return base;
+  return monthFilteredTransactions();
+}
+function txTypeMatches(t){
+  const f=state.txTypeFilter||'Tümü';
+  if(f==='Tümü') return true;
+  if(f==='Transfer') return t[4]==='Transfer';
+  if(f==='Gelir') return t[4]==='Gelir' || Number(t[1])>0 && t[4]!=='Transfer';
+  if(f==='Gider') return t[4]==='Gider' || Number(t[1])<0;
+  return true;
+}
+function filteredTransactions(){
+  const q=(state.txSearch||'').toLocaleLowerCase('tr-TR').trim();
+  return txRangeList().filter(t=>{
+    const name=String(t[0]||'').toLocaleLowerCase('tr-TR');
+    const kind=String(t[4]||'').toLocaleLowerCase('tr-TR');
+    const d=txDateValue(t);
+    const f=state.filters||{};
+    return txTypeMatches(t) &&
+      (!q||`${name} ${kind} ${String(t[7]||'')}`.includes(q)) &&
+      (!f.from||d>=f.from) &&
+      (!f.to||d<=f.to) &&
+      (!f.category||f.category==='Tümü'||String(t[0]||'')===f.category);
+  });
+}
+function txSummaryTotals(list){
+  return list.reduce((a,t)=>{
+    if(t[4]==='Transfer') return a;
+    const v=Number(t[1])||0;
+    if(v>=0)a.income+=v; else a.expense+=Math.abs(v);
+    return a;
+  },{income:0,expense:0});
+}
+function txMonthTotals(){
+  const list=monthFilteredTransactions();
+  const a=txSummaryTotals(list);
+  return {...a,net:a.income-a.expense};
+}
+function txRangeLabel(){
+  if(state.txRange==='today')return 'Bugün';
+  if(state.txRange==='week')return 'Bu Hafta';
+  if(state.txRange==='all')return 'Geçmiş';
+  return 'Bu Ay';
+}
+function setTxTypeFilter(type){
+  state.txTypeFilter=type;
+  state.txExpandedDays={};
+  render();
+}
+function setTxRange(range){
+  state.txRange=range;
+  state.txExpandedDays={};
+  render();
+}
+function toggleTxDay(key){
+  state.txExpandedDays=state.txExpandedDays||{};
+  state.txExpandedDays[key]=!state.txExpandedDays[key];
+  render();
+}
+function transactionDayCards(list){
+  return groupTransactionsByDay(list).map(([d,items])=>{
+    const totals=dayTotals(items);
+    const transfers=items.filter(t=>t[4]==='Transfer').length;
+    const net=totals.income-totals.expense;
+    const expanded=!!state.txExpandedDays?.[d];
+    const shown=expanded?items:items.slice(0,2);
+    const more=Math.max(0,items.length-2);
+    return `<section class="tx-day-card ${expanded?'expanded':''}">
+      <button class="tx-day-summary" type="button" onclick="toggleTxDay('${d}')">
+        <span class="tx-day-date"><b>${dayLabel(d)==='Bugün'?'Bugün':new Date(d+'T12:00:00').toLocaleDateString('tr-TR',{day:'2-digit',month:'long'})}</b><small>${new Date(d+'T12:00:00').toLocaleDateString('tr-TR',{weekday:'long',year:'numeric'})}</small></span>
+        <span class="tx-day-result ${net>=0?'green':'red'}">${net>=0?'+':'-'}${money(net)}</span>
+        <span class="tx-day-count">${items.length} işlem <i>${expanded?'⌃':'⌄'}</i></span>
+      </button>
+      <div class="tx-day-metrics">
+        <span><small>Gelir</small><b class="green">${money(totals.income)}</b></span>
+        <span><small>Gider</small><b class="red">${money(totals.expense)}</b></span>
+        ${transfers?`<span><small>Transfer</small><b class="purple">${transfers}</b></span>`:''}
+      </div>
+      <div class="tx-day-bar"><i class="income-bar" style="width:${totals.income+totals.expense?Math.min(100,totals.income/(totals.income+totals.expense)*100):0}%"></i><i class="expense-bar" style="width:${totals.income+totals.expense?Math.min(100,totals.expense/(totals.income+totals.expense)*100):0}%"></i></div>
+      <div class="tx-day-items">${shown.map(tx).join('')}</div>
+      ${!expanded&&more?`<button class="tx-more" onclick="toggleTxDay('${d}')">${more} işlemi daha göster <span>›</span></button>`:''}
+      ${expanded?`<button class="tx-more subtle" onclick="toggleTxDay('${d}')">Günü kapat <span>⌃</span></button>`:''}
+    </section>`;
+  }).join('');
+}
+function openMonthPicker(){
+  const now=new Date(2026,7,1);const months=[];
+  for(let i=0;i<12;i++){
+    const d=new Date(now.getFullYear(),i,1);
+    const ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    months.push(`<button class="month-choice ${state.selectedMonth===ym?'active':''}" onclick="state.selectedMonth='${ym}';state.filters={from:'',to:'',category:'Tümü'};state.txRange='month';state.txExpandedDays={};closeModal();render()"><span>${d.getFullYear()}</span><b>${d.toLocaleDateString('tr-TR',{month:'long'})}</b></button>`);
+  }
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').innerHTML=`<div class="sheet month-picker-sheet"><button class="close" onclick="closeModal()">×</button><h2>Ay Seç</h2><div class="month-picker-grid">${months.join('')}</div></div>`;
+}
+function transactions(){
+  const list=filteredTransactions();
+  const summary=txSummaryTotals(list);
+  const net=summary.income-summary.expense;
+  const allBase=txRangeList();
+  const activeFilter=(state.filters?.from||state.filters?.to||state.filters?.category&&state.filters.category!=='Tümü');
+  const search=state.searchOpen?`<div class="tx-search-wrap"><div class="tx-search-box">${iconSvg('search')}<input id="txSearch" value="${esc(state.txSearch||'')}" placeholder="İşlem ara..." oninput="filterTx(this.value)"><button aria-label="Aramayı kapat" onclick="closeTransactionSearch()">×</button></div></div>`:'';
+  const grouped=list.length?transactionDayCards(list):'<button type="button" class="empty empty-clickable" onclick="openModal()" aria-label="İşlem ekle">Filtreye uygun işlem bulunamadı.</button>';
+  const types=['Tümü','Gelir','Gider','Transfer'];
+  const ranges=[['today','Bugün'],['week','Bu Hafta'],['month','Bu Ay'],['all','Geçmiş']];
+  const typeTabs=types.map(x=>`<button class="tx-type-tab ${state.txTypeFilter===x?'active':''}" onclick="setTxTypeFilter('${x}')">${x}</button>`).join('');
+  const rangeTabs=ranges.map(([k,label])=>`<button class="tx-range-tab ${state.txRange===k?'active':''}" onclick="setTxRange('${k}')">${label}</button>`).join('');
+  return `<div class="tx-filter-state">${activeFilter?'Filtre aktif':''}</div>
+    <div class="tx-type-tabs">${typeTabs}</div>
+    <div class="tx-summary-new">
+      <div class="tx-summary-cell"><small>Gelir</small><b class="green">${money(summary.income)}</b></div>
+      <div class="tx-summary-cell"><small>Gider</small><b class="red">${money(summary.expense)}</b></div>
+      <div class="tx-summary-cell"><small>Net</small><b class="${net>=0?'green':'red'}">${net<0?'-':''}${money(net)}</b></div>
+    </div>
+    <div class="tx-range-tabs">${rangeTabs}<button class="tx-calendar-btn" onclick="openMonthPicker()" aria-label="Ay seç">${iconSvg('calendar')}</button></div>
+    ${search}
+    <div id="txList" class="tx-history-wrap">
+      <div class="tx-history-head"><div><b>${txRangeLabel()}</b><small>${state.txRange==='all'?'Tüm kayıtlar':`${monthLabel(state.selectedMonth)} 2026`}</small></div><span>${list.length}/${allBase.length} işlem</span></div>
+      ${grouped}
+      <button class="wide" onclick="openModal()">＋ İşlem Ekle</button>
+    </div>`;
+}
+function refreshTxList(){
+  const input=document.getElementById('txSearch');
+  const list=filteredTransactions();
+  const box=document.getElementById('txList');
+  if(!box)return;
+  const grouped=list.length?transactionDayCards(list):'<div class="empty">Filtreye uygun işlem bulunamadı.</div>';
+  box.innerHTML=`<div class="tx-history-head"><div><b>${txRangeLabel()}</b><small>${state.txRange==='all'?'Tüm kayıtlar':`${monthLabel(state.selectedMonth)} 2026`}</small></div><span>${list.length}/${txRangeList().length} işlem</span></div>${grouped}<button class="wide" onclick="openModal()">＋ İşlem Ekle</button>`;
+  if(input){const fresh=document.getElementById('txSearch');if(fresh){fresh.focus();fresh.setSelectionRange(fresh.value.length,fresh.value.length)}}
+}
 function filterTx(q){state.txSearch=q||'';refreshTxList()}
 function openFilterModal(){const cats=[...new Set(state.transactions.map(t=>String(t[0]||'Diğer')))];const f=state.filters||{from:'',to:'',category:'Tümü'};document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet filter-sheet"><button class="close" onclick="closeModal()">×</button><h2>Filtrele</h2><div class="filter-summary"><span>Seçili işlem</span><b>${filteredTransactions().length}</b></div><div class="form"><label>Tarih Aralığı</label><div class="filter-grid"><input id="filterFrom" type="date" value="${f.from||''}"><input id="filterTo" type="date" value="${f.to||''}"><label>Başlangıç</label><label>Bitiş</label></div><label>Kategori</label><select id="filterCategory"><option>Tümü</option>${cats.map(c=>`<option ${f.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="filter-actions"><button class="filter-clear" onclick="clearFilters()">Temizle</button><button class="filter-apply" onclick="applyFilters()">Uygula</button></div></div>`}
 function applyFilters(){state.filters={from:document.getElementById('filterFrom')?.value||'',to:document.getElementById('filterTo')?.value||'',category:document.getElementById('filterCategory')?.value||'Tümü'};closeModal();state.page='transactions';render();}
