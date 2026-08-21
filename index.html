@@ -941,7 +941,25 @@ function reportTrend(list){
   return `<div class="trend-chart"><div class="trend-legend"><span><i class="income-dot"></i>Gelir</span><span><i class="expense-dot"></i>Gider</span></div><div class="trend-bars">${keys.map((k,i)=>{const a=buckets[k];const ih=Math.max(3,Math.round(a.income/max*100));const eh=Math.max(3,Math.round(a.expense/max*100));return `<div class="trend-col"><div class="trend-values"><span>${a.income?money(a.income):''}</span><span>${a.expense?money(a.expense):''}</span></div><div class="trend-track"><i class="trend-income" style="height:${ih}%"></i><i class="trend-expense" style="height:${eh}%"></i></div><small>${labels[i]}</small></div>`}).join('')}</div></div>`;
 }
 function reports(){
-  const list=reportTransactions();const income=list.filter(x=>Number(x[1])>0).reduce((a,x)=>a+Number(x[1]),0);const expense=Math.abs(list.filter(x=>Number(x[1])<0).reduce((a,x)=>a+Number(x[1]),0));const net=income-expense;const total=income+expense;const ip=total?Math.round(income/total*100):0;const cats={};list.filter(x=>Number(x[1])<0).forEach(x=>{const k=x[0]||'Diğer';cats[k]=(cats[k]||0)+Math.abs(Number(x[1]))});const catIcons={Yemek:'🍴',Yakıt:'⛽',Alışveriş:'🛒',Market:'🛒',Kahve:'☕',Diğer:'◉'};const catRows=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,val],idx)=>{const pct=expense?Math.round(val/expense*100):0;return `<div class="barrow"><span class="catlabel"><span class="caticon c${idx}">${catIcons[name]||'◉'}</span>${esc(name)}</span><div class="bar"><i style="width:${pct}%"></i></div><span>${money(val)}　${pct}%</span></div>`}).join('')||'<div class="empty">Henüz gider verisi yok.</div>';const center=total.toLocaleString('tr-TR',{maximumFractionDigits:0});const labels={week:'11 - 17 Ağustos 2026',month:'1 - 17 Ağustos 2026','3m':'1 Haziran - 17 Ağustos 2026',all:'Tüm kayıtlar'};return `<div class="periods">${[['week','Bu Hafta'],['month','Bu Ay'],['3m','3 Ay'],['all','Tümü']].map(([v,l])=>`<button class="${state.reportPeriod===v?'active':''}" onclick="state.reportPeriod='${v}';render()">${l}</button>`).join('')}</div><section class="card report"><b>Genel Bakış</b><div class="muted" style="font-size:8px;margin:5px 0 13px">${labels[state.reportPeriod]}</div><div class="donutrow"><div class="donut" style="background:conic-gradient(var(--green) 0 ${ip}%,var(--red) ${ip}% 100%)"><div class="donut-center"><small>Toplam</small><b>₺${center}</b></div></div><div class="legend"><span>🟢 Gelir<b>${money(income)}</b></span><span>🔴 Gider<b class="red">${money(expense)}</b></span><span>🟣 Net<b>${money(net)}</b></span></div></div></section><section class="card report"><div class="list-head"><b>Grafik</b><span class="muted" style="font-size:8px">Gelir / Gider</span></div>${reportTrend(list)}</section><section class="card report"><div class="list-head"><b>Kategori Dağılımı</b><span class="muted" style="font-size:8px">Detaylar ›</span></div>${catRows}</section>`}
+  const list=reportTransactions();const income=list.filter(x=>Number(x[1])>0).reduce((a,x)=>a+Number(x[1]),0);const expense=Math.abs(list.filter(x=>Number(x[1])<0).reduce((a,x)=>a+Number(x[1]),0));const net=income-expense;const total=income+expense;const ip=total?Math.round(income/total*100):0;const cats={};list.filter(x=>Number(x[1])<0).forEach(x=>{const k=x[0]||'Diğer';cats[k]=(cats[k]||0)+Math.abs(Number(x[1]))});const catIcons={Yemek:'🍴',Yakıt:'⛽',Alışveriş:'🛒',Market:'🛒',Kahve:'☕',Diğer:'◉'};const catRows=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,val],idx)=>{const pct=expense?Math.round(val/expense*100):0;return `<div class="barrow"><span class="catlabel"><span class="caticon c${idx}">${catIcons[name]||'◉'}</span>${esc(name)}</span><div class="bar"><i style="width:${pct}%"></i></div><span>${money(val)}　${pct}%</span></div>`}).join('')||'<div class="empty">Henüz gider verisi yok.</div>';const center=total.toLocaleString('tr-TR',{maximumFractionDigits:0});const labels={week:'11 - 17 Ağustos 2026',month:'1 - 17 Ağustos 2026','3m':'1 Haziran - 17 Ağustos 2026',all:'Tüm kayıtlar'};return `<div class="periods">${[['week','Bu Hafta'],['month','Bu Ay'],['3m','3 Ay'],['all','Tümü']].map(([v,l])=>`<button class="${state.reportPeriod===v?'active':''}" onclick="state.reportPeriod='${v}';render()">${l}</button>`).join('')}</div><section class="card report"><b>Genel Bakış</b><div class="muted" style="font-size:8px;margin:5px 0 13px">${labels[state.reportPeriod]}</div><div class="donutrow"><div class="donut" style="background:conic-gradient(var(--green) 0 ${ip}%,var(--red) ${ip}% 100%)"><div class="donut-center"><small>Toplam</small><b>₺${center}</b></div></div><div class="legend"><span>🟢 Gelir<b>${money(income)}</b></span><span>🔴 Gider<b class="red">${money(expense)}</b></span><span>🟣 Net<b>${money(net)}</b></span></div></div></section><section class="card report"><div class="list-head"><b>Grafik</b><span class="muted" style="font-size:8px">Gelir / Gider</span></div>${reportTrend(list)}</section><section class="card report"><div class="list-head"><b>Kategori Dağılımı</b><button class="detail" onclick="openExpenseDetails()">Detaylar ›</button></div>${catRows}</section>`}
+
+function openExpenseDetails(){
+  const list=reportTransactions();
+  const cats={};
+  list.filter(x=>Number(x[1])<0).forEach(x=>{const k=x[0]||'Diğer';cats[k]=(cats[k]||0)+Math.abs(Number(x[1]));});
+  const total=Object.values(cats).reduce((a,v)=>a+v,0);
+  const iconFor=(name)=>{
+    const custom=[...(state.customCategories?.Gider||[])];
+    const found=custom.find(x=>(typeof x==='string'?x:x?.name)===name);
+    return found?(typeof found==='string'?categoryIcon(found,'Gider'):(found.icon||categoryIcon(found.name,'Gider'))):categoryIcon(name,'Gider');
+  };
+  const rows=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([name,val])=>{
+    const pct=total?Math.round(val/total*100):0;
+    return `<div class="expense-detail-row"><span class="expense-detail-icon">${iconFor(name)}</span><div class="expense-detail-main"><b>${esc(name)}</b><small>${pct}% · ${money(val)}</small><i><em style="width:${pct}%"></em></i></div></div>`;
+  }).join('') || `<div class="empty">Bu dönemde gider kaydı yok.</div>`;
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').innerHTML=`<div class="sheet expense-detail-sheet"><button class="close" onclick="closeModal()">×</button><div class="expense-detail-head"><div><div class="smart-kicker">HARCAMA ANALİZİ</div><h2>Harcama Detayları</h2><small>Kategori bazında giderlerinin dağılımı.</small></div><div class="expense-total"><small>Toplam</small><b>${money(total)}</b></div></div><div class="expense-detail-list">${rows}</div></div>`;
+}
 
 function openSmartCenter(){state.page='smartCenter';render();}
 function smartCenter(){
@@ -1430,6 +1448,19 @@ body{overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scro
 }
 .light .empty-action span{background:color-mix(in srgb,var(--theme-accent) 10%,white)!important}
 </style>
+
+<style id="fix-13-3-46-expense-details">
+.expense-detail-sheet{max-height:88dvh;overflow:auto;padding-bottom:calc(22px + env(safe-area-inset-bottom))!important}
+.expense-detail-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
+.expense-detail-head h2{margin:3px 0 5px}
+.expense-detail-head small{color:var(--muted);font-size:10px}
+.expense-total{min-width:88px;text-align:right;padding:9px 10px;border:1px solid color-mix(in srgb,var(--theme-accent) 24%,#242b47);border-radius:12px;background:color-mix(in srgb,var(--theme-accent) 7%,#0b1020)}
+.expense-total small{display:block}.expense-total b{display:block;margin-top:3px;font-size:14px;color:var(--theme-accent)}
+.expense-detail-list{display:grid;gap:8px}.expense-detail-row{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;padding:10px;border:1px solid #171d35;border-radius:13px;background:#090e1b}
+.expense-detail-icon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--theme-accent) 10%,#10162a);font-size:19px;box-shadow:0 0 14px color-mix(in srgb,var(--theme-accent) 10%,transparent)}
+.expense-detail-main{min-width:0}.expense-detail-main>b{display:block;font-size:11px}.expense-detail-main>small{display:block;color:var(--muted);font-size:9px;margin:3px 0 6px}.expense-detail-main>i{display:block;height:5px;background:#11182d;border-radius:99px;overflow:hidden}.expense-detail-main>i em{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--theme-accent-2),var(--theme-accent));box-shadow:0 0 8px color-mix(in srgb,var(--theme-accent) 28%,transparent)}
+.light .expense-detail-row{background:#fff;border-color:#dce2ec}.light .expense-detail-icon{background:#f2ecff}.light .expense-detail-main>i{background:#e9edf5}
+</style>
 </body></html>`],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fix-finans-islemler.xls';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
 }
 function showHelp(){document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>Yardım & Destek</h2><div class="settings-sub">Fix Finans kullanım alanları</div><div class="quick-settings"><button>＋ İşlem eklemek için ortadaki + butonunu kullan.</button><button>▥ Raporlar ekranında gelir, gider ve kategori dağılımını takip et.</button><button>₺ Borç / Alacak ekranından kayıtlarını yönet.</button><button>☰ Üst bardaki menü ile Ana Sayfa'ya dönebilirsin.</button></div></div>`}
@@ -1904,6 +1935,19 @@ document.addEventListener('pointerdown',function(e){
 /* 13.3.42 — Kategoriye özel ikonlar: mevcut Fix Finans kart dilini korur. */
 .category-icon{font-family:system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif;line-height:1;}
 .category-row .category-icon{box-shadow:0 0 0 1px rgba(255,255,255,.035),0 6px 16px rgba(89,62,180,.08);}
+</style>
+
+<style id="fix-13-3-46-expense-details">
+.expense-detail-sheet{max-height:88dvh;overflow:auto;padding-bottom:calc(22px + env(safe-area-inset-bottom))!important}
+.expense-detail-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
+.expense-detail-head h2{margin:3px 0 5px}
+.expense-detail-head small{color:var(--muted);font-size:10px}
+.expense-total{min-width:88px;text-align:right;padding:9px 10px;border:1px solid color-mix(in srgb,var(--theme-accent) 24%,#242b47);border-radius:12px;background:color-mix(in srgb,var(--theme-accent) 7%,#0b1020)}
+.expense-total small{display:block}.expense-total b{display:block;margin-top:3px;font-size:14px;color:var(--theme-accent)}
+.expense-detail-list{display:grid;gap:8px}.expense-detail-row{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;padding:10px;border:1px solid #171d35;border-radius:13px;background:#090e1b}
+.expense-detail-icon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--theme-accent) 10%,#10162a);font-size:19px;box-shadow:0 0 14px color-mix(in srgb,var(--theme-accent) 10%,transparent)}
+.expense-detail-main{min-width:0}.expense-detail-main>b{display:block;font-size:11px}.expense-detail-main>small{display:block;color:var(--muted);font-size:9px;margin:3px 0 6px}.expense-detail-main>i{display:block;height:5px;background:#11182d;border-radius:99px;overflow:hidden}.expense-detail-main>i em{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--theme-accent-2),var(--theme-accent));box-shadow:0 0 8px color-mix(in srgb,var(--theme-accent) 28%,transparent)}
+.light .expense-detail-row{background:#fff;border-color:#dce2ec}.light .expense-detail-icon{background:#f2ecff}.light .expense-detail-main>i{background:#e9edf5}
 </style>
 </body></html>
 
