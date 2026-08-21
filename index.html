@@ -804,7 +804,15 @@ body{--theme-accent:var(--purple)!important;--theme-accent-2:var(--purple2)!impo
   .upcoming-card .upcoming-row .upcoming-actions{width:68px!important;min-width:68px!important;gap:4px!important;}
   .upcoming-card .upcoming-row .upcoming-actions button{width:30px!important;height:30px!important;min-width:30px!important;}
 }
-</style></head><body>
+</style><style id="fix-13-3-41-ai-header-final">
+/* İşlemler başlığı: AI + filtre + arama dengeli ve tek hizada. */
+.tx-subactions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:6px!important;height:40px!important;min-width:116px!important;}
+.tx-subactions .ai-finance-btn{width:34px!important;height:34px!important;min-width:34px!important;margin:0!important;padding:0!important;display:grid!important;place-items:center!important;border:1px solid rgba(247,185,44,.16)!important;border-radius:11px!important;background:rgba(247,185,44,.035)!important;box-shadow:0 0 14px rgba(247,185,44,.08)!important;}
+.tx-subactions .ai-finance-btn svg{width:19px!important;height:19px!important;}
+.tx-subactions>.icon:not(.ai-finance-btn){width:34px!important;height:34px!important;min-width:34px!important;margin:0!important;padding:0!important;display:grid!important;place-items:center!important;}
+@media(max-width:360px){.tx-subactions{gap:4px!important;min-width:108px!important}.tx-subactions .ai-finance-btn,.tx-subactions>.icon:not(.ai-finance-btn){width:32px!important;height:32px!important;min-width:32px!important}.tx-subactions .ai-finance-btn svg{width:18px!important;height:18px!important}}
+</style>
+</head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
   <div class="fix-welcome-glow glow-a"></div>
@@ -889,7 +897,7 @@ function header(){
   }
   const aiButton=`<button class="icon ai-finance-btn" aria-label="Akıllı Finans Merkezi" title="Akıllı Finans Merkezi" onclick="openSmartCenter()">${iconSvg('sparkle')}</button>`;
   const right=state.page==='transactions'
-    ? `<div class="subactions">${aiButton}<button class="icon" aria-label="Filtrele" onclick="openFilterModal()">${iconSvg('filter')}</button><button class="icon" aria-label="Ara" onclick="focusTransactionSearch()">${iconSvg('search')}</button></div>`
+    ? `<div class="subactions tx-subactions">${aiButton}<button class="icon" aria-label="Filtrele" onclick="openFilterModal()">${iconSvg('filter')}</button><button class="icon" aria-label="Ara" onclick="focusTransactionSearch()">${iconSvg('search')}</button></div>`
     : state.page==='reports' ? `<div class="subactions">${aiButton}<button class="icon" aria-label="Rapor tarihi" onclick="showPeriodPicker('reports')">${iconSvg('calendar')}</button></div>` : `<div class="subactions">${aiButton}</div>`;
   el.innerHTML=`<div class="subtop"><button class="icon back-btn" aria-label="Ana sayfaya dön" onclick="goHome()">${iconSvg('back')}</button><div class="subtitle">${titles[state.page]}</div>${right}</div>`;
 }
