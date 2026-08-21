@@ -2096,7 +2096,20 @@ function openModal(type){
   const currentAmount=document.getElementById('amount')?.value;
   const currentNote=document.getElementById('note')?.value;
   const currentDate=document.getElementById('txDate')?.value;
-  if(currentAmount!==undefined||currentNote!==undefined||currentDate!==undefined){state.txDraft={amount:currentAmount||'',note:currentNote||'',date:currentDate||localDateISO()}}
+  const currentWallet=document.getElementById('wallet')?.value;
+  const currentFrom=document.getElementById('walletFrom')?.value;
+  const currentTo=document.getElementById('walletTo')?.value;
+  if(currentAmount!==undefined||currentNote!==undefined||currentDate!==undefined||currentWallet!==undefined||currentFrom!==undefined||currentTo!==undefined){
+    const previous=state.txDraft||{};
+    state.txDraft={
+      amount:currentAmount!==undefined?(currentAmount||''):(previous.amount||''),
+      note:currentNote!==undefined?(currentNote||''):(previous.note||''),
+      date:currentDate!==undefined?(currentDate||localDateISO()):(previous.date||localDateISO()),
+      wallet:currentWallet!==undefined?(currentWallet||'Banka'):(previous.wallet||'Banka'),
+      from:currentFrom!==undefined?(currentFrom||'Banka'):(previous.from||'Banka'),
+      to:currentTo!==undefined?(currentTo||'Nakit'):(previous.to||'Nakit')
+    };
+  }
   state.type=type||'Gelir';
   const opts=categoryOptions(state.type);
   state.selectedCat=state.selectedCat||opts[0][1];
