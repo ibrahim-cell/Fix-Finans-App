@@ -849,6 +849,110 @@ body{--theme-accent:var(--purple)!important;--theme-accent-2:var(--purple2)!impo
 @keyframes fixCoinIn4{0%{opacity:0;transform:translate(105px,90px) scale(.32) rotate(18deg)}20%{opacity:.78}50%{opacity:.95;transform:translate(22px,20px) scale(1.08) rotate(-10deg)}64%{opacity:.62;transform:translate(0,0) scale(.74) rotate(-28deg)}100%{opacity:0;transform:translate(-3px,-2px) scale(.28) rotate(-45deg)}}
 @media (prefers-reduced-motion:reduce){.fix-intro-wallet,.fix-intro-wallet-icon,.fix-wallet-coin{animation:none!important}.fix-intro-wallet{opacity:.12!important}.fix-wallet-coin{opacity:0!important}}
 </style>
+
+<style id="fix-13-3-67-upcoming-live-final">
+/* 13.3.67 — Yaklaşan: canlı arayüzde başlık + konumu ve yatay aksiyon kolonları */
+.upcoming-card > .upcoming-section-title{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 32px!important;
+  align-items:center!important;
+  column-gap:8px!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:32px!important;
+  margin:0 0 10px!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+.upcoming-card > .upcoming-section-title > span{
+  min-width:0!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.upcoming-card > .upcoming-section-title > .mini-add{
+  position:static!important;
+  float:none!important;
+  display:grid!important;
+  place-items:center!important;
+  justify-self:end!important;
+  flex:none!important;
+  width:32px!important;
+  min-width:32px!important;
+  max-width:32px!important;
+  height:32px!important;
+  min-height:32px!important;
+  max-height:32px!important;
+  margin:0!important;
+  padding:0!important;
+}
+.upcoming-card .upcoming-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 104px 68px!important;
+  column-gap:8px!important;
+  align-items:center!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+.upcoming-card .upcoming-row .upcoming-amount{
+  width:104px!important;
+  min-width:104px!important;
+  justify-self:end!important;
+  text-align:right!important;
+  white-space:nowrap!important;
+}
+.upcoming-card .upcoming-row .upcoming-actions{
+  width:68px!important;
+  min-width:68px!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:6px!important;
+  margin:0!important;
+  padding:0!important;
+}
+.upcoming-card .upcoming-row .upcoming-actions button{
+  flex:0 0 28px!important;
+  width:28px!important;
+  min-width:28px!important;
+  max-width:28px!important;
+  height:28px!important;
+  min-height:28px!important;
+  max-height:28px!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:8px!important;
+  background:transparent!important;
+}
+.upcoming-card .upcoming-row .upcoming-actions svg{
+  width:14px!important;
+  height:14px!important;
+}
+.upcoming-card .upcoming-row .edit-upcoming,
+.upcoming-card .upcoming-row .edit-upcoming svg,
+.upcoming-card .upcoming-row .edit-upcoming svg *{
+  color:#b996ff!important;
+  stroke:#b996ff!important;
+}
+.upcoming-card .upcoming-row .delete-upcoming,
+.upcoming-card .upcoming-row .delete-upcoming svg,
+.upcoming-card .upcoming-row .delete-upcoming svg *{
+  color:#ff6574!important;
+  stroke:#ff6574!important;
+}
+@media(max-width:380px){
+  .upcoming-card .upcoming-row{
+    grid-template-columns:minmax(0,1fr) 94px 64px!important;
+    column-gap:6px!important;
+  }
+  .upcoming-card .upcoming-row .upcoming-amount{width:94px!important;min-width:94px!important;font-size:11.5px!important}
+  .upcoming-card .upcoming-row .upcoming-actions{width:64px!important;min-width:64px!important;gap:4px!important}
+  .upcoming-card .upcoming-row .upcoming-actions button{flex-basis:28px!important;width:28px!important;min-width:28px!important;max-width:28px!important}
+}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
