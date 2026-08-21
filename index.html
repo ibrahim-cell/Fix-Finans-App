@@ -777,12 +777,34 @@ body{--theme-accent:var(--purple)!important;--theme-accent-2:var(--purple2)!impo
 <style id="fix-13-3-37-daily-groups">
 .day-group{margin:0 0 10px;border-top:1px solid #181d30}.day-group:first-child{border-top:0}.day-head{display:flex;justify-content:space-between;align-items:flex-end;padding:10px 3px 7px}.day-title{font-size:12px;font-weight:800;color:#eef0f7}.day-title small{display:block;font-size:9px;font-weight:500;color:#6f7589;margin-top:3px}.day-totals{display:flex;gap:9px;font-size:9px;font-weight:700}.day-income{color:#42d89a}.day-expense{color:#ff536b}.day-group .txrow{border-top:1px solid rgba(24,29,48,.75)}.home-day-group{margin-top:2px}.home-day-head{display:flex;justify-content:space-between;padding:8px 2px 5px;color:#b9bdcc;font-size:9px}.home-day-head b{color:#eef0f7;font-size:11px}.home-day-totals{display:flex;gap:7px}.home-day-group .row:first-of-type{border-top:0}
 </style>
-<style id="fix-13-3-38-upcoming-row-align">
-.upcoming-card .upcoming-row{grid-template-columns:minmax(0,1fr) 116px 32px;}
-.upcoming-card .upcoming-row strong{width:116px;text-align:right;justify-self:stretch;}
-.upcoming-card .upcoming-row button{width:32px;justify-self:end;}
-</style>
-</head><body>
+<style id="fix-13-3-40-upcoming-row-final">
+/* 13.3.40 — Yaklaşan: tek kolon sistemi + düzenle/sil aksiyonları */
+.upcoming-card .upcoming-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 118px 72px!important;
+  column-gap:12px!important;
+  align-items:center!important;
+  min-height:68px!important;
+  padding:13px 0!important;
+  border-top:1px solid #171d32!important;
+}
+.upcoming-card .upcoming-row .upcoming-info{min-width:0!important;overflow:hidden!important;}
+.upcoming-card .upcoming-row .upcoming-info b{display:block!important;font-size:14px!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+.upcoming-card .upcoming-row .upcoming-info small{display:block!important;margin-top:5px!important;font-size:10px!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+.upcoming-card .upcoming-row .upcoming-amount{width:118px!important;min-width:118px!important;text-align:right!important;justify-self:end!important;font-size:13px!important;font-weight:800!important;white-space:nowrap!important;font-variant-numeric:tabular-nums!important;}
+.upcoming-card .upcoming-row .upcoming-actions{width:72px!important;min-width:72px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:6px!important;}
+.upcoming-card .upcoming-row .upcoming-actions button{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;margin:0!important;border-radius:9px!important;border:1px solid #252d49!important;background:#0d1323!important;display:grid!important;place-items:center!important;font-size:0!important;color:#aeb5c9!important;box-sizing:border-box!important;}
+.upcoming-card .upcoming-row .upcoming-actions button.edit-upcoming{color:#c4a4ff!important;border-color:rgba(168,125,255,.28)!important;}
+.upcoming-card .upcoming-row .upcoming-actions button.delete-upcoming{color:#ff6675!important;border-color:rgba(255,82,101,.25)!important;}
+.upcoming-card .upcoming-row .upcoming-actions button:active{transform:scale(.96)!important;}
+.upcoming-card .upcoming-row .upcoming-actions svg{width:16px!important;height:16px!important;}
+@media(max-width:380px){
+  .upcoming-card .upcoming-row{grid-template-columns:minmax(0,1fr) 104px 68px!important;column-gap:8px!important;}
+  .upcoming-card .upcoming-row .upcoming-amount{width:104px!important;min-width:104px!important;font-size:12px!important;}
+  .upcoming-card .upcoming-row .upcoming-actions{width:68px!important;min-width:68px!important;gap:4px!important;}
+  .upcoming-card .upcoming-row .upcoming-actions button{width:30px!important;height:30px!important;min-width:30px!important;}
+}
+</style></head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
   <div class="fix-welcome-glow glow-a"></div>
@@ -842,6 +864,8 @@ function nav(){document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('
     gear:`<svg ${common}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-2.6V20a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.6h.4A1.7 1.7 0 0 0 8 10a1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h2.6V5a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1A1.7 1.7 0 0 0 19 10a1.7 1.7 0 0 0 1.6 1h.4v2.6h-.4a1.7 1.7 0 0 0-1.2 1.4Z"/></svg>`,
     settingsRefresh:`<svg ${common}><path d="M7 7a7 7 0 1 1-1.4 9.1"/><path d="M7 3v4h4"/><circle cx="12" cy="12" r="2.5"/><path d="M12 5.5v1M12 17.5v1M5.5 12h1M17.5 12h1"/></svg>`,
     plus:`<svg ${common}><path d="M12 5v14M5 12h14"/></svg>`,
+    edit:`<svg ${common}><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="m14.5 7.5 2 2"/></svg>`,
+    trash:`<svg ${common}><path d="M5 7h14"/><path d="M9 7V4h6v3M8 10v7M12 10v7M16 10v7"/><path d="M6 7l1 14h10l1-14"/></svg>`,
     debt:`<svg ${common}><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M7 10h6M7 14h4"/><path d="M16 10v5"/></svg>`,
     refresh:`<svg ${common}><path d="M20 11a8 8 0 0 0-14-4L4 9"/><path d="M4 4v5h5"/><path d="M4 13a8 8 0 0 0 14 4l2-2"/><path d="M20 20v-5h-5"/></svg>`,
     currency:`<svg ${common}><circle cx="12" cy="12" r="8"/><path d="M15 8.5c-.7-.7-1.6-1-2.8-1-1.8 0-3 .8-3 2s1.2 2 3 2 3 .8 3 2-1.2 2-3 2c-1.2 0-2.2-.3-3-1"/><path d="M12 5v14"/></svg>`,
@@ -951,11 +975,32 @@ function smartCenter(){
   <section class="smart-grid"><div class="card smart-mini"><small>En yüksek gider</small><b>${topCat?esc(topCat[0]):'—'}</b><span>${topCat?money(topCat[1]):'Veri yok'}</span></div><div class="card smart-mini"><small>Borç / Alacak</small><b>${money(debtBorç-debtAlacak)}</b><span>Net yükümlülük</span></div><div class="card smart-mini"><small>Yaklaşan ödeme</small><b>${paymentCount}</b><span>Kayıt</span></div><div class="card smart-mini"><small>Net oran</small><b>%${Math.max(-100,Math.min(100,netRatio))}</b><span>Gelirden kalan</span></div></section>`;
 }
 
-function upcoming(){const list=state.upcoming||[];const payments=list.filter(x=>x.kind==='payment');const reminders=list.filter(x=>x.kind==='reminder');const card=(x)=>`<div class="upcoming-row"><div><b>${esc(x.title)}</b><small>${esc(x.date)} · ${esc(x.note||'')}</small></div><strong>${x.kind==='payment'?money(Number(x.amount)||0):'Hatırlatma'}</strong><button onclick="deleteUpcoming('${x.id}')">×</button></div>`;return `<div class="upcoming-head"><div><h1>Yaklaşan</h1><p>Ödeme ve hatırlatmalarını buradan takip et.</p></div></div><section class="card section upcoming-card"><div class="section-title">Yaklaşan Ödemeler <button class="mini-add" onclick="openUpcomingModal('payment')">＋</button></div>${payments.length?payments.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('payment')"><span>${iconSvg('calendar')}</span><b>Yaklaşan ödeme ekle</b><small>Vade tarihi ve tutarı takip et</small></button>`}</section><section class="card section upcoming-card"><div class="section-title">Hatırlatmalar <button class="mini-add" onclick="openUpcomingModal('reminder')">＋</button></div>${reminders.length?reminders.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('reminder')"><span>${iconSvg('bell')}</span><b>Hatırlatma ekle</b><small>Önemli işleri zamanında hatırla</small></button>`}</section>`}
+function upcoming(){const list=state.upcoming||[];const payments=list.filter(x=>x.kind==='payment');const reminders=list.filter(x=>x.kind==='reminder');const card=(x)=>`<div class="upcoming-row"><div class="upcoming-info"><b>${esc(x.title)}</b><small>${esc(x.date)} · ${esc(x.note||'')}</small></div><strong class="upcoming-amount">${x.kind==='payment'?money(Number(x.amount)||0):'Hatırlatma'}</strong><div class="upcoming-actions"><button type="button" class="edit-upcoming" aria-label="Düzenle" title="Düzenle" onclick="editUpcoming('${x.id}')">${iconSvg('edit')}</button><button type="button" class="delete-upcoming" aria-label="Sil" title="Sil" onclick="deleteUpcoming('${x.id}')">${iconSvg('trash')}</button></div></div>`;return `<div class="upcoming-head"><div><h1>Yaklaşan</h1><p>Ödeme ve hatırlatmalarını buradan takip et.</p></div></div><section class="card section upcoming-card"><div class="section-title">Yaklaşan Ödemeler <button class="mini-add" onclick="openUpcomingModal('payment')">＋</button></div>${payments.length?payments.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('payment')"><span>${iconSvg('calendar')}</span><b>Yaklaşan ödeme ekle</b><small>Vade tarihi ve tutarı takip et</small></button>`}</section><section class="card section upcoming-card"><div class="section-title">Hatırlatmalar <button class="mini-add" onclick="openUpcomingModal('reminder')">＋</button></div>${reminders.length?reminders.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('reminder')"><span>${iconSvg('bell')}</span><b>Hatırlatma ekle</b><small>Önemli işleri zamanında hatırla</small></button>`}</section>`}
 function showUpcoming(){state.page='upcoming';render()}
-function openUpcomingModal(kind){document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>${kind==='payment'?'Yaklaşan Ödeme':'Hatırlatma Ekle'}</h2><div class="form"><label>Başlık</label><input id="upTitle" placeholder="${kind==='payment'?'Kredi kartı ödemesi':'Örneğin: Fatura öde'}"><label>${kind==='payment'?'Tutar':''}</label>${kind==='payment'?'<input id="upAmount" inputmode="decimal" placeholder="₺0,00">':''}<label>Tarih</label><input id="upDate" type="date" value="${localDateISO()}"><label>Not</label><input id="upNote" placeholder="Not ekleyin..."><button class="save" onclick="saveUpcoming('${kind}')">Kaydet</button></div></div>`} 
-function saveUpcoming(kind){const title=document.getElementById('upTitle')?.value.trim();if(!title){showToast('Başlık gerekli.');return}const amount=kind==='payment'?Number(String(document.getElementById('upAmount')?.value||0).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.')):0;const date=document.getElementById('upDate')?.value||localDateISO();const note=document.getElementById('upNote')?.value.trim()||'';state.upcoming.unshift({id:Date.now().toString(),kind,title,amount,date,note});persist();closeModal();showUpcoming()}
-function deleteUpcoming(id){state.upcoming=(state.upcoming||[]).filter(x=>x.id!==id);persist();showUpcoming()}
+function openUpcomingModal(kind,editId){
+  const existing=editId?((state.upcoming||[]).find(x=>String(x.id)===String(editId))||null):null;
+  const currentKind=existing?.kind||kind;
+  document.getElementById('modal').classList.remove('hidden');
+  const safeId=existing?String(existing.id).replace(/'/g,"\\'"):'';
+  document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>${existing?(currentKind==='payment'?'Yaklaşan Ödemeyi Düzenle':'Hatırlatmayı Düzenle'):(currentKind==='payment'?'Yaklaşan Ödeme':'Hatırlatma Ekle')}</h2><div class="form"><label>Başlık</label><input id="upTitle" value="${esc(existing?.title||'')}" placeholder="${currentKind==='payment'?'Kredi kartı ödemesi':'Örneğin: Fatura öde'}"><label>${currentKind==='payment'?'Tutar':''}</label>${currentKind==='payment'?`<input id="upAmount" inputmode="decimal" value="${existing?String(existing.amount||''):''}" placeholder="₺0,00">`:''}<label>Tarih</label><input id="upDate" type="date" value="${esc(existing?.date||localDateISO())}"><label>Not</label><input id="upNote" value="${esc(existing?.note||'')}" placeholder="Not ekleyin..."><button class="save" onclick="saveUpcoming('${currentKind}',${existing?`'${safeId}'`:'null'})">${existing?'Güncelle':'Kaydet'}</button></div></div>`
+}
+function editUpcoming(id){const x=(state.upcoming||[]).find(v=>String(v.id)===String(id));if(!x)return;openUpcomingModal(x.kind,String(x.id))}
+function saveUpcoming(kind,editId){
+  const title=document.getElementById('upTitle')?.value.trim();
+  if(!title){showToast('Başlık gerekli.');return}
+  const amount=kind==='payment'?Number(String(document.getElementById('upAmount')?.value||0).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.')):0;
+  const date=document.getElementById('upDate')?.value||localDateISO();
+  const note=document.getElementById('upNote')?.value.trim()||'';
+  if(editId){
+    const item=(state.upcoming||[]).find(x=>String(x.id)===String(editId));
+    if(item){item.kind=kind;item.title=title;item.amount=amount;item.date=date;item.note=note}
+  }else{
+    state.upcoming.unshift({id:Date.now().toString(),kind,title,amount,date,note})
+  }
+  persist();closeModal();showUpcoming()
+}
+function deleteUpcoming(id){state.upcoming=(state.upcoming||[]).filter(x=>String(x.id)!==String(id));persist();showUpcoming()}
+
 function debts(){
   const borc=state.debts.filter(d=>d[0]==='Borç');
   const alacak=state.debts.filter(d=>d[0]==='Alacak');
