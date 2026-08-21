@@ -1079,7 +1079,7 @@ function smartCenter(){
   <section class="smart-grid"><div class="card smart-mini"><small>En yüksek gider</small><b>${topCat?esc(topCat[0]):'—'}</b><span>${topCat?money(topCat[1]):'Veri yok'}</span></div><div class="card smart-mini"><small>Borç / Alacak</small><b>${money(debtBorç-debtAlacak)}</b><span>Net yükümlülük</span></div><div class="card smart-mini"><small>Yaklaşan ödeme</small><b>${paymentCount}</b><span>Kayıt</span></div><div class="card smart-mini"><small>Net oran</small><b>%${Math.max(-100,Math.min(100,netRatio))}</b><span>Gelirden kalan</span></div></section>`;
 }
 
-function upcoming(){const list=state.upcoming||[];const payments=list.filter(x=>x.kind==='payment');const reminders=list.filter(x=>x.kind==='reminder');const card=(x)=>`<div class="upcoming-row"><div class="upcoming-info"><b>${esc(x.title)}</b><small>${esc(x.date)} · ${esc(x.note||'')}</small></div><strong class="upcoming-amount">${x.kind==='payment'?money(Number(x.amount)||0):'Hatırlatma'}</strong><div class="upcoming-actions"><button type="button" class="edit-upcoming" aria-label="Düzenle" title="Düzenle" onclick="editUpcoming('${x.id}')">${iconSvg('edit')}</button><button type="button" class="delete-upcoming" aria-label="Sil" title="Sil" onclick="deleteUpcoming('${x.id}')">${iconSvg('trash')}</button></div></div>`;return `<div class="upcoming-head"><div><h1>Yaklaşan</h1><p>Ödeme ve hatırlatmalarını buradan takip et.</p></div></div><section class="card section upcoming-card"><div class="section-title">Yaklaşan Ödemeler <button class="mini-add" onclick="openUpcomingModal('payment')">＋</button></div>${payments.length?payments.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('payment')"><span>${iconSvg('calendar')}</span><b>Yaklaşan ödeme ekle</b><small>Vade tarihi ve tutarı takip et</small></button>`}</section><section class="card section upcoming-card"><div class="section-title">Hatırlatmalar <button class="mini-add" onclick="openUpcomingModal('reminder')">＋</button></div>${reminders.length?reminders.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('reminder')"><span>${iconSvg('bell')}</span><b>Hatırlatma ekle</b><small>Önemli işleri zamanında hatırla</small></button>`}</section>`}
+function upcoming(){const list=state.upcoming||[];const payments=list.filter(x=>x.kind==='payment');const reminders=list.filter(x=>x.kind==='reminder');const card=(x)=>`<div class="upcoming-row"><div class="upcoming-info"><b>${esc(x.title)}</b><small>${esc(x.date)} · ${esc(x.note||'')}</small></div><strong class="upcoming-amount">${x.kind==='payment'?money(Number(x.amount)||0):'Hatırlatma'}</strong><div class="upcoming-actions"><button type="button" class="edit-upcoming" aria-label="Düzenle" title="Düzenle" onclick="editUpcoming('${x.id}')">${iconSvg('edit').replace('stroke="currentColor"','stroke="#b996ff"')}</button><button type="button" class="delete-upcoming" aria-label="Sil" title="Sil" onclick="deleteUpcoming('${x.id}')">${iconSvg('trash').replace('stroke="currentColor"','stroke="#ff6574"')}</button></div></div>`;return `<div class="upcoming-head"><div><h1>Yaklaşan</h1><p>Ödeme ve hatırlatmalarını buradan takip et.</p></div></div><section class="card section upcoming-card"><div class="section-title upcoming-section-title"><span>Yaklaşan Ödemeler</span><button class="mini-add" onclick="openUpcomingModal('payment')" aria-label="Yaklaşan ödeme ekle">＋</button></div>${payments.length?payments.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('payment')"><span>${iconSvg('calendar')}</span><b>Yaklaşan ödeme ekle</b><small>Vade tarihi ve tutarı takip et</small></button>`}</section><section class="card section upcoming-card"><div class="section-title upcoming-section-title"><span>Hatırlatmalar</span><button class="mini-add" onclick="openUpcomingModal('reminder')" aria-label="Hatırlatma ekle">＋</button></div>${reminders.length?reminders.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('reminder')"><span>${iconSvg('bell')}</span><b>Hatırlatma ekle</b><small>Önemli işleri zamanında hatırla</small></button>`}</section>`}
 function showUpcoming(){state.page='upcoming';render()}
 function openUpcomingModal(kind,editId){
   const existing=editId?((state.upcoming||[]).find(x=>String(x.id)===String(editId))||null):null;
@@ -1652,65 +1652,55 @@ body{overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scro
 .upcoming-card .section-title .mini-add{float:none!important;flex:0 0 32px!important;width:32px!important;min-width:32px!important;margin:0 0 0 auto!important;}
 .upcoming-card .upcoming-row{width:100%!important;clear:both!important;}
 
-/* 13.3.65 — Yaklaşan: başlık + en sağda, aksiyon renkleri net ayrılmış */
-.upcoming-card > .section-title{
+/* 13.3.66 — Yaklaşan: başlık ve + bağımsız kolon; edit/delete renkleri SVG seviyesinde sabit */
+.upcoming-card > .upcoming-section-title{
   position:relative!important;
-  display:block!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
   width:100%!important;
   min-width:0!important;
   min-height:32px!important;
-  padding:0 40px 0 0!important;
   margin:0 0 10px!important;
-  line-height:32px!important;
+  padding:0 42px 0 0!important;
   box-sizing:border-box!important;
 }
-.upcoming-card > .section-title .mini-add{
+.upcoming-card > .upcoming-section-title > span{
+  display:block!important;
+  min-width:0!important;
+  white-space:nowrap!important;
+}
+.upcoming-card > .upcoming-section-title > .mini-add{
   position:absolute!important;
   top:0!important;
   right:0!important;
+  left:auto!important;
+  bottom:auto!important;
   float:none!important;
   display:grid!important;
   place-items:center!important;
+  flex:none!important;
   width:32px!important;
   min-width:32px!important;
+  max-width:32px!important;
   height:32px!important;
   min-height:32px!important;
+  max-height:32px!important;
   margin:0!important;
+  padding:0!important;
 }
-.upcoming-card .upcoming-row .edit-upcoming{
-  color:#b996ff!important;
-  stroke:#b996ff!important;
-}
-.upcoming-card .upcoming-row .edit-upcoming svg{
-  color:#b996ff!important;
-  stroke:#b996ff!important;
-}
-.upcoming-card .upcoming-row .edit-upcoming svg *{
-  stroke:#b996ff!important;
-}
-.upcoming-card .upcoming-row .delete-upcoming{
-  color:#ff6574!important;
-  stroke:#ff6574!important;
-}
-.upcoming-card .upcoming-row .delete-upcoming svg{
-  color:#ff6574!important;
-  stroke:#ff6574!important;
-}
-.upcoming-card .upcoming-row .delete-upcoming svg *{
-  stroke:#ff6574!important;
-}
-.light .upcoming-card .upcoming-row .edit-upcoming,
+.upcoming-card .upcoming-row .edit-upcoming{color:#b996ff!important;}
+.upcoming-card .upcoming-row .delete-upcoming{color:#ff6574!important;}
+.upcoming-card .upcoming-row .edit-upcoming svg{stroke:#b996ff!important;color:#b996ff!important;}
+.upcoming-card .upcoming-row .delete-upcoming svg{stroke:#ff6574!important;color:#ff6574!important;}
+.upcoming-card .upcoming-row .edit-upcoming svg *{stroke:#b996ff!important;}
+.upcoming-card .upcoming-row .delete-upcoming svg *{stroke:#ff6574!important;}
+.light .upcoming-card .upcoming-row .edit-upcoming{color:#8d63ed!important;}
+.light .upcoming-card .upcoming-row .delete-upcoming{color:#e13d54!important;}
 .light .upcoming-card .upcoming-row .edit-upcoming svg,
-.light .upcoming-card .upcoming-row .edit-upcoming svg *{
-  color:#8d63ed!important;
-  stroke:#8d63ed!important;
-}
-.light .upcoming-card .upcoming-row .delete-upcoming,
+.light .upcoming-card .upcoming-row .edit-upcoming svg *{stroke:#8d63ed!important;color:#8d63ed!important;}
 .light .upcoming-card .upcoming-row .delete-upcoming svg,
-.light .upcoming-card .upcoming-row .delete-upcoming svg *{
-  color:#e13d54!important;
-  stroke:#e13d54!important;
-}
+.light .upcoming-card .upcoming-row .delete-upcoming svg *{stroke:#e13d54!important;color:#e13d54!important;}
 </style>
 </body></html>`],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fix-finans-islemler.xls';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
 }
