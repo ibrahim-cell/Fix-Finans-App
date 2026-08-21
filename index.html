@@ -1441,43 +1441,28 @@ function profileSettings(){
 function setFontSize(size){const allowed=['small','large','system'];const v=allowed.includes(size)?size:'system';localStorage.setItem('fix_font_size',v);closeModal();applyFontSize();render()}
 function applyFontSize(){
   const v=localStorage.getItem('fix_font_size')||'system';
-  const previousScale=Number(window.__ffAppliedFontScale)||1;
-  const scale=v==='small'?.90:v==='large'?1.12:1;
   document.body.classList.remove('font-size-small','font-size-large','font-size-system');
   document.body.classList.add('font-size-'+v);
+  const scale=v==='small'?.90:v==='large'?1.12:1;
   document.documentElement.style.setProperty('--ff-font-scale',String(scale));
   document.documentElement.style.setProperty('-webkit-text-size-adjust',v==='system'?'auto':'100%');
-
   const root=document.body;
   root.querySelectorAll('*').forEach(el=>{
-    const tag=el.tagName;
-    const cls=typeof el.className==='string'?el.className:'';
-    if(['SCRIPT','STYLE','SVG','PATH','CIRCLE','RECT','LINE','POLYLINE','POLYGON'].includes(tag)) return;
-    if(/(^|\s)(icon|premium-icon|theme-premium-icon|sample|badge|qicon|nav-icon)(\s|$)/i.test(cls)) return;
-
-    const directText=Array.from(el.childNodes).some(n=>n.nodeType===Node.TEXT_NODE && n.textContent.trim());
-    if(!directText) return;
-
-    // Keep a true CSS/base size so repeated render() calls never compound scaling.
     if(!el.dataset.ffBaseFontSize){
+      const tag=el.tagName;
+      const cls=typeof el.className==='string'?el.className:'';
+      if(['SCRIPT','STYLE','SVG','PATH','CIRCLE','RECT','LINE','POLYLINE','POLYGON'].includes(tag)) return;
+      if(/(^|\s)(icon|premium-icon|theme-premium-icon|sample|badge|qicon|nav-icon)(\s|$)/i.test(cls)) return;
+      const directText=Array.from(el.childNodes).some(n=>n.nodeType===Node.TEXT_NODE && n.textContent.trim());
+      if(!directText) return;
       const px=parseFloat(getComputedStyle(el).fontSize);
-      if(Number.isFinite(px)&&px>0){
-        const base=previousScale!==1 ? px/previousScale : px;
-        el.dataset.ffBaseFontSize=String(base);
-      }
+      if(Number.isFinite(px)&&px>0) el.dataset.ffBaseFontSize=String(px);
     }
-
     const base=parseFloat(el.dataset.ffBaseFontSize);
     if(!Number.isFinite(base)) return;
-
-    if(v==='system'){
-      el.style.removeProperty('font-size');
-    }else{
-      el.style.fontSize=(base*scale).toFixed(2)+'px';
-    }
+    if(v==='system') el.style.removeProperty('font-size');
+    else el.style.fontSize=(base*scale).toFixed(2)+'px';
   });
-
-  window.__ffAppliedFontScale=scale;
 }
 function setTheme(theme){localStorage.setItem('fix_theme',['light','dark','system'].includes(theme)?theme:'dark');closeModal();render()}
 function toggleExcelSetting(){localStorage.setItem('fix_excel_enabled',localStorage.getItem('fix_excel_enabled')==='0'?'1':'0');profileSettings()}
