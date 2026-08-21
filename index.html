@@ -1652,41 +1652,62 @@ body{overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scro
 .upcoming-card .section-title .mini-add{float:none!important;flex:0 0 32px!important;width:32px!important;min-width:32px!important;margin:0 0 0 auto!important;}
 .upcoming-card .upcoming-row{width:100%!important;clear:both!important;}
 
-/* 13.3.64 — Yaklaşan: yalnızca başlık + hizası ve aksiyon renkleri */
+/* 13.3.65 — Yaklaşan: başlık + en sağda, aksiyon renkleri net ayrılmış */
 .upcoming-card > .section-title{
+  position:relative!important;
+  display:block!important;
   width:100%!important;
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) 32px!important;
-  align-items:center!important;
-  column-gap:8px!important;
-  margin-bottom:10px!important;
+  min-width:0!important;
+  min-height:32px!important;
+  padding:0 40px 0 0!important;
+  margin:0 0 10px!important;
+  line-height:32px!important;
+  box-sizing:border-box!important;
 }
 .upcoming-card > .section-title .mini-add{
-  justify-self:end!important;
-  align-self:center!important;
+  position:absolute!important;
+  top:0!important;
+  right:0!important;
+  float:none!important;
+  display:grid!important;
+  place-items:center!important;
+  width:32px!important;
+  min-width:32px!important;
+  height:32px!important;
+  min-height:32px!important;
   margin:0!important;
 }
 .upcoming-card .upcoming-row .edit-upcoming{
   color:#b996ff!important;
+  stroke:#b996ff!important;
 }
 .upcoming-card .upcoming-row .edit-upcoming svg{
-  stroke:#b996ff!important;
   color:#b996ff!important;
+  stroke:#b996ff!important;
+}
+.upcoming-card .upcoming-row .edit-upcoming svg *{
+  stroke:#b996ff!important;
 }
 .upcoming-card .upcoming-row .delete-upcoming{
   color:#ff6574!important;
+  stroke:#ff6574!important;
 }
 .upcoming-card .upcoming-row .delete-upcoming svg{
-  stroke:#ff6574!important;
   color:#ff6574!important;
+  stroke:#ff6574!important;
+}
+.upcoming-card .upcoming-row .delete-upcoming svg *{
+  stroke:#ff6574!important;
 }
 .light .upcoming-card .upcoming-row .edit-upcoming,
-.light .upcoming-card .upcoming-row .edit-upcoming svg{
+.light .upcoming-card .upcoming-row .edit-upcoming svg,
+.light .upcoming-card .upcoming-row .edit-upcoming svg *{
   color:#8d63ed!important;
   stroke:#8d63ed!important;
 }
 .light .upcoming-card .upcoming-row .delete-upcoming,
-.light .upcoming-card .upcoming-row .delete-upcoming svg{
+.light .upcoming-card .upcoming-row .delete-upcoming svg,
+.light .upcoming-card .upcoming-row .delete-upcoming svg *{
   color:#e13d54!important;
   stroke:#e13d54!important;
 }
