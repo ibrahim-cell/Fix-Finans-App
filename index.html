@@ -995,6 +995,111 @@ body{--theme-accent:var(--purple)!important;--theme-accent-2:var(--purple2)!impo
 @media(max-width:430px){.support-sheet{max-height:88dvh!important;padding:15px 14px calc(18px + env(safe-area-inset-bottom))!important}.support-card{min-height:75px}.support-card small{font-size:6.2px}.support-action-card small{font-size:6.2px}}
 @media(max-width:360px){.support-grid,.support-action-grid{gap:5px}.support-card{min-height:72px;padding:8px}.support-card-icon{width:28px;height:28px}.support-card b{font-size:8px}.support-card small{font-size:5.8px}.support-ai-card{grid-template-columns:36px minmax(0,1fr) 14px}.support-ai-icon{width:36px;height:36px}.support-ai-copy b{font-size:9px}.support-version-card{grid-template-columns:58px 1px minmax(0,1fr) 18px}}
 </style>
+
+<style id="fix-13382-ui-scale">
+/* 13.3.82 — Arayüz Boyutu
+   Küçük/Büyük: yazı + kart yoğunluğu birlikte ölçeklenir.
+   Sistem: mevcut cihaz/browser yazı davranışı korunur.
+*/
+body{
+  --ff-ui-pad:1;
+  --ff-ui-gap:1;
+  --ff-ui-radius:1;
+}
+body.font-size-small{
+  --ff-ui-pad:.90;
+  --ff-ui-gap:.90;
+  --ff-ui-radius:.94;
+}
+body.font-size-large{
+  --ff-ui-pad:1.10;
+  --ff-ui-gap:1.10;
+  --ff-ui-radius:1.04;
+}
+
+/* Ana kartlar ve premium kartlar */
+body.font-size-small .card,
+body.font-size-small .feature-card,
+body.font-size-small .font-size-card,
+body.font-size-small .quick-settings,
+body.font-size-small .setting-card,
+body.font-size-small .smart-card,
+body.font-size-small .support-hero,
+body.font-size-small .support-version-card,
+body.font-size-small .support-grid-card,
+body.font-size-small .support-ai-card,
+body.font-size-small .support-mini-card{
+  padding:calc(14px * var(--ff-ui-pad))!important;
+  border-radius:calc(16px * var(--ff-ui-radius))!important;
+}
+body.font-size-large .card,
+body.font-size-large .feature-card,
+body.font-size-large .font-size-card,
+body.font-size-large .quick-settings,
+body.font-size-large .setting-card,
+body.font-size-large .smart-card,
+body.font-size-large .support-hero,
+body.font-size-large .support-version-card,
+body.font-size-large .support-grid-card,
+body.font-size-large .support-ai-card,
+body.font-size-large .support-mini-card{
+  padding:calc(14px * var(--ff-ui-pad))!important;
+  border-radius:calc(16px * var(--ff-ui-radius))!important;
+}
+
+/* İşlem listesi / yaklaşan / hızlı işlem kartları */
+body.font-size-small .tx-item,
+body.font-size-small .transaction-item,
+body.font-size-small .upcoming-row,
+body.font-size-small .quick button,
+body.font-size-small .wallet-choice button,
+body.font-size-small .wallet-picker-option{
+  min-height:calc(58px * var(--ff-ui-pad))!important;
+}
+body.font-size-large .tx-item,
+body.font-size-large .transaction-item,
+body.font-size-large .upcoming-row,
+body.font-size-large .quick button,
+body.font-size-large .wallet-choice button,
+body.font-size-large .wallet-picker-option{
+  min-height:calc(58px * var(--ff-ui-pad))!important;
+}
+
+/* Form alanları ve ayar seçenekleri de aynı yoğunluğu takip etsin */
+body.font-size-small .font-size-option,
+body.font-size-small .theme-mode-btn,
+body.font-size-small .excel-row,
+body.font-size-small .setting,
+body.font-size-small .edit-btn,
+body.font-size-small .delete-btn{
+  min-height:calc(46px * var(--ff-ui-pad))!important;
+}
+body.font-size-large .font-size-option,
+body.font-size-large .theme-mode-btn,
+body.font-size-large .excel-row,
+body.font-size-large .setting,
+body.font-size-large .edit-btn,
+body.font-size-large .delete-btn{
+  min-height:calc(46px * var(--ff-ui-pad))!important;
+}
+
+/* Boşlukları da kontrollü biçimde değiştir */
+body.font-size-small .page{gap:calc(12px * var(--ff-ui-gap))}
+body.font-size-large .page{gap:calc(12px * var(--ff-ui-gap))}
+body.font-size-small .card{margin-bottom:calc(12px * var(--ff-ui-gap))}
+body.font-size-large .card{margin-bottom:calc(12px * var(--ff-ui-gap))}
+body.font-size-small .feature-grid,
+body.font-size-small .font-size-options,
+body.font-size-small .theme-mode-grid{gap:calc(8px * var(--ff-ui-gap))}
+body.font-size-large .feature-grid,
+body.font-size-large .font-size-options,
+body.font-size-large .theme-mode-grid{gap:calc(8px * var(--ff-ui-gap))}
+
+/* Ölçekleme ayarı açıkken mevcut JS font inline değerleriyle çakışan
+   eski data işaretlerini temizledikten sonra fontlar aşağıdaki sınıflardan gelir. */
+body.font-size-small .font-size-option .sample{font-size:27px!important}
+body.font-size-large .font-size-option .sample{font-size:34px!important}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -1459,34 +1564,38 @@ function profileSettings(){
   <button class="feature-card feature-action" onclick="openMultiDeviceInfo()"><span class="fi premium-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="11" height="15" rx="2"/><path d="M7 16.2h4"/><rect x="15.5" y="7" width="5" height="9" rx="1.4"/><path d="M17.2 18.5h1.6"/></svg></span><span class="feature-copy"><b>Çoklu Cihaz</b><small>Yedekle ve cihazlar arasında taşı.</small></span><span class="feature-arrow">›</span></button>
   <button class="feature-card feature-action" onclick="exportExcel()"><span class="fi premium-icon excel-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 3v18M4 9h16M4 15h16"/><path d="m6.5 5.5 2 1.7m-2 0 2-1.7"/></svg></span><span class="feature-copy"><b>Excel Desteği</b><small>Finans kayıtlarını hemen dışa aktar.</small></span><span class="feature-arrow">›</span></button>
   <button class="feature-card feature-action" onclick="openQuickEntry()"><span class="fi premium-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m13.1 2.8-7 10.1h5l-1 8.3 7.8-11.1h-5l.2-7.3Z"/></svg></span><span class="feature-copy"><b>Hızlı & Basit</b><small>Yeni gelir kaydını saniyeler içinde başlat.</small></span><span class="feature-arrow">›</span></button>
-  </div><div class="font-size-card compact-setting-card"><div class="font-size-title">Yazı Boyutu</div><div class="font-size-sub">Küçük, büyük veya telefonunun sistem yazı boyutunu kullan.</div><div class="font-size-options"><button class="font-size-option ${fontSize==='small'?'active':''}" onclick="setFontSize('small')"><span class="sample small">A</span><b>Küçük</b><small>${fontSize==='small'?'Seçili':''}</small></button><button class="font-size-option ${fontSize==='large'?'active':''}" onclick="setFontSize('large')"><span class="sample large">A</span><b>Büyük</b><small>${fontSize==='large'?'Seçili':''}</small></button><button class="font-size-option ${fontSize==='system'?'active':''}" onclick="setFontSize('system')"><span class="sample system">A</span><b>Sistem</b><small>${fontSize==='system'?'Seçili':''}</small></button></div></div><div class="quick-settings compact-setting-card"><div class="setting-note">Tema</div><div class="theme-mode-grid"><button class="theme-mode-btn ${mode==='light'?'active':''}" onclick="setTheme('light')"><span class="theme-premium-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><b>Açık</b><small>${mode==='light'?'Seçili':''}</small></button><button class="theme-mode-btn ${mode==='dark'?'active':''}" onclick="setTheme('dark')"><span class="theme-premium-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.7 8.7 0 0 1 8.8 4a8.8 8.8 0 1 0 11.2 11.2Z"/></svg></span><b>Koyu</b><small>${mode==='dark'?'Seçili':''}</small></button><button class="theme-mode-btn ${mode==='system'?'active':''}" onclick="setTheme('system')"><span class="theme-premium-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M12 8v5M9.5 10.5h5"/></svg></span><b>Sistemi takip et</b><small>${mode==='system'?'Seçili':''}</small></button></div><button class="excel-row" onclick="toggleExcelSetting()">Excel Desteği <span class="setting-toggle ${excel?'on':''}"></span></button></div><div class="setting-note">Tema tercihi bu cihazda korunur. Sistem seçildiğinde telefonunun açık/koyu tercihi takip edilir.</div></div>`;
+  </div><div class="font-size-card compact-setting-card"><div class="font-size-title">Arayüz Boyutu</div><div class="font-size-sub">Yazılar, kartlar ve arayüz yoğunluğu birlikte ayarlanır.</div><div class="font-size-options"><button class="font-size-option ${fontSize==='small'?'active':''}" onclick="setFontSize('small')"><span class="sample small">A</span><b>Küçük</b><small>${fontSize==='small'?'Seçili':''}</small></button><button class="font-size-option ${fontSize==='large'?'active':''}" onclick="setFontSize('large')"><span class="sample large">A</span><b>Büyük</b><small>${fontSize==='large'?'Seçili':''}</small></button><button class="font-size-option ${fontSize==='system'?'active':''}" onclick="setFontSize('system')"><span class="sample system">A</span><b>Sistem</b><small>${fontSize==='system'?'Seçili':''}</small></button></div></div><div class="quick-settings compact-setting-card"><div class="setting-note">Tema</div><div class="theme-mode-grid"><button class="theme-mode-btn ${mode==='light'?'active':''}" onclick="setTheme('light')"><span class="theme-premium-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><b>Açık</b><small>${mode==='light'?'Seçili':''}</small></button><button class="theme-mode-btn ${mode==='dark'?'active':''}" onclick="setTheme('dark')"><span class="theme-premium-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 15.2A8.7 8.7 0 0 1 8.8 4a8.8 8.8 0 1 0 11.2 11.2Z"/></svg></span><b>Koyu</b><small>${mode==='dark'?'Seçili':''}</small></button><button class="theme-mode-btn ${mode==='system'?'active':''}" onclick="setTheme('system')"><span class="theme-premium-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M12 8v5M9.5 10.5h5"/></svg></span><b>Sistemi takip et</b><small>${mode==='system'?'Seçili':''}</small></button></div><button class="excel-row" onclick="toggleExcelSetting()">Excel Desteği <span class="setting-toggle ${excel?'on':''}"></span></button></div><div class="setting-note">Tema tercihi bu cihazda korunur. Sistem seçildiğinde telefonunun açık/koyu tercihi takip edilir.</div></div>`;
 }
-function setFontSize(size){const allowed=['small','large','system'];const v=allowed.includes(size)?size:'system';localStorage.setItem('fix_font_size',v);closeModal();applyFontSize();render()}
-
+function setFontSize(size){
+  const allowed=['small','large','system'];
+  const v=allowed.includes(size)?size:'system';
+  localStorage.setItem('fix_font_size',v);
+  applyFontSize();
+  closeModal();
+  render();
+}
 function applyFontSize(){
   const v=localStorage.getItem('fix_font_size')||'system';
   document.body.classList.remove('font-size-small','font-size-large','font-size-system');
   document.body.classList.add('font-size-'+v);
-  const scale=v==='small'?.90:v==='large'?1.12:1;
-  document.documentElement.style.setProperty('--ff-font-scale',String(scale));
-  document.documentElement.style.setProperty('-webkit-text-size-adjust',v==='system'?'auto':'100%');
-  const root=document.body;
-  root.querySelectorAll('*').forEach(el=>{
-    if(!el.dataset.ffBaseFontSize){
-      const tag=el.tagName;
-      const cls=typeof el.className==='string'?el.className:'';
-      if(['SCRIPT','STYLE','SVG','PATH','CIRCLE','RECT','LINE','POLYLINE','POLYGON'].includes(tag)) return;
-      if(/(^|\s)(icon|premium-icon|theme-premium-icon|sample|badge|qicon|nav-icon)(\s|$)/i.test(cls)) return;
-      const directText=Array.from(el.childNodes).some(n=>n.nodeType===Node.TEXT_NODE && n.textContent.trim());
-      if(!directText) return;
-      const px=parseFloat(getComputedStyle(el).fontSize);
-      if(Number.isFinite(px)&&px>0) el.dataset.ffBaseFontSize=String(px);
-    }
-    const base=parseFloat(el.dataset.ffBaseFontSize);
-    if(!Number.isFinite(base)) return;
-    if(v==='system') el.style.removeProperty('font-size');
-    else el.style.fontSize=(base*scale).toFixed(2)+'px';
+
+  /* Eski 13.3.72/13.3.80 inline font ölçeklemesini tamamen temizle.
+     Böylece üst üste binmiş CSS/inline değerleri yeni sistemi ezemez. */
+  document.body.querySelectorAll('[data-ff-base-font-size]').forEach(el=>{
+    el.style.removeProperty('font-size');
+    delete el.dataset.ffBaseFontSize;
   });
+  document.body.querySelectorAll('[style]').forEach(el=>{
+    if(el.style.fontSize && el.dataset.ffLegacyFontSize==='1'){
+      el.style.removeProperty('font-size');
+      delete el.dataset.ffLegacyFontSize;
+    }
+  });
+
+  document.documentElement.style.setProperty(
+    '-webkit-text-size-adjust',
+    v==='system'?'auto':'100%'
+  );
 }
 function setTheme(theme){localStorage.setItem('fix_theme',['light','dark','system'].includes(theme)?theme:'dark');closeModal();render()}
 function toggleExcelSetting(){localStorage.setItem('fix_excel_enabled',localStorage.getItem('fix_excel_enabled')==='0'?'1':'0');profileSettings()}
@@ -2196,6 +2305,7 @@ if(localStorage.getItem('fix_profile_photo_clean_13274')!=='1'){
   localStorage.removeItem('fix_profile_photo');
   localStorage.setItem('fix_profile_photo_clean_13274','1');
 }
+applyFontSize();
 render();
 
 let pullStartY=null,pullStartX=null,pullTriggered=false,pullResetTimer=null;
