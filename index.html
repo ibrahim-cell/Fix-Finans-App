@@ -1682,6 +1682,15 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .light .backup-download-warning{background:color-mix(in srgb,var(--gold) 8%,white)!important}
 </style>
 
+
+<style id="fix-13-3-27-smart-graph-icons">
+/* 13.3.27 — Akıllı Finans: görünür gelir/gider grafik ikonları */
+.smart-stat .smart-trend-icon{width:36px!important;height:36px!important;border-radius:50%;display:grid!important;place-items:center!important;margin:8px 0 6px!important;font-style:normal!important;flex:0 0 36px!important}
+.smart-stat .smart-trend-icon svg{display:block!important;width:21px!important;height:21px!important;min-width:21px!important;min-height:21px!important;fill:none!important;stroke:currentColor!important;stroke-width:2.2!important;stroke-linecap:round!important;stroke-linejoin:round!important;opacity:1!important}
+.smart-stat.income .smart-trend-icon{color:#20d99b!important;background:rgba(32,217,155,.15)!important;box-shadow:0 0 16px rgba(32,217,155,.2),inset 0 0 10px rgba(32,217,155,.08)!important}
+.smart-stat.expense .smart-trend-icon{color:#ff465b!important;background:rgba(255,70,91,.15)!important;box-shadow:0 0 16px rgba(255,70,91,.2),inset 0 0 10px rgba(255,70,91,.08)!important}
+@media(max-width:420px){.smart-stat .smart-trend-icon{width:31px!important;height:31px!important;flex-basis:31px!important;margin:6px 0 5px!important}.smart-stat .smart-trend-icon svg{width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important}}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -1841,8 +1850,8 @@ function home(){
         <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="score-track" cx="50" cy="50" r="42"></circle><circle class="score-progress" cx="50" cy="50" r="42" stroke-dasharray="${dash} ${circumference.toFixed(1)}"></circle></svg>
         <strong>${smart.hasData?smart.score:'—'}</strong><small>/100</small><b class="${smart.toneClass}">${smart.tone}</b>
       </div>
-      <div class="smart-stat income"><span>Gelir</span><i class="smart-trend-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17 8.2 11.8 11.6 14.9 16.8 8.5"/><path d="M14.4 8.5h2.4v2.4"/></svg></i><b>${money(t.income)}</b><small>${t.income?'▲ %'+Math.abs(smart.netRatio).toFixed(1):'—'}</small></div>
-      <div class="smart-stat expense"><span>Gider</span><i class="smart-trend-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m3 7 5.2 5.2 3.4-3.1 5.2 5.4"/><path d="M14.4 14.5h2.4v-2.4"/></svg></i><b>${money(t.expense)}</b><small>${t.income?'▲ %'+smart.expenseRatio:'—'}</small></div>
+      <div class="smart-stat income"><span>Gelir</span><i class="smart-trend-icon smart-trend-income" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 3.5 3 6.5-8"/><path d="M14.5 7H18v3.5"/></svg></i><b>${money(t.income)}</b><small>${t.income?'▲ %'+Math.abs(smart.netRatio).toFixed(1):'—'}</small></div>
+      <div class="smart-stat expense"><span>Gider</span><i class="smart-trend-icon smart-trend-expense" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l5 5 3.5-3 6.5 8"/><path d="M14.5 17H18v-3.5"/></svg></i><b>${money(t.expense)}</b><small>${t.income?'▲ %'+smart.expenseRatio:'—'}</small></div>
       <div class="smart-stat free"><span>Serbest Bakiye</span><i class="smart-wallet-icon">${iconSvg('wallet')}</i><b>${money(t.net)}</b><small>${t.income?'▲ %'+Math.max(0,smart.netRatio).toFixed(1):'—'}</small></div>
     </div>
     <div class="smart-home-advice"><div class="advice-icon">💡</div><div><b>Bugünün Önerisi</b><p>${esc(smart.advice)}</p></div><div class="advice-art" aria-hidden="true">🛍️✨</div></div>
