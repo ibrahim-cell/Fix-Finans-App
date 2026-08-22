@@ -1456,6 +1456,180 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 }
 </style>
 
+
+<style id="fix-13317-backup-center">
+/* 13.3.17 — Yedekleme Merkezi. Existing backup logic is extended, not removed. */
+.backup-center-sheet{
+  max-height:88vh!important;
+  overflow:auto!important;
+  padding-bottom:calc(22px + env(safe-area-inset-bottom))!important;
+  scrollbar-width:none;
+}
+.backup-center-sheet::-webkit-scrollbar{display:none}
+.backup-hero{
+  position:relative;overflow:hidden;padding:15px;margin:4px 0 12px;
+  border:1px solid #34266b;border-radius:17px;
+  background:radial-gradient(circle at 80% 20%,rgba(116,60,255,.20),transparent 42%),linear-gradient(145deg,#0d1224,#090d1b);
+}
+.backup-hero b{display:block;color:#c3a7ff;font-size:16px;margin-bottom:5px}
+.backup-hero p{margin:0;color:#8d93aa;font-size:10px;line-height:1.5;max-width:75%}
+.backup-shield{position:absolute;right:18px;top:18px;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:#17102f;border:1px solid #5930bc;color:#a97aff;font-size:25px;box-shadow:0 0 24px rgba(116,60,255,.25)}
+.backup-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:10px 0 12px}
+.backup-stat{padding:11px;border:1px solid #202846;background:#090e1c;border-radius:13px}
+.backup-stat b{display:block;font-size:15px;color:#f4f2ff}
+.backup-stat span{display:block;margin-top:3px;color:#7f869c;font-size:8px}
+.backup-section{margin:11px 0;padding:12px;border:1px solid #1e2745;border-radius:16px;background:rgba(8,12,25,.72)}
+.backup-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.backup-section-title b{font-size:12px;color:#f4f2ff}
+.backup-section-title small{color:#777f98;font-size:8px}
+.backup-main-btn,.backup-secondary-btn{
+  width:100%;height:45px;border-radius:12px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;
+}
+.backup-main-btn{border:1px solid #7b48ff;color:#fff;background:linear-gradient(135deg,#4e1bd4,#7a3cff);box-shadow:0 7px 20px rgba(116,60,255,.20)}
+.backup-secondary-btn{border:1px solid #202846;color:#e7e6f2;background:#0b1020}
+.backup-two{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.backup-action-list{display:grid;gap:7px}
+.backup-action{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:9px;width:100%;min-height:56px;padding:8px 10px;border:1px solid #202846;background:#0a0f1e;color:#f2f0fb;border-radius:13px;text-align:left;font:inherit;cursor:pointer}
+.backup-action .ba-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#181132;color:#a97aff;border:1px solid #3c2781;font-size:17px}
+.backup-action b{display:block;font-size:10px}
+.backup-action small{display:block;color:#777f98;font-size:8px;margin-top:3px}
+.backup-action .arrow{color:#777f98;font-size:18px}
+.backup-clouds{display:grid;gap:7px}
+.backup-cloud{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:9px;padding:9px;border:1px solid #202846;background:#090e1c;border-radius:12px}
+.backup-cloud .cloud-logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#10172a;font-size:17px}
+.backup-cloud b{display:block;font-size:10px}
+.backup-cloud small{display:block;color:#777f98;font-size:8px;margin-top:3px}
+.backup-cloud button{border:1px solid #3b2b72;background:#17112d;color:#b995ff;border-radius:9px;height:31px;padding:0 9px;font-size:8px;font-weight:700}
+.backup-history{display:grid;gap:6px}
+.backup-history-row{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:8px;padding:8px;border:1px solid #1b2340;background:#090e1b;border-radius:11px}
+.backup-history-row .bh-icon{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;background:#171032;color:#a97aff}
+.backup-history-row b{display:block;font-size:9px}
+.backup-history-row small{display:block;color:#72798e;font-size:7px;margin-top:3px}
+.backup-history-row button{border:0;background:transparent;color:#9e7cff;font-size:9px;padding:5px}
+.backup-auto{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.backup-auto-options{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px}
+.backup-auto-options button{height:33px;border:1px solid #202846;background:#0a0f1e;color:#858ba0;border-radius:9px;font-size:8px}
+.backup-auto-options button.active{background:#21134b;border-color:#6f3cff;color:#c2a5ff}
+.backup-security{display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid #1f5b4a;background:#071a17;border-radius:12px}
+.backup-security b{display:block;color:#4ce4b0;font-size:9px}
+.backup-security small{display:block;color:#7fa69c;font-size:8px;line-height:1.4;margin-top:3px}
+.backup-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.backup-check{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid #202846;background:#0a0f1e;border-radius:10px;color:#c6c8d5;font-size:8px}
+.backup-check input{accent-color:#743cff}
+.backup-danger{color:#ff7b88!important;border-color:#5d2430!important;background:#1a0c12!important}
+.light .backup-hero{background:linear-gradient(145deg,#fff,#f3f1fb);border-color:#ded6f6}
+.light .backup-section,.light .backup-action,.light .backup-cloud,.light .backup-history-row,.light .backup-stat,.light .backup-secondary-btn,.light .backup-auto-options button,.light .backup-check{background:#fff;border-color:#dfe4ee;color:#151827}
+.light .backup-stat b,.light .backup-section-title b,.light .backup-action b,.light .backup-cloud b,.light .backup-history-row b{color:#151827}
+<style id="fix-13319-backup-action-colors">
+/* 13.3.19 — Yedekleme Merkezi: işlem türüne göre renkli aksiyonlar; tema değişiminde tema bağlı aksiyonlar otomatik güncellenir. */
+.backup-download-cancel{
+  border-color:#ff596b!important;
+  color:#ff6f7e!important;
+  background:rgba(255,71,91,.07)!important;
+  box-shadow:0 0 14px rgba(255,71,91,.08)!important;
+}
+.backup-download-cancel:active{background:rgba(255,71,91,.16)!important}
+.backup-auto-options button{
+  transition:border-color .2s ease,background .2s ease,color .2s ease,box-shadow .2s ease,transform .15s ease;
+}
+.backup-auto-options button:active{transform:translateY(1px)}
+.backup-auto-options .backup-auto-off.active{
+  color:#ff7080!important;border-color:#ff596b!important;background:rgba(255,71,91,.10)!important;
+  box-shadow:0 0 14px rgba(255,71,91,.10)!important;
+}
+.backup-auto-options .backup-auto-daily.active{
+  color:#55e0aa!important;border-color:#35c995!important;background:rgba(53,201,149,.11)!important;
+  box-shadow:0 0 14px rgba(53,201,149,.10)!important;
+}
+.backup-auto-options .backup-auto-weekly.active{
+  color:#5fb8ff!important;border-color:#429cf0!important;background:rgba(66,156,240,.11)!important;
+  box-shadow:0 0 14px rgba(66,156,240,.10)!important;
+}
+.backup-auto-options .backup-auto-monthly.active{
+  color:#c19bff!important;border-color:#8b5cf6!important;background:rgba(139,92,246,.13)!important;
+  box-shadow:0 0 14px rgba(139,92,246,.12)!important;
+}
+/* Seçili otomatik yedekleme dışında butonlar sade kalır; sadece hover/active ile renklenir. */
+.backup-auto-options .backup-auto-daily:hover{color:#55e0aa;border-color:rgba(53,201,149,.55);background:rgba(53,201,149,.06)}
+.backup-auto-options .backup-auto-weekly:hover{color:#5fb8ff;border-color:rgba(66,156,240,.55);background:rgba(66,156,240,.06)}
+.backup-auto-options .backup-auto-monthly:hover{color:#c19bff;border-color:rgba(139,92,246,.55);background:rgba(139,92,246,.07)}
+.backup-auto-options .backup-auto-off:hover{color:#ff7080;border-color:rgba(255,71,91,.55);background:rgba(255,71,91,.06)}
+.light .backup-auto-options .backup-auto-off.active{background:rgba(255,71,91,.08)!important}
+.light .backup-auto-options .backup-auto-daily.active{background:rgba(53,201,149,.08)!important}
+.light .backup-auto-options .backup-auto-weekly.active{background:rgba(66,156,240,.08)!important}
+.light .backup-auto-options .backup-auto-monthly.active{background:rgba(139,92,246,.09)!important}
+</style>
+<style id="fix-13318-backup-theme">
+/* 13.3.18 — Yedekleme Merkezi tema uyumu + JSON indirme onay kartı */
+.backup-center-sheet,
+.backup-download-sheet{
+  --backup-accent:var(--theme-accent);
+  --backup-accent-2:var(--theme-accent-2);
+}
+.backup-hero{
+  border-color:color-mix(in srgb,var(--backup-accent) 42%,#34266b)!important;
+  background:
+    radial-gradient(circle at 80% 20%,color-mix(in srgb,var(--backup-accent) 20%,transparent),transparent 42%),
+    linear-gradient(145deg,#0d1224,#090d1b)!important;
+  box-shadow:inset 0 0 28px color-mix(in srgb,var(--backup-accent) 5%,transparent);
+}
+.backup-hero b{color:color-mix(in srgb,var(--backup-accent) 72%,white)!important}
+.backup-shield{
+  border-color:color-mix(in srgb,var(--backup-accent) 65%,transparent)!important;
+  color:var(--backup-accent)!important;
+  box-shadow:0 0 24px color-mix(in srgb,var(--backup-accent) 25%,transparent)!important;
+}
+.backup-main-btn{
+  border-color:var(--backup-accent)!important;
+  background:linear-gradient(135deg,var(--backup-accent-2),var(--backup-accent))!important;
+  box-shadow:0 7px 20px color-mix(in srgb,var(--backup-accent) 20%,transparent)!important;
+}
+.backup-action .ba-icon{color:var(--backup-accent)!important;border-color:color-mix(in srgb,var(--backup-accent) 35%,#3c2781)!important;background:color-mix(in srgb,var(--backup-accent) 10%,#181132)!important}
+.backup-cloud button,.backup-history-row button{border-color:color-mix(in srgb,var(--backup-accent) 38%,#3b2b72)!important;color:var(--backup-accent)!important}
+.backup-auto-options button.active{background:color-mix(in srgb,var(--backup-accent) 18%,#21134b)!important;border-color:var(--backup-accent)!important;color:color-mix(in srgb,var(--backup-accent) 68%,white)!important}
+.backup-check input{accent-color:var(--backup-accent)!important}
+.backup-select-grid .backup-check:has(input:checked){border-color:color-mix(in srgb,var(--backup-accent) 38%,#202846)!important;background:color-mix(in srgb,var(--backup-accent) 8%,#0a0f1e)!important}
+.backup-download-sheet{
+  position:relative;
+  overflow:hidden;
+  max-width:420px;
+  border-color:color-mix(in srgb,var(--backup-accent) 48%,#292f4c)!important;
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--backup-accent) 8%,transparent),0 18px 60px rgba(0,0,0,.48),0 0 36px color-mix(in srgb,var(--backup-accent) 16%,transparent)!important;
+}
+.backup-download-sheet:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 0%,color-mix(in srgb,var(--backup-accent) 12%,transparent),transparent 45%);
+}
+.backup-download-icon{
+  width:64px;height:64px;margin:2px auto 12px;border-radius:20px;display:grid;place-items:center;
+  color:var(--backup-accent);font-size:28px;
+  border:1px solid color-mix(in srgb,var(--backup-accent) 55%,transparent);
+  background:color-mix(in srgb,var(--backup-accent) 9%,#11152a);
+  box-shadow:0 0 24px color-mix(in srgb,var(--backup-accent) 24%,transparent);
+}
+.backup-download-sheet h2{text-align:center;margin:0 34px 8px;font-size:19px}
+.backup-download-file{text-align:center;color:color-mix(in srgb,var(--backup-accent) 64%,white);font-size:10px;line-height:1.45;word-break:break-all;margin:0 20px 14px}
+.backup-download-meta{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:11px;border-radius:13px;
+  border:1px solid #202846;background:#090e1c;margin-bottom:9px
+}
+.backup-download-meta b{display:block;color:#f4f2ff;font-size:10px;margin-bottom:3px}.backup-download-meta small{color:#777f98;font-size:8px}
+.backup-download-warning{
+  display:flex;gap:9px;align-items:flex-start;padding:11px;border-radius:13px;margin-bottom:14px;
+  border:1px solid color-mix(in srgb,var(--gold) 38%,#4a3b1d);
+  background:color-mix(in srgb,var(--gold) 7%,#12121b);
+}
+.backup-download-warning b{display:block;color:var(--gold);font-size:9px}.backup-download-warning small{display:block;color:#9d947d;font-size:8px;line-height:1.4;margin-top:3px}
+.backup-download-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.backup-download-actions button{height:44px;border-radius:12px;font:inherit;font-size:10px;font-weight:800;cursor:pointer}
+.backup-download-cancel{border:1px solid #202846;background:#0a0f1e;color:#d7d8e3}
+.backup-download-confirm{border:1px solid var(--backup-accent);color:#fff;background:linear-gradient(135deg,var(--backup-accent-2),var(--backup-accent));box-shadow:0 8px 24px color-mix(in srgb,var(--backup-accent) 25%,transparent)}
+.light .backup-download-sheet{background:#fff!important;color:#151827!important}
+.light .backup-download-meta,.light .backup-download-cancel{background:#fff!important;border-color:#dfe4ee!important}
+.light .backup-download-meta b{color:#151827!important}.light .backup-download-meta small{color:#687084!important}
+.light .backup-download-warning{background:color-mix(in srgb,var(--gold) 8%,white)!important}
+</style>
+
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -1509,7 +1683,7 @@ const state={page:'home',type:'Gelir',debtTab:'Borç',transactions:Array.isArray
 const money=n=>'₺'+Number(Math.abs(n)).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const totals=()=>{const income=state.transactions.filter(t=>t[1]>0).reduce((a,t)=>a+Number(t[1]),0);const expense=Math.abs(state.transactions.filter(t=>t[1]<0).reduce((a,t)=>a+Number(t[1]),0));return {income,expense,net:income-expense};};
 const walletTotals=()=>{let cash=0;state.transactions.forEach(t=>{const type=t[4]||'';if(type==='Transfer'&&t[7]==='Transfer'){const amount=Math.abs(Number(t[10])||0),from=t[8]||'Banka',to=t[9]||'Nakit';if(from==='Nakit')cash-=amount;if(to==='Nakit')cash+=amount;return;}const v=Number(t[1])||0;if(t[7]==='Nakit')cash+=v;});const net=totals().net;return {cash,bank:net-cash};};
-const persist=()=>{localStorage.removeItem('fix_notifications_cleared');localStorage.setItem(STORAGE_KEY,JSON.stringify(state.transactions));localStorage.setItem(DEBT_KEY,JSON.stringify(state.debts));localStorage.setItem('fix_upcoming',JSON.stringify(state.upcoming||[]));localStorage.setItem('fix_custom_categories',JSON.stringify(state.customCategories||{Gelir:[],Gider:[]}));};
+const persist=()=>{localStorage.removeItem('fix_notifications_cleared');localStorage.setItem(STORAGE_KEY,JSON.stringify(state.transactions));localStorage.setItem(DEBT_KEY,JSON.stringify(state.debts));localStorage.setItem('fix_upcoming',JSON.stringify(state.upcoming||[]));localStorage.setItem('fix_custom_categories',JSON.stringify(state.customCategories||{Gelir:[],Gider:[]}));if(typeof maybeAutoBackup==='function')setTimeout(()=>maybeAutoBackup(false),0);};
 
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function nav(){document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.page===(state.page==='upcoming'?'home':state.page)));}function iconSvg(name){
@@ -1911,7 +2085,7 @@ function profile(){
   const pmail=user?.email || (guest?'':(localStorage.getItem('fix_profile_mail')||'yilmaz.ibrahim@gmail.com'));
   const paletteNames={purple:'Mor',blue:'Mavi',green:'Yeşil',amber:'Altın',cyan:'Turkuaz',rose:'Pembe',red:'Kırmızı',slate:'Gümüş'};
   const currentPalette=localStorage.getItem('fix_palette')||'purple';
-  const items=[...(guest?[]:[['♙','Hesap Bilgileri','accountInfo()']]),[iconSvg('settingsRefresh'),'Ayarlar','profileSettings()'],['◴','Yedekle / Geri Yükle','openBackupRestore()'],['⇩','Veri Dışa Aktar (Excel)','exportExcel()'],['◐',`Tema & Renk · ${paletteNames[currentPalette]||'Mor'}`,'openThemes()'],['ⓘ','Yardım & Destek','showHelp()']];
+  const items=[...(guest?[]:[['♙','Hesap Bilgileri','accountInfo()']]),[iconSvg('settingsRefresh'),'Ayarlar','profileSettings()'],['◴','Yedekleme Merkezi','openBackupRestore()'],['⇩','Veri Dışa Aktar (Excel)','exportExcel()'],['◐',`Tema & Renk · ${paletteNames[currentPalette]||'Mor'}`,'openThemes()'],['ⓘ','Yardım & Destek','showHelp()']];
   // Misafir modunda daha önce kaydedilmiş kişisel profil fotoğrafını
   // göstermiyoruz; Google bağlandığında gerçek hesap fotoğrafı yeniden alınır.
   const photo=guest?'':getProfilePhoto();
@@ -2150,14 +2324,249 @@ function executeConfirmAction(){
     if (typeof action === 'function') action();
 }
 
-function openBackupRestore(){
-  const count=state.transactions.length,debtCount=state.debts.length;
-  document.getElementById('modal').classList.remove('hidden');
-  document.getElementById('modal').innerHTML=`<div class="sheet backup-sheet"><button class="close" onclick="closeModal()">×</button><h2>Yedekle / Geri Yükle</h2><div class="settings-sub">Verilerini güvenli şekilde dışarı aktar veya daha önce aldığın yedeği geri yükle.</div><div class="backup-status"><b>${count} işlem</b><span>${debtCount} borç/alacak</span><small>Son kontrol: ${new Date().toLocaleString('tr-TR')}</small></div><div class="quick-settings"><button onclick="backupData()">⬆️ Yedek Oluştur</button><button onclick="restoreData()">⬇️ Yedekten Geri Yükle</button><button class="danger-action" onclick="clearAllData()">🗑️ Verileri Temizle</button></div><div class="setting-note">Geri yükleme mevcut kayıtların üzerine geçer. Verileri temizleme işlemi geri alınamaz.</div></div>`;
+
+function backupLocalSnapshot(){
+  const keys=['fixFinansTransactions_13254','fixFinansDebts_13240','fix_upcoming','fix_custom_categories','fix_profile_name','fix_profile_mail','fix_profile_photo','fix_theme','fix_palette','fix_font_size','fix_excel_enabled','fix_balance_hidden'];
+  const local={};
+  keys.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)local[k]=v});
+  return local;
 }
-function backupData(){const payload={app:'Fix Finans',version:'13.3.86',backupType:'full',createdAt:new Date().toISOString(),transactions:Array.isArray(state.transactions)?state.transactions:[],debts:Array.isArray(state.debts)?state.debts:[],upcoming:Array.isArray(state.upcoming)?state.upcoming:[],customCategories:state.customCategories||{Gelir:[],Gider:[]},filters:state.filters||{from:'',to:'',category:'Tümü'}};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fix-finans-tam-yedek-13.3.86.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
-function restoreData(){const input=document.createElement('input');input.type='file';input.accept='.json,application/json';input.onchange=()=>{const file=input.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const d=JSON.parse(reader.result);if(d.app!=='Fix Finans'||!Array.isArray(d.transactions))throw new Error('invalid');const debts=Array.isArray(d.debts)?d.debts:[];const upcoming=Array.isArray(d.upcoming)?d.upcoming:[];const customCategories=d.customCategories&&typeof d.customCategories==='object'?d.customCategories:{Gelir:[],Gider:[]};if(!confirm(`${d.transactions.length} işlem, ${debts.length} borç/alacak ve ${upcoming.length} yaklaşan kayıt geri yüklenecek. Mevcut kayıtların üzerine yazılsın mı?`))return;state.transactions=d.transactions;state.debts=debts;state.upcoming=upcoming;state.customCategories=customCategories;state.filters=d.filters&&typeof d.filters==='object'?d.filters:{from:'',to:'',category:'Tümü'};persist();closeModal();render()}catch(e){alert('Geçerli bir Fix Finans yedeği seçmelisin.')}};reader.readAsText(file)};input.click()}
-function clearAllData(){confirmAction('Verileri Temizle','Tüm gelir, gider, borç/alacak, yaklaşan ödeme ve hatırlatma kayıtları kalıcı olarak silinecek. Bu işlem geri alınamaz.',()=>{state.transactions=[];state.debts=[];state.upcoming=[];state.filters={from:'',to:'',category:'Tümü'};persist();closeModal();state.page='home';render();showToast('Tüm finans verileri temizlendi.')})}
+function makeBackupPayload(){
+  return {
+    app:'Fix Finans',
+    version:'13.3.19',
+    backupType:'full',
+    createdAt:new Date().toISOString(),
+    transactions:Array.isArray(state.transactions)?state.transactions:[],
+    debts:Array.isArray(state.debts)?state.debts:[],
+    upcoming:Array.isArray(state.upcoming)?state.upcoming:[],
+    customCategories:state.customCategories||{Gelir:[],Gider:[]},
+    filters:state.filters||{from:'',to:'',category:'Tümü'},
+    localStorage:backupLocalSnapshot()
+  };
+}
+function backupHistoryRead(){
+  try{const h=JSON.parse(localStorage.getItem('fix_backup_history')||'[]');return Array.isArray(h)?h:[]}catch(e){return[]}
+}
+function backupHistoryWrite(list){localStorage.setItem('fix_backup_history',JSON.stringify(list.slice(0,12)))}
+function backupSize(payload){return new Blob([JSON.stringify(payload)]).size}
+function formatBytes(bytes){
+  const n=Number(bytes)||0;
+  if(n<1024)return n+' B';
+  if(n<1024*1024)return (n/1024).toFixed(1)+' KB';
+  return (n/1024/1024).toFixed(2)+' MB';
+}
+function saveBackupToHistory(payload,auto=false){
+  const raw=JSON.stringify(payload);
+  const history=backupHistoryRead();
+  const item={id:Date.now().toString(),createdAt:payload.createdAt,size:raw.length,transactions:payload.transactions.length,debts:payload.debts.length,upcoming:payload.upcoming.length,auto,payload};
+  history.unshift(item);backupHistoryWrite(history);
+  localStorage.setItem('fix_last_backup',payload.createdAt);
+  return item;
+}
+function backupFileName(payload){
+  return 'fix-finans-yedek-'+new Date(payload.createdAt).toISOString().slice(0,19).replace(/[:T]/g,'-')+'.json';
+}
+function downloadBackupPayload(payload){
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=backupFileName(payload);a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  closeModal();
+  renderBackupCenter();
+  showToast('JSON yedeği indirildi.');
+}
+function showBackupDownloadConfirm(payload){
+  const size=formatBytes(backupSize(payload));
+  const filename=backupFileName(payload);
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').innerHTML=`<div class="sheet backup-download-sheet">
+    <button class="close" onclick="closeModal();renderBackupCenter()">×</button>
+    <div class="backup-download-icon">⇩</div>
+    <h2>.json dosyası indirilsin mi?</h2>
+    <p class="backup-download-file">${esc(filename)}</p>
+    <div class="backup-download-meta"><div><b>${esc(size)}</b><small>Dosya boyutu</small></div><div><b>JSON</b><small>Yedek dosyası</small></div></div>
+    <div class="backup-download-warning"><span>⚠️</span><div><b>Bu dosya kişisel finans verilerini içerir.</b><small>Dosyayı güvenli bir yerde saklaman ve başkalarıyla paylaşmaman önerilir.</small></div></div>
+    <div class="backup-download-actions"><button class="backup-download-cancel" onclick="closeModal();renderBackupCenter()">İptal</button><button class="backup-download-confirm" onclick="downloadBackupPayload(window.__pendingBackupDownload)">⇩ İndir (${esc(size)})</button></div>
+  </div>`;
+  window.__pendingBackupDownload=payload;
+}
+function performBackup(download=true,auto=false){
+  const payload=makeBackupPayload();
+  saveBackupToHistory(payload,auto);
+  if(download)showBackupDownloadConfirm(payload);
+  return payload;
+}
+function backupData(){performBackup(true,false)}
+function getAutoBackupMode(){return localStorage.getItem('fix_backup_auto')||'off'}
+function setAutoBackupMode(mode){
+  localStorage.setItem('fix_backup_auto',['off','daily','weekly','monthly'].includes(mode)?mode:'off');
+  maybeAutoBackup(true);renderBackupCenter();
+}
+function maybeAutoBackup(forceRender=false){
+  const mode=getAutoBackupMode();if(mode==='off')return;
+  const last=Date.parse(localStorage.getItem('fix_last_backup')||'')||0;
+  const interval=mode==='daily'?86400000:mode==='weekly'?604800000:2592000000;
+  if(Date.now()-last>=interval)performBackup(false,true);
+  if(forceRender)renderBackupCenter();
+}
+function backupRestorePayload(payload,parts){
+  if(!payload||payload.app!=='Fix Finans'||!Array.isArray(payload.transactions))throw new Error('invalid');
+  const p=parts||{transactions:true,debts:true,upcoming:true,categories:true,settings:true,profile:true};
+  if(p.transactions)state.transactions=payload.transactions;
+  if(p.debts)state.debts=Array.isArray(payload.debts)?payload.debts:[];
+  if(p.upcoming)state.upcoming=Array.isArray(payload.upcoming)?payload.upcoming:[];
+  if(p.categories)state.customCategories=payload.customCategories&&typeof payload.customCategories==='object'?payload.customCategories:{Gelir:[],Gider:[]};
+  if(payload.localStorage&&typeof payload.localStorage==='object'){
+    const settings=['fix_theme','fix_palette','fix_font_size','fix_excel_enabled','fix_balance_hidden'];
+    const profile=['fix_profile_name','fix_profile_mail','fix_profile_photo'];
+    const selected=[...(p.settings?settings:[]),...(p.profile?profile:[])];
+    selected.forEach(k=>{if(payload.localStorage[k]!==undefined)localStorage.setItem(k,payload.localStorage[k])});
+  }
+  state.filters=payload.filters&&typeof payload.filters==='object'?payload.filters:{from:'',to:'',category:'Tümü'};
+  persist();
+  applyFontSize();
+  closeModal();render();
+  showToast('Yedek başarıyla geri yüklendi.');
+}
+function openSelectiveRestore(payload){
+  window.__pendingBackupPayload=payload;
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').innerHTML=`<div class="sheet backup-center-sheet">
+    <button class="close" onclick="closeModal();window.__pendingBackupPayload=null">×</button>
+    <h2>Seçimli Geri Yükleme</h2>
+    <div class="settings-sub">Hangi verilerin geri yükleneceğini seç. Seçilmeyen bölümler korunur.</div>
+    <div class="backup-select-grid" style="margin:12px 0">
+      <label class="backup-check"><input id="br_tx" type="checkbox" checked> İşlemler</label>
+      <label class="backup-check"><input id="br_debt" type="checkbox" checked> Borç / Alacak</label>
+      <label class="backup-check"><input id="br_up" type="checkbox" checked> Yaklaşanlar</label>
+      <label class="backup-check"><input id="br_cat" type="checkbox" checked> Kategoriler</label>
+      <label class="backup-check"><input id="br_set" type="checkbox" checked> Tema & Ayarlar</label>
+      <label class="backup-check"><input id="br_prof" type="checkbox" checked> Profil</label>
+    </div>
+    <button class="backup-main-btn" onclick="executeSelectiveRestore()">✓ Seçilenleri Geri Yükle</button>
+    <div class="setting-note">Geri yükleme mevcut seçili bölümlerin üzerine yazar. İşlemden önce bir yedek alman önerilir.</div>
+  </div>`;
+}
+function executeSelectiveRestore(){
+  const payload=window.__pendingBackupPayload;if(!payload)return;
+  const parts={transactions:document.getElementById('br_tx')?.checked,debts:document.getElementById('br_debt')?.checked,upcoming:document.getElementById('br_up')?.checked,categories:document.getElementById('br_cat')?.checked,settings:document.getElementById('br_set')?.checked,profile:document.getElementById('br_prof')?.checked};
+  window.__pendingBackupPayload=null;
+  confirmAction('Geri yüklemeyi onayla','Seçtiğin veriler mevcut kayıtların üzerine yazılacak. Devam edilsin mi?',()=>backupRestorePayload(payload,parts));
+}
+function restoreData(){
+  const input=document.createElement('input');input.type='file';input.accept='.json,application/json';
+  input.onchange=()=>{const file=input.files?.[0];if(!file)return;const reader=new FileReader();
+    reader.onload=()=>{try{const d=JSON.parse(reader.result);openSelectiveRestore(d)}catch(e){showToast('Geçerli bir Fix Finans yedeği seçmelisin.')}};reader.readAsText(file)
+  };input.click()
+}
+function restoreHistory(id){
+  const item=backupHistoryRead().find(x=>String(x.id)===String(id));
+  if(item?.payload)openSelectiveRestore(item.payload);else showToast('Bu yedek bulunamadı.');
+}
+function deleteBackupHistory(id){
+  const next=backupHistoryRead().filter(x=>String(x.id)!==String(id));backupHistoryWrite(next);renderBackupCenter();showToast('Yedek geçmişinden kaldırıldı.');
+}
+function openCloudProvider(name){showToast(name+' bağlantısı henüz etkin değil. Güvenli OAuth entegrasyonu sonraki aşamada.')}
+
+function backupHistoryRows(list,limit){
+  const rows=(limit?list.slice(0,limit):list);
+  if(!rows.length)return '<div class="empty">Henüz kayıtlı yedek yok.</div>';
+  return rows.map(h=>{
+    const when=new Date(h.createdAt).toLocaleString('tr-TR');
+    const auto=h.auto?' · otomatik':'';
+    return '<div class="backup-history-row"><span class="bh-icon">▤</span><div><b>'+esc(when)+'</b><small>'+h.transactions+' işlem · '+h.debts+' borç/alacak · '+formatBytes(h.size)+auto+'</small></div><span><button onclick="restoreHistory(\''+esc(h.id)+'\')">↩</button><button onclick="deleteBackupHistory(\''+esc(h.id)+'\')">×</button></span></div>';
+  }).join('');
+}
+function openBackupRestore(){renderBackupCenter()}
+
+function renderBackupCenter(){
+  const history=backupHistoryRead(), payload=makeBackupPayload(), size=formatBytes(backupSize(payload));
+  const last=localStorage.getItem('fix_last_backup');const lastLabel=last?new Date(last).toLocaleString('tr-TR'):'Henüz yok';
+  const auto=getAutoBackupMode();
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').innerHTML=`<div class="sheet backup-center-sheet">
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Yedekleme Merkezi</h2>
+    <div class="settings-sub">Verilerini güvenle yedekle, geçmişi yönet ve gerektiğinde seçerek geri yükle.</div>
+
+    <div class="backup-hero"><b>🛡️ Verilerin güvende</b><p>Yedeklerin cihazında tutulur. Manuel JSON yedeği oluşturabilir, geçmişten geri yükleyebilir ve otomatik yedeklemeyi açabilirsin.</p><div class="backup-shield">🔐</div></div>
+
+    <div class="backup-stat-grid">
+      <div class="backup-stat"><b>${state.transactions.length}</b><span>Toplam işlem</span></div>
+      <div class="backup-stat"><b>${state.debts.length}</b><span>Borç / alacak</span></div>
+      <div class="backup-stat"><b>${history.length}</b><span>Kayıtlı yedek</span></div>
+      <div class="backup-stat"><b>${size}</b><span>Yeni yedek boyutu</span></div>
+    </div>
+
+    <div class="backup-section">
+      <div class="backup-section-title"><b>1. Yedek Oluştur</b><small>Son: ${lastLabel}</small></div>
+      <button class="backup-main-btn" onclick="backupData()">⬆️ Şimdi Yedekle</button>
+      <div class="setting-note">Tam yedek; işlemler, borç/alacak, yaklaşanlar, kategoriler ve seçili uygulama ayarlarını içerir.</div>
+    </div>
+
+    <div class="backup-section">
+      <div class="backup-section-title"><b>2. Geri Yükle</b><small>Kontrollü</small></div>
+      <div class="backup-two"><button class="backup-secondary-btn" onclick="restoreData()">⬇️ JSON Yedek Seç</button><button class="backup-secondary-btn" onclick="openBackupHistory()">🕘 Geçmişten Seç</button></div>
+      <div class="setting-note">Geri yükleme seçmeli yapılır; mevcut verilerin üzerine yazmadan önce onay ister.</div>
+    </div>
+
+    <div class="backup-section">
+      <div class="backup-section-title"><b>3. Yedek Geçmişi</b><small>${history.length}/12</small></div>
+      <div class="backup-history">${backupHistoryRows(history,5)}</div>
+      ${history.length>5?`<button class="backup-secondary-btn" style="margin-top:7px" onclick="openBackupHistory()">Tüm Yedekleri Gör</button>`:''}
+    </div>
+
+    <div class="backup-section">
+      <div class="backup-section-title"><b>4. Otomatik Yedekleme</b><small>${auto==='off'?'Kapalı':auto==='daily'?'Günlük':auto==='weekly'?'Haftalık':'Aylık'}</small></div>
+      <div class="backup-auto"><span class="setting-note" style="margin:0">Veri değişikliklerinden sonra uygun zamanda yerel yedek oluştur.</span><span class="setting-toggle ${auto!=='off'?'on':''}"></span></div>
+      <div class="backup-auto-options"><button class="backup-auto-off ${auto==='off'?'active':''}" onclick="setAutoBackupMode('off')">Kapalı</button><button class="backup-auto-daily ${auto==='daily'?'active':''}" onclick="setAutoBackupMode('daily')">Günlük</button><button class="backup-auto-weekly ${auto==='weekly'?'active':''}" onclick="setAutoBackupMode('weekly')">Haftalık</button><button class="backup-auto-monthly ${auto==='monthly'?'active':''}" onclick="setAutoBackupMode('monthly')">Aylık</button></div>
+    </div>
+
+    <div class="backup-section">
+      <div class="backup-section-title"><b>5. Bulut Depolar</b><small>Güvenli bağlantı</small></div>
+      <div class="backup-clouds">
+        <div class="backup-cloud"><span class="cloud-logo">🟢</span><div><b>Google Drive</b><small>Bulut yedeği için bağlan</small></div><button onclick="openCloudProvider('Google Drive')">Bağla</button></div>
+        <div class="backup-cloud"><span class="cloud-logo">🔵</span><div><b>Yandex Disk</b><small>Bulut yedeği için bağlan</small></div><button onclick="openCloudProvider('Yandex Disk')">Bağla</button></div>
+        <div class="backup-cloud"><span class="cloud-logo">☁️</span><div><b>OneDrive</b><small>Bulut yedeği için bağlan</small></div><button onclick="openCloudProvider('OneDrive')">Bağla</button></div>
+      </div>
+    </div>
+
+    <div class="backup-section">
+      <div class="backup-section-title"><b>6. JSON Yedek</b><small>Taşınabilir</small></div>
+      <div class="backup-two"><button class="backup-secondary-btn" onclick="backupData()">↗ JSON Dışa Aktar</button><button class="backup-secondary-btn" onclick="restoreData()">↙ JSON İçe Aktar</button></div>
+    </div>
+
+    <div class="backup-section">
+      <div class="backup-section-title"><b>7. Yedek Güvenliği</b><small>Kontrol</small></div>
+      <div class="backup-security"><span>✓</span><div><b>Yedek yapısı okunabilir</b><small>Son oluşturulan paket; işlem, borç/alacak ve uygulama verilerini doğrulanabilir JSON olarak saklıyor.</small></div></div>
+    </div>
+
+    <div class="backup-section">
+      <div class="backup-section-title"><b>8. Depolama Bilgisi</b><small>Yerel</small></div>
+      <div class="backup-stat-grid" style="margin:0"><div class="backup-stat"><b>${formatBytes(history.reduce((a,h)=>a+(Number(h.size)||0),0))}</b><span>Yedek geçmişi</span></div><div class="backup-stat"><b>${history.length}</b><span>Kayıtlı kopya</span></div></div>
+      <button class="backup-secondary-btn backup-danger" onclick="clearBackupHistory()">🗑️ Eski Yedek Geçmişini Temizle</button>
+    </div>
+
+    <div class="backup-section">
+      <div class="backup-section-title"><b>9. Seçimli Geri Yükleme</b><small>Kontrollü aktarım</small></div>
+      <button class="backup-secondary-btn" onclick="restoreData()">🎯 Yedek seç ve bölümleri belirle</button>
+    </div>
+
+    <div class="backup-security"><span>🔒</span><div><b>Bilgilerin cihazında</b><small>Bu merkez yerel yedekleme işlevlerini yönetir. Bulut sağlayıcılarına otomatik veri gönderilmez.</small></div></div>
+  </div>`;
+}
+function openBackupHistory(){
+  const history=backupHistoryRead();
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').innerHTML=`<div class="sheet backup-center-sheet"><button class="close" onclick="renderBackupCenter()">×</button><h2>Yedek Geçmişi</h2><div class="settings-sub">${history.length} kayıtlı yedek</div><div class="backup-history">${backupHistoryRows(history)}</div></div>`;
+}
+function clearBackupHistory(){
+  confirmAction('Yedek geçmişini temizle','Kayıtlı yerel yedek geçmişi silinecek. İndirdiğin JSON dosyaları silinmez.',()=>{localStorage.removeItem('fix_backup_history');renderBackupCenter();showToast('Yedek geçmişi temizlendi.')});
+}
+function clearAllData(){
+  confirmAction('Verileri Temizle','Tüm gelir, gider, borç/alacak, yaklaşan ödeme ve hatırlatma kayıtları kalıcı olarak silinecek. Bu işlem geri alınamaz.',()=>{state.transactions=[];state.debts=[];state.upcoming=[];state.filters={from:'',to:'',category:'Tümü'};persist();closeModal();state.page='home';render();showToast('Tüm finans verileri temizlendi.')})
+}
+
 function exportExcelFile(){
   const rows=[['Tür','Tutar','Kategori','Zaman','Not','Tarih'],...state.transactions.map(t=>[t[4]||'',Number(t[1])||0,t[0]||'',txTimeLabel(t),t[5]||'',t[6]||''])];
   const table=`<table border="1"><tr>${rows[0].map(x=>`<th>${esc(x)}</th>`).join('')}</tr>${rows.slice(1).map(r=>`<tr>${r.map(x=>`<td>${esc(x)}</td>`).join('')}</tr>`).join('')}</table>`;
