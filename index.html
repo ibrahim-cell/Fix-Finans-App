@@ -1238,6 +1238,62 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .light .tx-summary-new,.light .tx-day-card{background:#fff;border-color:#dfe4ee}
 .light .tx-day-items .txrow{border-color:#edf0f5!important}
 </style>
+<style id="fix-13311-bottom-nav-v2">
+/* Fix Finans 13.3.11 — Bottom Navigation UI only. */
+.bottom{
+  left:50% !important; right:auto !important;
+  bottom:max(8px,env(safe-area-inset-bottom)) !important;
+  width:min(calc(100% - 20px),410px) !important;
+  height:70px !important; min-height:70px !important;
+  padding:6px 7px !important; box-sizing:border-box !important;
+  border:1px solid rgba(112,126,174,.20) !important;
+  border-radius:24px !important;
+  background:linear-gradient(180deg,rgba(13,17,31,.96),rgba(7,10,19,.98)) !important;
+  box-shadow:0 14px 38px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.045) !important;
+  backdrop-filter:blur(18px) saturate(135%) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(135%) !important;
+  grid-template-columns:1fr 1fr 62px 1fr 1fr !important;
+  align-items:center !important; overflow:visible !important;
+  transform:translateX(-50%) !important;
+}
+.bottom .nav{
+  position:relative !important; height:56px !important; min-height:0 !important;
+  border:1px solid transparent !important; border-radius:18px !important;
+  color:#858ca0 !important; gap:3px !important; justify-content:center !important;
+  background:transparent !important;
+  transition:background .22s ease,border-color .22s ease,color .22s ease,transform .22s ease !important;
+}
+.bottom .nav-icon{font-size:21px !important;line-height:22px !important;transition:filter .22s ease,transform .22s ease !important}
+.bottom .nav small{font-size:9px !important;font-weight:650 !important;letter-spacing:-.05px !important}
+.bottom .nav.active{
+  color:#ffb52d !important;
+  background:linear-gradient(180deg,rgba(255,181,45,.105),rgba(255,181,45,.035)) !important;
+  border-color:rgba(255,181,45,.12) !important;
+  box-shadow:inset 0 1px rgba(255,214,117,.055),0 0 22px rgba(255,181,45,.055) !important;
+}
+.bottom .nav.active .nav-icon{filter:drop-shadow(0 0 7px rgba(255,181,45,.38)) !important;transform:translateY(-1px) !important}
+.bottom .nav.active:after{
+  content:"" !important; position:absolute !important; left:50% !important; bottom:3px !important;
+  width:5px !important; height:5px !important; border-radius:50% !important;
+  background:#ffb52d !important; box-shadow:0 0 8px rgba(255,181,45,.65) !important;
+  transform:translateX(-50%) !important;
+}
+.bottom .add{
+  position:relative !important; z-index:2 !important; width:56px !important; height:56px !important;
+  margin:0 !important; align-self:center !important; border:1px solid rgba(255,206,103,.85) !important;
+  border-radius:50% !important;
+  background:linear-gradient(145deg,#ffbe32 0%,#f09b12 52%,#d87908 100%) !important;
+  color:#fff !important; font-size:31px !important; line-height:1 !important;
+  box-shadow:0 8px 24px rgba(240,145,17,.30),0 0 0 5px rgba(255,181,45,.045),inset 0 1px rgba(255,255,255,.42) !important;
+}
+.bottom .add:active{transform:scale(.95) !important;box-shadow:0 5px 16px rgba(240,145,17,.25),0 0 0 4px rgba(255,181,45,.04) !important}
+@media(max-width:360px){
+ .bottom{width:calc(100% - 14px) !important;height:68px !important;min-height:68px !important;grid-template-columns:1fr 1fr 58px 1fr 1fr !important;padding:5px 6px !important;border-radius:22px !important}
+ .bottom .nav{height:55px !important;border-radius:16px !important}
+ .bottom .nav small{font-size:8.5px !important}.bottom .nav-icon{font-size:20px !important}
+ .bottom .add{width:54px !important;height:54px !important;font-size:29px !important}
+}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -2049,118 +2105,6 @@ body{overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scro
 
 {table}
 
-
-
-
-
-<style id="fix-13311-bottom-nav">
-/* 13.3.11 — Alt Bar Premium: 2 + 4 hybrid
-   UI-only change. Navigation structure, data-page values and #add behavior are untouched. */
-.bottom{
-  left:50%;
-  bottom:max(8px, env(safe-area-inset-bottom));
-  width:min(calc(100% - 20px),410px);
-  height:70px;
-  padding:6px 7px;
-  border:1px solid rgba(112,126,174,.20);
-  border-radius:24px;
-  background:linear-gradient(180deg,rgba(13,17,31,.94),rgba(7,10,19,.97));
-  box-shadow:0 14px 38px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.045);
-  backdrop-filter:blur(18px) saturate(135%);
-  -webkit-backdrop-filter:blur(18px) saturate(135%);
-  grid-template-columns:1fr 1fr 62px 1fr 1fr;
-  align-items:center;
-  overflow:visible;
-}
-.bottom .nav{
-  position:relative;
-  height:56px;
-  min-height:0;
-  border:1px solid transparent;
-  border-radius:18px;
-  color:#858ca0;
-  gap:3px;
-  justify-content:center;
-  transition:background .22s ease,border-color .22s ease,color .22s ease,transform .22s ease;
-}
-.bottom .nav-icon{
-  font-size:21px;
-  line-height:22px;
-  transition:filter .22s ease,transform .22s ease;
-}
-.bottom .nav small{
-  font-size:9px;
-  font-weight:650;
-  letter-spacing:-.05px;
-}
-.bottom .nav.active{
-  color:#ffb52d!important;
-  background:linear-gradient(180deg,rgba(255,181,45,.105),rgba(255,181,45,.035));
-  border-color:rgba(255,181,45,.12);
-  box-shadow:inset 0 1px rgba(255,214,117,.055),0 0 22px rgba(255,181,45,.055);
-}
-.bottom .nav.active .nav-icon{
-  filter:drop-shadow(0 0 7px rgba(255,181,45,.38));
-  transform:translateY(-1px);
-}
-.bottom .nav.active:after{
-  content:"";
-  position:absolute;
-  left:50%;
-  bottom:3px;
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  background:#ffb52d;
-  box-shadow:0 0 8px rgba(255,181,45,.65);
-  transform:translateX(-50%);
-}
-.bottom .add{
-  position:relative;
-  z-index:2;
-  width:56px;
-  height:56px;
-  margin:0;
-  align-self:center;
-  border:1px solid rgba(255,206,103,.85);
-  border-radius:50%;
-  background:linear-gradient(145deg,#ffbe32 0%,#f09b12 52%,#d87908 100%);
-  color:#fff;
-  font-size:31px;
-  line-height:1;
-  box-shadow:0 8px 24px rgba(240,145,17,.30),0 0 0 5px rgba(255,181,45,.045),inset 0 1px rgba(255,255,255,.42);
-  transition:transform .18s ease,box-shadow .18s ease;
-}
-.bottom .add:active{
-  transform:scale(.95);
-  box-shadow:0 5px 16px rgba(240,145,17,.25),0 0 0 4px rgba(255,181,45,.04);
-}
-.light .bottom{
-  background:rgba(255,255,255,.94)!important;
-  border-color:#d9dfeb!important;
-  box-shadow:0 10px 28px rgba(32,48,78,.12),inset 0 1px rgba(255,255,255,.8);
-}
-.light .bottom .nav{color:#70798d!important}
-.light .bottom .nav.active{
-  color:#b87500!important;
-  background:rgba(255,181,45,.10);
-  border-color:rgba(184,117,0,.12);
-}
-.light .bottom .nav.active:after{background:#d28a00;box-shadow:0 0 7px rgba(210,138,0,.35)}
-@media(max-width:360px){
-  .bottom{
-    width:calc(100% - 14px);
-    height:68px;
-    grid-template-columns:1fr 1fr 58px 1fr 1fr;
-    padding:5px 6px;
-    border-radius:22px;
-  }
-  .bottom .nav{height:55px;border-radius:16px}
-  .bottom .nav small{font-size:8.5px}
-  .bottom .nav-icon{font-size:20px}
-  .bottom .add{width:54px;height:54px;font-size:29px}
-}
-</style>
 
 
 
