@@ -1362,6 +1362,111 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
   .bottom .add{width:55px !important;height:55px !important;font-size:29px !important}
 }
 </style>
+
+<style id="fix-13314-fab-breathe-pulse">
+/* Fix Finans 13.3.14 — FAB soft breathe/pulse + occasional sparkle.
+   Visual-only: no HTML structure, JS handlers, navigation, calculations or theme logic changed. */
+
+.bottom .add{
+  --fab-accent:var(--theme-accent,var(--purple));
+  --fab-accent-2:var(--theme-accent-2,var(--purple2));
+  background:
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.28),transparent 22%),
+    linear-gradient(145deg,
+      color-mix(in srgb,var(--fab-accent) 92%,white 8%) 0%,
+      var(--fab-accent) 48%,
+      var(--fab-accent-2) 100%) !important;
+  border-color:color-mix(in srgb,var(--fab-accent) 72%,white 28%) !important;
+  box-shadow:
+    0 9px 26px color-mix(in srgb,var(--fab-accent) 34%,transparent),
+    0 0 0 4px color-mix(in srgb,var(--fab-accent) 9%,transparent),
+    0 0 22px color-mix(in srgb,var(--fab-accent) 24%,transparent),
+    inset 0 1px rgba(255,255,255,.52) !important;
+  isolation:isolate !important;
+  animation:fixFabBreathe 3.8s ease-in-out infinite !important;
+}
+
+.bottom .add::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:-5px !important;
+  z-index:-1 !important;
+  border-radius:50% !important;
+  border:1px solid color-mix(in srgb,var(--fab-accent) 42%,transparent) !important;
+  opacity:.34 !important;
+  transform:scale(.92) !important;
+  animation:fixFabAura 3.8s ease-in-out infinite !important;
+  pointer-events:none !important;
+}
+
+.bottom .add::after{
+  content:"" !important;
+  position:absolute !important;
+  top:8% !important;
+  left:-32% !important;
+  width:25% !important;
+  height:84% !important;
+  border-radius:999px !important;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,.72),transparent) !important;
+  filter:blur(1px) !important;
+  opacity:0 !important;
+  transform:rotate(20deg) translateX(-15px) !important;
+  animation:fixFabSparkle 5.8s ease-in-out infinite !important;
+  pointer-events:none !important;
+}
+
+@keyframes fixFabBreathe{
+  0%,100%{
+    transform:scale(1);
+    box-shadow:
+      0 9px 26px color-mix(in srgb,var(--fab-accent) 30%,transparent),
+      0 0 0 4px color-mix(in srgb,var(--fab-accent) 7%,transparent),
+      0 0 20px color-mix(in srgb,var(--fab-accent) 18%,transparent),
+      inset 0 1px rgba(255,255,255,.50);
+  }
+  50%{
+    transform:scale(1.025);
+    box-shadow:
+      0 11px 29px color-mix(in srgb,var(--fab-accent) 38%,transparent),
+      0 0 0 7px color-mix(in srgb,var(--fab-accent) 10%,transparent),
+      0 0 31px color-mix(in srgb,var(--fab-accent) 30%,transparent),
+      inset 0 1px rgba(255,255,255,.58);
+  }
+}
+
+@keyframes fixFabAura{
+  0%,100%{opacity:.22;transform:scale(.92)}
+  50%{opacity:.50;transform:scale(1.08)}
+}
+
+@keyframes fixFabSparkle{
+  0%,67%{opacity:0;transform:rotate(20deg) translateX(-15px)}
+  72%{opacity:.78}
+  79%{opacity:0;transform:rotate(20deg) translateX(360px)}
+  100%{opacity:0;transform:rotate(20deg) translateX(360px)}
+}
+
+/* Keep the effect calm and accessible when the device asks for reduced motion. */
+@media (prefers-reduced-motion:reduce){
+  .bottom .add,
+  .bottom .add::before,
+  .bottom .add::after{
+    animation:none !important;
+  }
+}
+
+/* Light mode keeps the selected palette; only the surface treatment changes. */
+.light .bottom .add{
+  background:
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.42),transparent 22%),
+    linear-gradient(145deg,
+      color-mix(in srgb,var(--theme-accent,var(--purple)) 88%,white 12%),
+      var(--theme-accent,var(--purple)),
+      var(--theme-accent-2,var(--purple2))) !important;
+  border-color:color-mix(in srgb,var(--theme-accent,var(--purple)) 62%,white 38%) !important;
+}
+</style>
+
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
