@@ -1238,60 +1238,128 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .light .tx-summary-new,.light .tx-day-card{background:#fff;border-color:#dfe4ee}
 .light .tx-day-items .txrow{border-color:#edf0f5!important}
 </style>
-<style id="fix-13311-bottom-nav-v2">
-/* Fix Finans 13.3.11 — Bottom Navigation UI only. */
+<style id="fix-13312-bottom-nav-icon-premium">
+/* Fix Finans 13.3.12 — Alt Bar Icon Premium
+   Visual-only layer. Navigation HTML, JS, IDs, data-page values and finance logic untouched. */
+
 .bottom{
   left:50% !important; right:auto !important;
   bottom:max(8px,env(safe-area-inset-bottom)) !important;
   width:min(calc(100% - 20px),410px) !important;
-  height:70px !important; min-height:70px !important;
+  height:72px !important; min-height:72px !important;
   padding:6px 7px !important; box-sizing:border-box !important;
-  border:1px solid rgba(112,126,174,.20) !important;
-  border-radius:24px !important;
-  background:linear-gradient(180deg,rgba(13,17,31,.96),rgba(7,10,19,.98)) !important;
-  box-shadow:0 14px 38px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.045) !important;
-  backdrop-filter:blur(18px) saturate(135%) !important;
-  -webkit-backdrop-filter:blur(18px) saturate(135%) !important;
-  grid-template-columns:1fr 1fr 62px 1fr 1fr !important;
+  border:1px solid rgba(112,126,174,.22) !important;
+  border-radius:25px !important;
+  background:linear-gradient(180deg,rgba(15,19,35,.97),rgba(7,10,20,.99)) !important;
+  box-shadow:0 16px 42px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.055),0 0 28px rgba(76,71,145,.07) !important;
+  backdrop-filter:blur(20px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(20px) saturate(145%) !important;
+  grid-template-columns:1fr 1fr 66px 1fr 1fr !important;
   align-items:center !important; overflow:visible !important;
   transform:translateX(-50%) !important;
 }
+
 .bottom .nav{
-  position:relative !important; height:56px !important; min-height:0 !important;
-  border:1px solid transparent !important; border-radius:18px !important;
-  color:#858ca0 !important; gap:3px !important; justify-content:center !important;
+  position:relative !important;
+  height:58px !important; min-height:0 !important;
+  border:1px solid transparent !important;
+  border-radius:18px !important;
+  color:#858ca0 !important;
+  gap:3px !important; justify-content:center !important;
   background:transparent !important;
   transition:background .22s ease,border-color .22s ease,color .22s ease,transform .22s ease !important;
 }
-.bottom .nav-icon{font-size:21px !important;line-height:22px !important;transition:filter .22s ease,transform .22s ease !important}
-.bottom .nav small{font-size:9px !important;font-weight:650 !important;letter-spacing:-.05px !important}
+
+.bottom .nav-icon{
+  display:block !important;
+  width:22px !important; height:22px !important;
+  margin:0 auto 2px !important;
+  font-size:0 !important;
+  line-height:0 !important;
+  color:currentColor !important;
+  background:currentColor !important;
+  -webkit-mask-repeat:no-repeat !important;
+  mask-repeat:no-repeat !important;
+  -webkit-mask-position:center !important;
+  mask-position:center !important;
+  -webkit-mask-size:contain !important;
+  mask-size:contain !important;
+  transition:filter .22s ease,transform .22s ease,color .22s ease !important;
+}
+
+/* Clean outline icons — replaces the old text glyphs without touching HTML. */
+.bottom .nav:nth-child(1) .nav-icon{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.8 12 3l9 7.8'/%3E%3Cpath d='M5.5 9.8V21h13V9.8'/%3E%3Cpath d='M9.2 21v-6.4h5.6V21'/%3E%3C/svg%3E") !important;
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.8 12 3l9 7.8'/%3E%3Cpath d='M5.5 9.8V21h13V9.8'/%3E%3Cpath d='M9.2 21v-6.4h5.6V21'/%3E%3C/svg%3E") !important;
+}
+.bottom .nav:nth-child(2) .nav-icon{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M5 6h14M5 12h14M5 18h14'/%3E%3Ccircle cx='9' cy='6' r='1.6' fill='black' stroke='none'/%3E%3Ccircle cx='15' cy='12' r='1.6' fill='black' stroke='none'/%3E%3Ccircle cx='10' cy='18' r='1.6' fill='black' stroke='none'/%3E%3C/svg%3E") !important;
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M5 6h14M5 12h14M5 18h14'/%3E%3Ccircle cx='9' cy='6' r='1.6' fill='black' stroke='none'/%3E%3Ccircle cx='15' cy='12' r='1.6' fill='black' stroke='none'/%3E%3Ccircle cx='10' cy='18' r='1.6' fill='black' stroke='none'/%3E%3C/svg%3E") !important;
+}
+.bottom .nav:nth-child(4) .nav-icon{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 20V11M12 20V5M19 20v-8'/%3E%3Cpath d='M3 20h18'/%3E%3C/svg%3E") !important;
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 20V11M12 20V5M19 20v-8'/%3E%3Cpath d='M3 20h18'/%3E%3C/svg%3E") !important;
+}
+.bottom .nav:nth-child(5) .nav-icon{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='3.2'/%3E%3Cpath d='M5.2 21c.5-4.1 3-6.4 6.8-6.4s6.3 2.3 6.8 6.4'/%3E%3C/svg%3E") !important;
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='3.2'/%3E%3Cpath d='M5.2 21c.5-4.1 3-6.4 6.8-6.4s6.3 2.3 6.8 6.4'/%3E%3C/svg%3E") !important;
+}
+
+.bottom .nav small{
+  font-size:9px !important;
+  font-weight:650 !important;
+  letter-spacing:-.04px !important;
+  line-height:12px !important;
+}
+
 .bottom .nav.active{
   color:#ffb52d !important;
-  background:linear-gradient(180deg,rgba(255,181,45,.105),rgba(255,181,45,.035)) !important;
-  border-color:rgba(255,181,45,.12) !important;
-  box-shadow:inset 0 1px rgba(255,214,117,.055),0 0 22px rgba(255,181,45,.055) !important;
+  background:linear-gradient(180deg,rgba(255,181,45,.13),rgba(255,181,45,.035)) !important;
+  border-color:rgba(255,181,45,.14) !important;
+  box-shadow:inset 0 1px rgba(255,220,130,.07),0 0 24px rgba(255,181,45,.075) !important;
 }
-.bottom .nav.active .nav-icon{filter:drop-shadow(0 0 7px rgba(255,181,45,.38)) !important;transform:translateY(-1px) !important}
+.bottom .nav.active .nav-icon{
+  filter:drop-shadow(0 0 7px rgba(255,181,45,.42)) !important;
+  transform:translateY(-1px) !important;
+}
 .bottom .nav.active:after{
-  content:"" !important; position:absolute !important; left:50% !important; bottom:3px !important;
+  content:"" !important;
+  position:absolute !important; left:50% !important; bottom:3px !important;
   width:5px !important; height:5px !important; border-radius:50% !important;
-  background:#ffb52d !important; box-shadow:0 0 8px rgba(255,181,45,.65) !important;
+  background:#ffb52d !important; box-shadow:0 0 9px rgba(255,181,45,.72) !important;
   transform:translateX(-50%) !important;
 }
+
+/* More premium central action: purple core + warm brand rim. */
 .bottom .add{
-  position:relative !important; z-index:2 !important; width:56px !important; height:56px !important;
-  margin:0 !important; align-self:center !important; border:1px solid rgba(255,206,103,.85) !important;
+  position:relative !important; z-index:2 !important;
+  width:58px !important; height:58px !important; margin:0 !important;
+  align-self:center !important;
+  border:1px solid rgba(255,213,118,.9) !important;
   border-radius:50% !important;
-  background:linear-gradient(145deg,#ffbe32 0%,#f09b12 52%,#d87908 100%) !important;
+  background:
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.28),transparent 22%),
+    linear-gradient(145deg,#9a63ff 0%,#7040d8 45%,#4a25a7 100%) !important;
   color:#fff !important; font-size:31px !important; line-height:1 !important;
-  box-shadow:0 8px 24px rgba(240,145,17,.30),0 0 0 5px rgba(255,181,45,.045),inset 0 1px rgba(255,255,255,.42) !important;
+  box-shadow:
+    0 9px 26px rgba(95,50,205,.34),
+    0 0 0 4px rgba(255,181,45,.08),
+    0 0 20px rgba(126,76,255,.22),
+    inset 0 1px rgba(255,255,255,.5) !important;
 }
-.bottom .add:active{transform:scale(.95) !important;box-shadow:0 5px 16px rgba(240,145,17,.25),0 0 0 4px rgba(255,181,45,.04) !important}
+.bottom .add:active{
+  transform:scale(.95) !important;
+}
 @media(max-width:360px){
- .bottom{width:calc(100% - 14px) !important;height:68px !important;min-height:68px !important;grid-template-columns:1fr 1fr 58px 1fr 1fr !important;padding:5px 6px !important;border-radius:22px !important}
- .bottom .nav{height:55px !important;border-radius:16px !important}
- .bottom .nav small{font-size:8.5px !important}.bottom .nav-icon{font-size:20px !important}
- .bottom .add{width:54px !important;height:54px !important;font-size:29px !important}
+  .bottom{
+    width:calc(100% - 14px) !important; height:69px !important; min-height:69px !important;
+    grid-template-columns:1fr 1fr 60px 1fr 1fr !important;
+    padding:5px 6px !important; border-radius:23px !important;
+  }
+  .bottom .nav{height:55px !important;border-radius:16px !important}
+  .bottom .nav-icon{width:21px !important;height:21px !important}
+  .bottom .nav small{font-size:8.5px !important}
+  .bottom .add{width:55px !important;height:55px !important;font-size:29px !important}
 }
 </style>
 </head><body>
