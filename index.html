@@ -1844,12 +1844,33 @@ function smartHomeSummary(t){
   else advice='Finansal hareketlerin dengeli görünüyor. Düzenli kayıt tutmaya devam et.';
   return {score,tone,toneClass,expenseRatio,netRatio,advice,shopping,hasData};
 }
+function homeBalanceTrend(){
+  const today=new Date();
+  const iso=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`};
+  const periodNet=(start,end)=>state.transactions.reduce((sum,t)=>{if(t[4]==='Transfer')return sum;const d=txDateValue(t);if(d<iso(start)||d>iso(end))return sum;return sum+(Number(t[1])||0)},0);
+  const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
+  const prevMonthStart=new Date(today.getFullYear(),today.getMonth()-1,1);
+  const prevMonthEnd=new Date(today.getFullYear(),today.getMonth(),0);
+  const thisMonth=periodNet(monthStart,today), prevMonth=periodNet(prevMonthStart,prevMonthEnd);
+  if(prevMonth!==0){
+    const diff=thisMonth-prevMonth, pct=Math.round(Math.abs(diff)/Math.abs(prevMonth)*100);
+    if(diff>0)return {icon:'↗',text:`Geçen aya göre %${pct} daha güçlü`,tone:'up'};
+    if(diff<0)return {icon:'↘',text:`Geçen aya göre %${pct} geriledi`,tone:'down'};
+    return {icon:'•',text:'Geçen aya göre dengeli',tone:'flat'};
+  }
+  const day=(today.getDay()+6)%7;
+  const weekStart=new Date(today.getFullYear(),today.getMonth(),today.getDate()-day);
+  const weekNet=periodNet(weekStart,today);
+  if(weekNet>0)return {icon:'↗',text:`Bu hafta ${money(weekNet)} net arttı`,tone:'up'};
+  if(weekNet<0)return {icon:'↘',text:`Bu hafta ${money(Math.abs(weekNet))} net geriledi`,tone:'down'};
+  return {icon:'•',text:'Bu hafta dengeli seyrediyor',tone:'flat'};
+}
 function home(){
-  const t=totals();const w=walletTotals();const hidden=localStorage.getItem('fix_balance_hidden')==='1';const smart=smartHomeSummary(t);
+  const t=totals();const w=walletTotals();const hidden=localStorage.getItem('fix_balance_hidden')==='1';const smart=smartHomeSummary(t);const trend=homeBalanceTrend();
   const recent=state.transactions.length?homeRecentGrouped(state.transactions):'<button type="button" class="empty empty-clickable" onclick="openModal()" aria-label="İşlem ekle">Henüz işlem eklenmedi.<br><span style="opacity:.7">İlk gelir veya giderini + butonundan ekleyebilirsin.</span></button>';
   const circumference=2*Math.PI*42; const dash=(smart.score/100*circumference).toFixed(1);
   return `<div class="tabs reference-tabs"><button class="active" onclick="state.page='home';render()">${iconSvg('home')}<span>Özet</span></button><button onclick="state.page='reports';render()">${iconSvg('chart')}<span>Grafikler</span></button><button onclick="state.page='upcoming';render()">${iconSvg('calendar')}<span>Yaklaşan</span></button></div>
-  <section class="card balance"><div class="label balance-label">Net Bakiye <button class="eye-btn" aria-label="Bakiyeyi göster/gizle" onclick="toggleBalanceVisibility()">${iconSvg(hidden?'eyeOff':'eye')}</button></div><div class="balance-line"><div><span class="amount net-balance-counter" data-balance-value="${t.net}">${hidden?'••••••':money(t.net)}</span> <span class="status ${t.net>0?'':t.net<0?'status-negative':'status-neutral'}">${t.net>0?'↗ Pozitif':t.net<0?'↘ Negatif':'• Nötr'}</span></div><div class="wallet ff-balance-animation" aria-label="Finans animasyonu" aria-hidden="true"><div class="ff-finance-art"><div class="ff-particle p1"></div><div class="ff-particle p2"></div><div class="ff-particle p3"></div><div class="ff-particle p4"></div><div class="ff-ring ring-a"></div><div class="ff-ring ring-b"></div><div class="ff-ring ring-c"></div><div class="ff-sphere"><span class="ff-lira">₺</span><span class="ff-glint"></span></div><span class="ff-coin coin-a">₺</span><span class="ff-coin coin-b">₺</span><span class="ff-coin coin-c">₺</span><span class="ff-coin coin-d">₺</span></div></div></div><div class="wallet-mini-row"><div class="wallet-mini cash"><span class="wallet-mini-icon">💵</span><span><small>Nakit</small><b>${hidden?'••••••':money(w.cash)}</b></span></div><div class="wallet-mini bank"><span class="wallet-mini-icon">🏦</span><span><small>Banka</small><b>${hidden?'••••••':money(w.bank)}</b></span></div></div></section>
+  <section class="card balance"><div class="label balance-label">Net Bakiye <button class="eye-btn" aria-label="Bakiyeyi göster/gizle" onclick="toggleBalanceVisibility()">${iconSvg(hidden?'eyeOff':'eye')}</button></div><div class="balance-line"><div class="balance-main"><span class="amount net-balance-counter" data-balance-value="${t.net}">${hidden?'••••••':money(t.net)}</span><div class="balance-status-row"><span class="status ${t.net>0?'':t.net<0?'status-negative':'status-neutral'}">${t.net>0?'↗ Pozitif':t.net<0?'↘ Negatif':'• Nötr'}</span><span class="balance-trend ${trend.tone}">${trend.icon} ${esc(trend.text)}</span></div></div><div class="wallet ff-balance-animation" aria-label="Finans animasyonu" aria-hidden="true"><div class="ff-finance-art"><div class="ff-particle p1"></div><div class="ff-particle p2"></div><div class="ff-particle p3"></div><div class="ff-particle p4"></div><div class="ff-ring ring-a"></div><div class="ff-ring ring-b"></div><div class="ff-ring ring-c"></div><div class="ff-sphere"><span class="ff-lira">₺</span><span class="ff-glint"></span></div><span class="ff-coin coin-a">₺</span><span class="ff-coin coin-b">₺</span><span class="ff-coin coin-c">₺</span><span class="ff-coin coin-d">₺</span></div></div></div><div class="wallet-mini-row"><div class="wallet-mini cash"><span class="wallet-mini-icon">💵</span><span><small>Nakit</small><b>${hidden?'••••••':money(w.cash)}</b></span></div><div class="wallet-mini bank"><span class="wallet-mini-icon">🏦</span><span><small>Banka</small><b>${hidden?'••••••':money(w.bank)}</b></span></div></div></section>
   <section class="card smart-home-card">
     <div class="smart-home-head">
       <div class="smart-home-brand"><span class="smart-home-orb">✣</span><div>
@@ -4354,4 +4375,40 @@ body.font-size-system .app{font-size:inherit}
   .quick-five .qicon{width:46px!important;height:46px!important}
   .quick-five button{font-size:8.7px!important}
 }
+</style>
+
+<style id="fix-13-3-92-home-net-balance-compact">
+/* 13.3.92 — Ana ekran Net Bakiye: kompakt premium düzen.
+   Mevcut hesaplama, cüzdan animasyonu, gizleme ve Nakit/Banka verileri korunur. */
+.balance.card{padding:12px 12px 0!important;margin-bottom:10px!important;border-radius:15px!important}
+.balance-label{font-size:12px!important;line-height:1.2!important;display:flex!important;align-items:center!important;gap:5px!important}
+.balance-line{display:grid!important;grid-template-columns:minmax(0,1fr) 104px!important;gap:3px!important;min-height:82px!important;margin-top:3px!important;align-items:center!important}
+.balance-line>div.balance-main{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;min-width:0!important;gap:6px!important;flex:1!important}
+.balance-line .amount{font-size:30px!important;line-height:1!important;letter-spacing:-1.7px!important;white-space:nowrap!important;max-width:100%!important}
+.balance-status-row{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:5px!important;min-width:0!important}
+.balance-status-row .status{font-size:9px!important;padding:4px 7px!important;border-radius:9px!important;white-space:nowrap!important}
+.balance-trend{font-size:8px!important;line-height:1.2!important;color:#aaaec0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:145px!important}
+.balance-trend.up{color:#6ee8bd!important}.balance-trend.down{color:#ff7888!important}.balance-trend.flat{color:#b5b8c7!important}
+.balance-line .wallet.ff-balance-animation{width:104px!important;height:82px!important;justify-self:end!important}
+.balance-line .wallet.ff-balance-animation .ff-finance-art{transform:scale(.78)!important;transform-origin:center!important}
+.wallet-mini-row{margin-top:0!important;padding:7px 0 8px!important}
+.wallet-mini{gap:7px!important;padding:6px 8px!important;border-radius:9px!important}
+.wallet-mini-icon{width:25px!important;height:25px!important;border-radius:8px!important;font-size:13px!important}
+.wallet-mini small{font-size:7px!important;margin-bottom:1px!important}.wallet-mini b{font-size:11px!important}
+@media(max-width:380px){
+  .balance.card{padding-left:10px!important;padding-right:10px!important}
+  .balance-line{grid-template-columns:minmax(0,1fr) 88px!important;min-height:74px!important}
+  .balance-line .amount{font-size:27px!important}
+  .balance-line .wallet.ff-balance-animation{width:88px!important;height:74px!important}
+  .balance-line .wallet.ff-balance-animation .ff-finance-art{transform:scale(.68)!important}
+  .balance-trend{max-width:122px!important}
+}
+@media(max-width:340px){
+  .balance-line{grid-template-columns:minmax(0,1fr) 76px!important}
+  .balance-line .amount{font-size:25px!important}
+  .balance-line .wallet.ff-balance-animation{width:76px!important;height:68px!important}
+  .balance-line .wallet.ff-balance-animation .ff-finance-art{transform:scale(.58)!important}
+  .balance-trend{max-width:105px!important}
+}
+@media(prefers-reduced-motion:reduce){.balance-line .wallet.ff-balance-animation .ff-finance-art{transform:none!important}}
 </style>
