@@ -1818,7 +1818,7 @@ function nav(){document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('
 function header(){
   const el=document.getElementById('topHeader'); if(!el)return;
   if(state.page==='home'){
-    el.innerHTML=`<div class="home-left"><div class="brand"><img id="logo" alt="Fix Finans"><span>Fix Finans</span></div></div><div class="top-actions"><button class="icon ai-finance-btn" aria-label="Akıllı Finans Merkezi" title="Akıllı Finans Merkezi" onclick="openSmartCenter()">${iconSvg('sparkle')}</button><button class="icon currency-pill" aria-label="Döviz" onclick="openCurrencyRates()">${iconSvg('currency')}</button><button class="icon" aria-label="Tema" onclick="toggleQuickTheme()">${iconSvg('moon')}</button><button class="icon" aria-label="Bildirim" onclick="showNotifications()">${iconSvg('bell')}<span class="badge">${notificationData().length}</span></button></div>`;
+    el.innerHTML=`<div class="home-left"><div class="brand"><img id="logo" alt="Fix Finans"><span>Fix Finans</span></div></div><div class="top-actions"><button class="icon ai-finance-btn" aria-label="Akıllı Finans Merkezi" title="Akıllı Finans Merkezi" onclick="openSmartCenter()">${iconSvg('sparkle')}</button><button class="icon currency-pill" aria-label="Döviz" title="Döviz (uzun basın)" onpointerdown="startCurrencyLongPress(event)" onpointerup="cancelCurrencyLongPress(event)" onpointercancel="cancelCurrencyLongPress(event)" onpointerleave="cancelCurrencyLongPress(event)">${iconSvg('currency')}</button><button class="icon" aria-label="Tema" onclick="toggleQuickTheme()">${iconSvg('moon')}</button><button class="icon" aria-label="Bildirim" onclick="showNotifications()">${iconSvg('bell')}<span class="badge">${notificationData().length}</span></button></div>`;
     return;
   }
   const titles={transactions:'İşlemler',reports:'Raporlar',debts:'Borç / Alacak',profile:'Profil',smartCenter:'Akıllı Finans Merkezi',upcoming:'Yaklaşan'};
@@ -2558,6 +2558,21 @@ async function fetchMarketRates(){
 }
 
 function rateMoney(v){return v==null||!Number.isFinite(Number(v))?'—':'₺'+Number(v).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+let currencyLongPressTimer=null;
+function startCurrencyLongPress(e){
+  if(currencyLongPressTimer)clearTimeout(currencyLongPressTimer);
+  currencyLongPressTimer=setTimeout(()=>{
+    currencyLongPressTimer=null;
+    openCurrencyRates();
+  },700);
+}
+function cancelCurrencyLongPress(e){
+  if(currencyLongPressTimer){
+    clearTimeout(currencyLongPressTimer);
+    currencyLongPressTimer=null;
+  }
+}
+
 function openCurrencyRates(){
   try{const cached=JSON.parse(localStorage.getItem('fix_market_rates')||'null');if(cached&&typeof cached==='object')marketRates={...marketRates,...cached,loading:false}}
   catch(e){marketRates={...marketRates,loading:false}}
