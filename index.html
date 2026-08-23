@@ -1705,6 +1705,7 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .smart-home-orb svg{width:21px!important;height:21px!important;stroke:#f7c44f!important;filter:drop-shadow(0 0 4px rgba(247,196,79,.45))}
 @media(max-width:380px){.smart-home-orb{width:38px!important;height:38px!important;flex-basis:38px!important}.smart-home-orb svg{width:19px!important;height:19px!important}.trend-scale-note{display:none}}
 /* 13.3.94 — Rapor grafik dönem uyumu (13.3.96 çakışan tekrarları buraya birleştirildi) */
+.trend-bars-week{grid-template-columns:repeat(var(--trend-count,7),minmax(0,1fr))!important;gap:6px!important;width:100%!important;min-width:0!important}
 .trend-bars-month{grid-template-columns:repeat(var(--trend-count,23),minmax(46px,1fr))!important;gap:9px!important;width:max-content!important;min-width:max-content!important;align-items:end!important}
 .trend-bars-3m{grid-template-columns:repeat(var(--trend-count,3),minmax(72px,1fr))!important;gap:10px!important;width:max-content;min-width:100%}
 .trend-bars-all{grid-template-columns:repeat(var(--trend-count,6),minmax(58px,1fr))!important;gap:7px!important;width:max-content;min-width:100%}
@@ -2126,10 +2127,12 @@ function reportTrend(list){
   const b=periodBounds();
 
   if(state.reportPeriod==='week'){
-    // Bu Hafta: günlük görünüm, yalnızca gelir/gider; transferler yok.
+    // Bu Hafta: yalnızca Pazartesi → bugün aralığını üret; her gün tam olarak bir sütundur.
     list.forEach(t=>{if(!isTransferTx(t))add(txDateValue(t),t)});
+    const weekKeys=[];
     for(let d=new Date(b.start);d<=b.end;d.setDate(d.getDate()+1)){
       const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      weekKeys.push(k);
       if(!buckets[k])buckets[k]={income:0,expense:0};
     }
   } else if(state.reportPeriod==='month'){
@@ -2151,7 +2154,7 @@ function reportTrend(list){
     months.forEach(k=>{if(!buckets[k])buckets[k]={income:0,expense:0};});
   }
 
-  let keys=Object.keys(buckets).sort();
+  let keys=state.reportPeriod==='week' ? (weekKeys||[]) : Object.keys(buckets).sort();
   if(!keys.length)return '<div class="chart-empty">Bu dönem için grafik verisi yok.</div>';
 
   const max=Math.max(1,...keys.map(k=>Math.max(buckets[k]?.income||0,buckets[k]?.expense||0)));
