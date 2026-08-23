@@ -2135,6 +2135,63 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .light .profile-menu .setting-button:has(.danger) .danger{color:#df4055!important}
 .light .profile-menu .setting-button:has(.danger){border-top-color:#f0dfe2!important}
 </style>
+
+<style id="fix-goal-tab-v9">
+/* 13.3.99 V9 — Financial Goals: action controls and quick goal form entry.
+   Presentation-only; goal calculations/storage are untouched. */
+.smart-goal-item{
+  padding:12px!important;
+  border:1px solid #202844!important;
+  border-radius:14px!important;
+  background:linear-gradient(145deg,#0c1120,#090e1d)!important;
+}
+.smart-goal-head{grid-template-columns:36px minmax(0,1fr) auto!important;gap:9px!important}
+.smart-goal-icon{
+  width:36px!important;height:36px!important;border-radius:11px!important;
+  background:rgba(116,60,255,.12)!important;border:1px solid rgba(116,60,255,.28)!important;
+  color:#c9b1ff!important;font-size:16px!important;
+}
+.smart-goal-title b{font-size:10px!important;color:#f0f2f7!important}
+.smart-goal-title small{font-size:7px!important;color:#858da1!important}
+.smart-goal-actions{display:flex!important;gap:6px!important;align-items:center!important}
+.smart-goal-actions button{
+  width:32px!important;height:32px!important;border-radius:10px!important;
+  display:grid!important;place-items:center!important;
+  border:1px solid #303955!important;background:#11172a!important;
+  color:#bfa6ff!important;font-size:14px!important;line-height:1!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.12)!important;
+}
+.smart-goal-actions button:first-child{color:#b996ff!important;border-color:rgba(116,60,255,.38)!important}
+.smart-goal-actions button:last-child{color:#ff7a88!important;border-color:rgba(255,80,100,.28)!important}
+.smart-goal-values{margin-top:10px!important}
+.smart-goal-values span{font-size:7px!important;color:#8d95a8!important}
+.smart-goal-values b{font-size:9px!important;color:#e7eaf2!important;margin-top:3px!important}
+.smart-goal-progress{height:6px!important;margin-top:9px!important;background:#151c30!important}
+.smart-goal-meta{font-size:7px!important;color:#737c91!important}
+
+.light .smart-goal-item{
+  background:linear-gradient(145deg,#ffffff,#f8f9fd)!important;
+  border-color:#dfe4ee!important;
+  box-shadow:0 5px 16px rgba(48,61,96,.045)!important;
+}
+.light .smart-goal-icon{
+  background:#f0eaff!important;border-color:#d9cdf6!important;color:#6d35df!important;
+}
+.light .smart-goal-title b{color:#151b36!important}
+.light .smart-goal-title small{color:#69738a!important}
+.light .smart-goal-actions button{
+  background:#fff!important;border-color:#dfe4ee!important;color:#7040df!important;
+  box-shadow:0 3px 10px rgba(48,61,96,.045)!important;
+}
+.light .smart-goal-actions button:first-child{background:#f3edff!important;border-color:#d8c8f7!important;color:#6734d1!important}
+.light .smart-goal-actions button:last-child{background:#fff5f6!important;border-color:#f0cbd0!important;color:#d94d5d!important}
+.light .smart-goal-values span{color:#69738a!important}
+.light .smart-goal-values b{color:#151b36!important}
+.light .smart-goal-progress{background:#edf0f5!important}
+.light .smart-goal-meta{color:#69738a!important}
+
+/* The home quick action opens the same dedicated Goal form as the Goal tab. */
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -2355,7 +2412,7 @@ function home(){
     </div>
     <div class="smart-home-advice"><div class="advice-icon">💡</div><div><b>Bugünün Önerisi</b><p>${esc(smart.advice)}</p></div><div class="advice-art" aria-hidden="true">🛍️✨</div></div>
   </section>
-  <section class="section quick-home"><div class="quick-home-head"><div class="section-title">Hızlı İşlemler</div></div><div class="quick quick-five"><button onclick="openModal('Gelir')"><span class="qicon q-income">${iconSvg('quickIncome')}</span>Gelir Ekle</button><button onclick="openModal('Gider')"><span class="qicon q-expense">${iconSvg('quickExpense')}</span>Gider Ekle</button><button onclick="openModal('Transfer')"><span class="qicon q-transfer">${iconSvg('quickTransfer')}</span>Transfer</button><button onclick="state.page='debts';render()"><span class="qicon q-debt">${iconSvg('quickDebt')}</span>Borç / Alacak</button><button onclick="state.page='smartCenter';render()"><span class="qicon q-goal">${iconSvg('quickGoal')}</span>Hedef Ekle</button></div></section>
+  <section class="section quick-home"><div class="quick-home-head"><div class="section-title">Hızlı İşlemler</div></div><div class="quick quick-five"><button onclick="openModal('Gelir')"><span class="qicon q-income">${iconSvg('quickIncome')}</span>Gelir Ekle</button><button onclick="openModal('Gider')"><span class="qicon q-expense">${iconSvg('quickExpense')}</span>Gider Ekle</button><button onclick="openModal('Transfer')"><span class="qicon q-transfer">${iconSvg('quickTransfer')}</span>Transfer</button><button onclick="state.page='debts';render()"><span class="qicon q-debt">${iconSvg('quickDebt')}</span>Borç / Alacak</button><button onclick="openGoalModal()"><span class="qicon q-goal">${iconSvg('quickGoal')}</span>Hedef Ekle</button></div></section>
   <section class="card section month-home"><div class="month-head"><b class="month-title"><span class="month-title-icon">${iconSvg('calendar')}</span> Bu Ay</b><button class="detail" onclick="state.page='reports';render()">İncele ›</button></div><div class="month-grid"><div class="month-cell"><small class="green">◉ Gelir</small><b class="green">${money(month.income)}</b></div><div class="month-cell"><small class="red">◉ Gider</small><b class="red">${money(month.expense)}</b></div><div class="month-cell"><small>Net</small><b>${money(month.net)}</b></div></div></section>
   <section class="card section recent"><div class="list-head"><b>Son İşlemler</b><button class="detail" onclick="state.page='transactions';render()">İncele ›</button></div>${recent}</section>`
 }
@@ -5431,7 +5488,116 @@ document.addEventListener('pointerdown',function(e){
 
 
 <style id="fix-smart-13304">
-/* 13.3.04 — Akıllı Finans Merkezi: sıkı mobil kart yerleşimi */
+/* 13.3.04 — Akıllı Finan
+<style id="fix-13399-smart-income-softlight-final">
+/* Premium Soft Light — Akıllı Finans Merkezi / Düzenli Gelir final yüzey.
+   Yalnızca sunum katmanı; veri, hesaplama ve işlevlere dokunmaz. */
+.light .smart-income-card{
+  background:linear-gradient(145deg,#ffffff 0%,#fbfaff 58%,#f7f5ff 100%)!important;
+  color:#151b36!important;
+  border:1px solid #e2e5ee!important;
+  border-radius:18px!important;
+  box-shadow:0 8px 24px rgba(55,65,100,.07)!important;
+  overflow:hidden!important;
+}
+.light .smart-income-card .smart-section-title{
+  color:#151b36!important;
+  margin-bottom:12px!important;
+}
+.light .smart-income-card .smart-section-title>b{
+  color:#151b36!important;
+  font-size:16px!important;
+  font-weight:800!important;
+}
+.light .smart-income-card .smart-income-add-head{
+  height:32px!important;
+  padding:0 11px!important;
+  border-radius:10px!important;
+  border:1px solid color-mix(in srgb,var(--theme-accent) 35%,#dfe4ed)!important;
+  background:color-mix(in srgb,var(--theme-accent) 7%,white)!important;
+  color:var(--theme-accent)!important;
+  font-size:9px!important;
+  font-weight:800!important;
+  box-shadow:0 4px 12px color-mix(in srgb,var(--theme-accent) 8%,transparent)!important;
+}
+.light .smart-income-card .smart-income-note{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin:0 0 11px!important;
+  padding:10px 11px!important;
+  border:1px solid color-mix(in srgb,var(--theme-accent) 16%,#e1e5ee)!important;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--theme-accent) 7%,white),#ffffff)!important;
+  border-radius:13px!important;
+}
+.light .smart-income-card .smart-income-note-icon{
+  width:34px!important;height:34px!important;flex:0 0 34px!important;
+  border-radius:10px!important;
+  color:var(--theme-accent)!important;
+  background:color-mix(in srgb,var(--theme-accent) 10%,white)!important;
+  border:1px solid color-mix(in srgb,var(--theme-accent) 22%,#e3e6ee)!important;
+  box-shadow:0 5px 14px color-mix(in srgb,var(--theme-accent) 10%,transparent)!important;
+}
+.light .smart-income-card .smart-income-note-icon svg{width:17px!important;height:17px!important}
+.light .smart-income-card .smart-income-note b{
+  color:#202742!important;font-size:10px!important;line-height:1.25!important;
+}
+.light .smart-income-card .smart-income-note small{
+  color:#737d91!important;font-size:8px!important;line-height:1.4!important;margin-top:3px!important;
+}
+.light .smart-income-card .smart-income-status{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:10px!important;padding:8px 10px!important;margin-bottom:4px!important;
+  border:1px solid #e3e6ee!important;border-radius:10px!important;
+  background:#f7f8fb!important;color:#5f6980!important;
+}
+.light .smart-income-card .smart-income-status span{color:#69748a!important;font-size:8px!important}
+.light .smart-income-card .smart-income-status b{color:var(--theme-accent)!important;font-size:8px!important}
+.light .smart-income-card .smart-income-list{display:grid!important;margin-top:2px!important}
+.light .smart-income-card .smart-income-row{
+  display:grid!important;grid-template-columns:34px minmax(0,1fr) auto!important;
+  gap:9px!important;align-items:center!important;padding:10px 2px!important;
+  border-top:1px solid #eceef3!important;color:#202742!important;
+}
+.light .smart-income-card .smart-income-icon{
+  width:32px!important;height:32px!important;border-radius:10px!important;
+  color:var(--green)!important;background:#eefaf5!important;
+  border:1px solid #cdeee1!important;
+}
+.light .smart-income-card .smart-income-icon svg{width:17px!important;height:17px!important}
+.light .smart-income-card .smart-income-row b{
+  color:#202742!important;font-size:9.5px!important;font-weight:800!important;
+}
+.light .smart-income-card .smart-income-row small{
+  color:#7a8497!important;font-size:7.5px!important;margin-top:3px!important;
+}
+.light .smart-income-card .smart-income-row>strong{
+  color:var(--green)!important;font-size:8.5px!important;font-weight:800!important;
+}
+.light .smart-income-card .smart-income-add{
+  height:30px!important;padding:0 10px!important;margin-top:3px!important;
+  border-radius:9px!important;border:1px solid color-mix(in srgb,var(--theme-accent) 28%,#dfe4ed)!important;
+  background:color-mix(in srgb,var(--theme-accent) 6%,white)!important;
+  color:var(--theme-accent)!important;font-size:8px!important;font-weight:800!important;
+}
+.light .smart-income-card .smart-income-empty{
+  margin-top:8px!important;padding:11px!important;border:1px dashed #d9ddea!important;
+  background:#fafbfe!important;color:#69748a!important;border-radius:11px!important;
+}
+.light .smart-income-card .smart-income-empty b{color:#202742!important;font-size:9px!important}
+.light .smart-income-card .smart-income-empty span{color:#7a8497!important;font-size:7.5px!important;line-height:1.4!important}
+@media(max-width:420px){
+  .light .smart-income-card{padding:14px!important;border-radius:17px!important}
+  .light .smart-income-card .smart-section-title>b{font-size:15px!important}
+  .light .smart-income-card .smart-income-note{padding:9px 10px!important}
+  .light .smart-income-card .smart-income-note b{font-size:9px!important}
+  .light .smart-income-card .smart-income-note small{font-size:7.3px!important}
+  .light .smart-income-card .smart-income-row{grid-template-columns:31px minmax(0,1fr) auto!important;gap:8px!important;padding:9px 1px!important}
+  .light .smart-income-card .smart-income-icon{width:30px!important;height:30px!important}
+}
+</style>
+
+s Merkezi: sıkı mobil kart yerleşimi */
 .smart-center-head{padding:1px 0 10px;gap:8px}
 .smart-center-head h1{font-size:clamp(17px,4.6vw,21px);line-height:1.12;max-width:calc(100% - 48px)}
 .smart-center-head p{font-size:8px;line-height:1.35;max-width:100%;margin-top:5px}
