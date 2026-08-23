@@ -2325,7 +2325,8 @@ function home(){
         <div class="smart-home-status"><i></i>${smart.hasData?(smart.score>=70?'Finansal durumun iyi görünüyor':'Finansal durumunu yakından takip et'):'Finansal verilerin hazırlanıyor'}</div>
         <p>${smart.hasData?`Bu ay gelirlerin giderlerinden <b>${money(Math.abs(month.net))}</b> ${month.net>=0?'fazla':'daha az'}.`:'Verilerin geldikçe sana özel finansal özet oluşturacağız.'}</p>
       </div></div>
-      </div>
+      <button type="button" class="smart-home-open smart-home-open-compact" onclick="state.page='smartCenter';render()" aria-label="Akıllı Finans Merkezi'ni aç">Merkezi Aç <span>›</span></button>
+    </div>
     <div class="smart-home-metrics">
       <div class="smart-score" style="--home-score:${smart.hasData?smart.score*3.6:0}deg">
         <div class="smart-score-ring"><div class="smart-score-inner"><strong>${smart.hasData?smart.score:'—'}</strong><small>/100</small></div></div>
@@ -2336,7 +2337,6 @@ function home(){
       <div class="smart-stat free"><span>Serbest Bakiye</span><i class="smart-wallet-icon">${iconSvg('wallet')}</i><b>${money(month.net)}</b><small>${month.income?'Net marj %'+Math.max(-100,smart.netRatio).toFixed(1):'—'}</small></div>
     </div>
     <div class="smart-home-advice"><div class="advice-icon">💡</div><div><b>Bugünün Önerisi</b><p>${esc(smart.advice)}</p></div><div class="advice-art" aria-hidden="true">🛍️✨</div></div>
-    <button class="smart-home-open" onclick="state.page='smartCenter';render()">Akıllı Finans Merkezi’ni Aç <span>›</span></button>
   </section>
   <section class="section quick-home"><div class="quick-home-head"><div class="section-title">Hızlı İşlemler</div></div><div class="quick quick-five"><button onclick="openModal('Gelir')"><span class="qicon q-income">${iconSvg('quickIncome')}</span>Gelir Ekle</button><button onclick="openModal('Gider')"><span class="qicon q-expense">${iconSvg('quickExpense')}</span>Gider Ekle</button><button onclick="openModal('Transfer')"><span class="qicon q-transfer">${iconSvg('quickTransfer')}</span>Transfer</button><button onclick="state.page='debts';render()"><span class="qicon q-debt">${iconSvg('quickDebt')}</span>Borç / Alacak</button><button onclick="state.page='smartCenter';render()"><span class="qicon q-goal">${iconSvg('quickGoal')}</span>Hedef Ekle</button></div></section>
   <section class="card section month-home"><div class="month-head"><b class="month-title"><span class="month-title-icon">${iconSvg('calendar')}</span> Bu Ay</b><button class="detail" onclick="state.page='reports';render()">İncele ›</button></div><div class="month-grid"><div class="month-cell"><small class="green">◉ Gelir</small><b class="green">${money(month.income)}</b></div><div class="month-cell"><small class="red">◉ Gider</small><b class="red">${money(month.expense)}</b></div><div class="month-cell"><small>Net</small><b>${money(month.net)}</b></div></div></section>
@@ -4163,6 +4163,50 @@ function exportExcelFile(){
 .smart-cash-next span{grid-column:1/-1;font-size:6.5px;color:#777f92;margin-bottom:3px}.smart-cash-next div{min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px}.smart-cash-next b{font-size:7.7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}.smart-cash-next strong{font-size:8px;color:var(--red);white-space:nowrap}.smart-cash-next small{grid-column:1/-1;font-size:6.2px;margin-top:3px;color:#626a80}
 .smart-cash-empty{margin-top:7px;padding:9px 10px;border:1px dashed #222b47;background:#090e1d;border-radius:10px;text-align:center}.smart-cash-empty b{font-size:7.5px}.smart-cash-empty span{font-size:6.6px;line-height:1.35}
 @media(max-width:360px){.smart-cash-card{padding:10px!important}.smart-cash-note{grid-template-columns:31px minmax(0,1fr);gap:7px;padding:7px 8px}.smart-cash-lock{width:31px;height:31px}.smart-cash-lock svg{width:17px!important;height:17px!important}.smart-cash-note b{font-size:8.5px}.smart-cash-note small{font-size:6.5px}.smart-cash-metric{padding:8px 7px;min-height:63px}.smart-cash-metric b{font-size:11px}.smart-cash-metric span{font-size:5.8px}.smart-cash-next{padding:7px}.smart-cash-next b{font-size:7.2px}}
+</style>
+
+<style id="fix-13308-smart-home-cta">
+/* 13.3.108 — Akıllı Finans ana kartı: CTA kart içinde sağ üst kompakt aksiyon.
+   İşlev aynı kalır; yalnızca büyük alt yönlendirme kart yüksekliğini artırmayacak şekilde taşınır. */
+.smart-home-card .smart-home-head{position:relative;align-items:flex-start;gap:8px;padding-right:0}
+.smart-home-card .smart-home-brand{min-width:0;flex:1 1 auto}
+.smart-home-card .smart-home-open-compact{
+  flex:0 0 auto;
+  width:auto;
+  min-width:88px;
+  min-height:32px;
+  height:32px;
+  margin:0;
+  padding:0 9px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  border-radius:10px;
+  white-space:nowrap;
+  text-align:center;
+  font-size:9.5px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.05px;
+  box-sizing:border-box;
+}
+.smart-home-card .smart-home-open-compact span{
+  float:none;
+  font-size:16px;
+  line-height:1;
+  margin-left:1px;
+}
+.smart-home-card .smart-home-open-compact:active{transform:scale(.98)}
+@media(max-width:420px){
+  .smart-home-card .smart-home-head{gap:6px}
+  .smart-home-card .smart-home-open-compact{min-width:82px;width:82px;height:30px;min-height:30px;padding:0 7px;font-size:8.8px;border-radius:9px}
+  .smart-home-card .smart-home-open-compact span{font-size:15px}
+}
+@media(max-width:360px){
+  .smart-home-card .smart-home-open-compact{min-width:76px;width:76px;font-size:8.2px;padding:0 5px}
+  .smart-home-card .smart-home-open-compact span{font-size:14px}
+}
 </style>
 </body></html>`],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`fix-finans-islemler-${new Date().toISOString().replace(/[:.]/g,'-')}.xls`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
 }
