@@ -2715,34 +2715,25 @@ function smartExpenseDistribution(current, previous){
 }
 
 function smartCashFlow(period=state.smartPeriod){
-  /* 13.3.77 — #05 Nakit Akışı: gerçek bakiye ile tahmini bakiye kesin olarak ayrılır. */
+  /* 13.3.102 — Nakit Akışı: planlı gelirler tutarı bilinmiyorsa tahmine eklenmez. */
   const actual=financialSummary(state.transactions).net;
   const today=localDateISO();
   const futurePayments=(state.upcoming||[]).filter(x=>x.kind==='payment' && smartDateISO(x.date) && smartDateISO(x.date)>=today);
-  const b=smartPeriodBounds(period);
-  let horizonEnd=b.endISO;
-  if(period==='all') horizonEnd='9999-12-31';
+  const futureIncome=(state.upcoming||[]).filter(x=>x.kind==='income' && smartDateISO(x.date) && smartDateISO(x.date)>=today);
+  const b=smartPeriodBounds(period); let horizonEnd=b.endISO; if(period==='all') horizonEnd='9999-12-31';
   const scheduled=futurePayments.filter(x=>smartDateISO(x.date)<=horizonEnd);
+  const scheduledIncome=futureIncome.filter(x=>smartDateISO(x.date)<=horizonEnd);
   const scheduledTotal=scheduled.reduce((sum,x)=>sum+(Number(x.amount)||0),0);
   const projected=actual-scheduledTotal;
   const next=scheduled.slice().sort((a,b)=>smartDateISO(a.date).localeCompare(smartDateISO(b.date)))[0]||null;
+  const nextIncome=scheduledIncome.slice().sort((a,b)=>smartDateISO(a.date).localeCompare(smartDateISO(b.date)))[0]||null;
   const rangeLabel=period==='all'?'Tüm gelecek':smartPeriodLabel(period)+' sonuna kadar';
   const sortedScheduled=scheduled.slice().sort((a,b)=>smartDateISO(a.date).localeCompare(smartDateISO(b.date)));
   const visibleScheduled=sortedScheduled.slice(0,2);
-  const hiddenScheduledCount=Math.max(0,sortedScheduled.length-visibleScheduled.length);
   const rows=visibleScheduled.map(x=>`<div class="smart-cash-row"><span>${esc(x.title||'Planlı ödeme')}</span><small>${esc(x.date)}</small><b class="red">-${money(Number(x.amount)||0)}</b></div>`).join('');
   const hasScheduled=scheduled.length>0;
-  return `<section class="card smart-card smart-cash-card">
-    <div class="smart-section-title"><b>Nakit Akışı</b><span>Gerçek + tahmini ayrı</span></div>
-    <div class="smart-cash-note"><span class="smart-cash-lock">${iconSvg('wallet')}</span><div><b>Gerçek net bakiye korunuyor</b><small>Buradaki tahmin yalnızca vadesi yaklaşan planlı ödemeleri düşer; gerçek bakiyene dokunmaz.</small></div></div>
-    <div class="smart-cash-metrics">
-      <div class="smart-cash-metric actual"><small>Gerçek Net Bakiye</small><b>${money(actual)}</b><span>Kaydedilmiş gelir ve giderler</span></div>
-      <div class="smart-cash-arrow">→</div>
-      <div class="smart-cash-metric projected"><small>Tahmini Bakiye</small><b class="${projected>=0?'green':'red'}">${money(projected)}</b><span>${hasScheduled?`${rangeLabel} · ${scheduled.length} planlı ödeme`:'Planlı ödeme yok · bakiye değişmiyor'}</span></div>
-    </div>
-    <div class="smart-cash-breakdown"><span>Planlı ödemeler</span><b class="${hasScheduled?'red':'muted'}">${hasScheduled?'-'+money(scheduledTotal):'Yok'}</b></div>
-    ${next?`<div class="smart-cash-next"><span>En yakın yaklaşan ödeme</span><div><b>${esc(next.title||'Planlı ödeme')}</b><strong>${money(Number(next.amount)||0)}</strong></div><small>${esc(next.date)} · ${scheduled.length>1?`${scheduled.length-1} ödeme daha planlı`:'Tek planlı ödeme'}</small></div>`:`<div class="smart-cash-empty"><b>Bu dönem için yaklaşan ödeme yok.</b><span>Bir ödeme eklediğinde, vade tarihine göre tahmini bakiye burada otomatik hesaplanır.</span></div>`}
-  </section>`;
+  const incomeLine=nextIncome?`<div class="smart-cash-income"><span>${iconSvg('incomeTrend')}</span><div><small>Yaklaşan düzenli gelir</small><b>${esc(nextIncome.title||'Düzenli gelir')}</b><em>${esc(nextIncome.date)} · ${Number(nextIncome.amount)>0?money(Number(nextIncome.amount)):'Tutar bekleniyor'}</em></div><button type="button" onclick="openRecurringIncomeEntry('${String(nextIncome.id||'').replace(/'/g,"\\'")}')">Gelir Olarak Ekle →</button></div>`:'';
+  return `<section class="card smart-card smart-cash-card"><div class="smart-section-title"><b>Nakit Akışı</b><span>Gerçek + tahmini ayrı</span></div><div class="smart-cash-note"><span class="smart-cash-lock">${iconSvg('wallet')}</span><div><b>Gerçek net bakiye korunuyor</b><small>Yaklaşan giderler tahmini bakiyeden düşer; tutarı bilinmeyen düzenli gelirler tahmine eklenmez.</small></div></div><div class="smart-cash-metrics"><div class="smart-cash-metric actual"><small>Gerçek Net Bakiye</small><b>${money(actual)}</b><span>Kaydedilmiş gelir ve giderler</span></div><div class="smart-cash-arrow">→</div><div class="smart-cash-metric projected"><small>Tahmini Bakiye</small><b class="${projected>=0?'green':'red'}">${money(projected)}</b><span>${hasScheduled?`${rangeLabel} · ${scheduled.length} planlı ödeme`:'Planlı ödeme yok · bakiye değişmiyor'}</span></div></div><div class="smart-cash-breakdown"><span>Planlı ödemeler</span><b class="${hasScheduled?'red':'muted'}">${hasScheduled?'-'+money(scheduledTotal):'Yok'}</b></div>${incomeLine}${next?`<div class="smart-cash-next"><span>En yakın yaklaşan ödeme</span><div><b>${esc(next.title||'Planlı ödeme')}</b><strong>${money(Number(next.amount)||0)}</strong></div><small>${esc(next.date)} · ${scheduled.length>1?`${scheduled.length-1} ödeme daha planlı`:'Tek planlı ödeme'}</small></div>`:`<div class="smart-cash-empty"><b>${nextIncome?'Yaklaşan ödeme bulunmuyor.':'Bu dönem için yaklaşan ödeme yok.'}</b><span>${nextIncome?'Düzenli gelir ödeme günü geldiğinde kullanıcı onayıyla gerçek gelire dönüştürülür.':'Bir ödeme eklediğinde, vade tarihine göre tahmini bakiye burada otomatik hesaplanır.'}</span></div>`}</section>`;
 }
 
 function smartDebtAnalysis(){
@@ -2958,7 +2949,7 @@ function smartRecurringExpenses(){
     const confidence=Math.min(99,Math.round(55+months.size*8+Math.min(20,close*3)));
     candidates.push({category:g.category,note:g.note||g.category,monthlyAvg,last,months:months.size,confidence,source:'Otomatik'});
   });
-  const manual=(Array.isArray(state.recurring)?state.recurring:[]).filter(x=>(Number(x.amount)||0)>0&&x.active!==false);
+  const manual=(Array.isArray(state.recurring)?state.recurring:[]).filter(x=>(x.type!=='Düzenli Gelir')&&(Number(x.amount)||0)>0&&x.active!==false);
   manual.forEach(x=>{
     const freq=x.frequency||'Aylık';
     const monthlyFactor=freq==='Haftalık'?52/12:freq==='3 Aylık'?1/3:freq==='Yıllık'?1/12:1;
@@ -2978,14 +2969,79 @@ function smartRecurringExpenses(){
   return `<section class="card smart-card smart-recurring-card"><div class="smart-section-title"><b>Abonelik / Düzenli Giderler</b><button class="smart-recurring-add" onclick="openRecurringModal()">＋ Ekle</button></div><div class="smart-recurring-source"><span>Kaynak</span><b>İşlem geçmişi + kayıtlı abonelikler</b></div><div class="smart-recurring-note"><span class="smart-recurring-note-icon">↻</span><div><b>Tekrarlayan giderlerini takip et</b><small>Otomatik analiz mevcut Gider kayıtlarını okur. Manuel kayıtlar abonelik veya düzenli gider planını ayrıca saklar.</small></div></div><div class="smart-recurring-metrics"><div><small>Takip edilen</small><b>${top.length}</b><span>kalem</span></div><div><small>Aylık yaklaşık</small><b>${monthly?money(monthly):'—'}</b><span>toplam yük</span></div><div><small>Gelir payı</small><b>${allIncome&&monthly?'%'+risk:'—'}</b><span>${allIncome?'mevcut gelire göre':'gelir bekleniyor'}</span></div></div><div class="smart-recurring-insight"><b>Akıllı değerlendirme</b><span>${esc(insight)}</span></div>${top.length?`<div class="smart-list-summary"><span>${top.length} düzenli kalem</span><small>${hiddenRecurringCount?`${hiddenRecurringCount} kalem daha · `:''}Detayları yönetmek için Ekle alanını kullan</small></div>`:'<div class="smart-recurring-empty"><b>Henüz düzenli kalem yok.</b><span>İlk aboneliğini veya düzenli giderini eklemek için yukarıdaki “＋ Ekle” düğmesine dokun.</span></div>'}</section>`;
 }
 
+
+function smartRecurringIncome(){
+  /* 13.3.102 — Düzenli Gelir: gün sabit, tutar değişken olabilir.
+     Planlanan gelir gerçek bakiyeye hiçbir şekilde eklenmez. Kullanıcı
+     ödeme gerçekten geldiğinde "Gelir Olarak Ekle" ile normal Gelir işlemine çevirir. */
+  const list=(Array.isArray(state.recurring)?state.recurring:[]).filter(x=>x.type==='Düzenli Gelir'&&x.active!==false);
+  const today=localDateISO();
+  const rows=list.slice().sort((a,b)=>String(a.nextDate||'').localeCompare(String(b.nextDate||''))).slice(0,2).map(x=>{
+    const d=String(x.nextDate||'').slice(0,10);
+    const weekday=d?new Date(d+'T12:00:00').toLocaleDateString('tr-TR',{weekday:'long'}):'Ödeme günü';
+    const amount=(Number(x.amount)||0)>0?money(Number(x.amount)):'Tutar bekleniyor';
+    const source=String(x.title||'Düzenli gelir');
+    return `<div class="smart-income-row"><span class="smart-income-icon">${iconSvg('calendar')}</span><div><b>${esc(source)}</b><small>${esc(weekday)} · ${esc(x.frequency||'Haftalık')} · ${d?esc(formatDateTR(d)):'Tarih bekleniyor'}</small></div><strong class="green">${esc(amount)}</strong><button type="button" class="smart-income-add" onclick="openRecurringIncomeEntry('${String(x.id).replace(/'/g,"\\'")}')">Gelir Olarak Ekle <span>→</span></button></div>`;
+  }).join('');
+  const next=list.slice().sort((a,b)=>String(a.nextDate||'').localeCompare(String(b.nextDate||'')))[0]||null;
+  const nextDate=next?.nextDate?smartDateISO(next.nextDate):'';
+  const upcomingText=nextDate&&nextDate<today?'Ödeme günü geçti · yeni tarihi güncelle':nextDate===today?'Ödeme günü bugün':'Bir sonraki ödeme günü takipte';
+  return `<section class="card smart-card smart-income-card"><div class="smart-section-title"><b>Düzenli Gelir</b><button class="smart-income-add-head" onclick="openRecurringModal(null,'Düzenli Gelir')">＋ Ekle</button></div><div class="smart-recurring-source"><span>Kaynak</span><b>Kullanıcının belirlediği ödeme günü</b></div><div class="smart-income-note"><span class="smart-income-note-icon">${iconSvg('incomeTrend')}</span><div><b>Her ödeme gününü takip et</b><small>Tutar sabit değilse boş bırakılabilir. Para gerçekten geldiğinde kullanıcı onayıyla Gelir kaydı oluşturulur.</small></div></div>${list.length?`<div class="smart-income-status"><span>${esc(upcomingText)}</span><b>${next?.frequency==='Haftalık'?'Her hafta':'Düzenli ödeme'}</b></div><div class="smart-income-list">${rows}</div>`:`<div class="smart-income-empty"><b>Düzenli gelir tanımlanmadı.</b><span>Örneğin her Perşembe gelen firma ödemeni ekle; tutarı bilmek zorunda değilsin.</span></div>`}</section>`;
+}
+
+function openRecurringIncomeEntry(id){
+  let item=(state.recurring||[]).find(x=>String(x.id)===String(id));
+  if(!item)item=(state.recurring||[]).find(x=>String(x.upcomingId)===String(id));
+  if(!item)return;
+  const d=item.nextDate||localDateISO();
+  state.editIndex=null;
+  state.type='Gelir';
+  state.selectedCat=item.category||'Kurye Geliri';
+  const catNames=categoryOptions('Gelir').map(x=>x[1]);
+  if(!catNames.includes(state.selectedCat))state.selectedCat='Kurye Geliri';
+  state.txDraft={amount:'',note:item.note||`${item.title||'Düzenli gelir'} · ${item.frequency||'Haftalık'}`,date:d,wallet:'Banka',recurringId:String(item.id)};
+  openModal('Gelir');
+  requestAnimationFrame(()=>{
+    const amount=document.getElementById('amount');
+    if(amount)amount.focus();
+    const title=document.querySelector('#modal .sheet h2');
+    if(title)title.textContent='Gelir Olarak Ekle';
+    const save=document.querySelector('#modal .sheet .save');
+    if(save)save.textContent='Geliri Kaydet';
+  });
+}
+
+function advanceRecurringIncomeSchedule(id){
+  const item=(state.recurring||[]).find(x=>String(x.id)===String(id));
+  if(!item)return;
+  const d=new Date((item.nextDate||localDateISO())+'T12:00:00');
+  if(Number.isNaN(d.getTime()))return;
+  const freq=item.frequency||'Haftalık';
+  if(freq==='Haftalık')d.setDate(d.getDate()+7);
+  else if(freq==='3 Aylık')d.setMonth(d.getMonth()+3);
+  else if(freq==='Yıllık')d.setFullYear(d.getFullYear()+1);
+  else d.setMonth(d.getMonth()+1);
+  const next=d.toISOString().slice(0,10);
+  item.nextDate=next;
+  if(item.upcomingId){
+    const u=(state.upcoming||[]).find(x=>String(x.id)===String(item.upcomingId));
+    if(u){u.kind='income';u.title=item.title;u.amount=Number(item.amount)||0;u.date=next;u.note=`Düzenli Gelir · ${freq}`;}
+  }
+}
+
 function openRecurringModal(editId=null,typeOverride=null){
   const list=Array.isArray(state.recurring)?state.recurring:[];
   const existing=editId?list.find(x=>String(x.id)===String(editId)):null;
-  const freq=existing?.frequency||'Aylık';
+  const freq=existing?.frequency||'Haftalık';
   const type=typeOverride||existing?.type||'Abonelik';
+  const isIncome=type==='Düzenli Gelir';
   document.getElementById('modal').classList.remove('hidden');
-  document.getElementById('modal').innerHTML=`<div class="sheet recurring-sheet"><button class="close" onclick="closeModal()">×</button><div class="support-kicker"><span class="support-kicker-icon">↻</span> DÜZENLİ GİDER</div><h2>${existing?'Düzenli Gideri Düzenle':'Abonelik / Düzenli Gider Ekle'}</h2><div class="settings-sub">Bu kayıt planlama içindir; gerçek bakiyene otomatik gider yazmaz.</div><div class="form"><label>Tür</label><div class="type">${['Abonelik','Düzenli Gider'].map(x=>`<button class="${type===x?'active':''}" onclick="openRecurringModalType('${x}',${existing?`'${String(existing.id).replace(/'/g,"\\'")}'`:'null'})">${x}</button>`).join('')}</div><label>Ad</label><input id="recTitle" value="${esc(existing?.title||'')}" placeholder="Örn. Netflix, Kira, İnternet"><label>Tutar</label><input id="recAmount" inputmode="decimal" value="${existing?String(existing.amount||''):''}" placeholder="₺0,00"><label>Tekrar</label><select id="recFrequency">${['Haftalık','Aylık','3 Aylık','Yıllık'].map(x=>`<option ${freq===x?'selected':''}>${x}</option>`).join('')}</select><label>Sonraki tarih</label><input id="recNextDate" type="date" value="${esc(existing?.nextDate||localDateISO())}"><label class="recurring-check"><input id="recUpcoming" type="checkbox" ${existing?.addToUpcoming!==false?'checked':''}> Yaklaşan ödemelerde de takip et</label><label>Kategori</label><input id="recCategory" value="${esc(existing?.category||'Abonelik')}" placeholder="Örn. Fatura"><label>Not</label><input id="recNote" value="${esc(existing?.note||'')}" placeholder="İsteğe bağlı"><button class="save" onclick="saveRecurring(${existing?`'${String(existing.id).replace(/'/g,"\\'")}'`:'null'},'${type}')">${existing?'Değişiklikleri Kaydet':'Kaydet'}</button>${existing?`<button type="button" class="delete recurring-delete" onclick='deleteRecurring(${JSON.stringify(String(existing.id))})'>Kaydı Sil</button>`:''}</div></div>`;
+  const safeId=existing?String(existing.id).replace(/'/g,"\\'"):'';
+  const typeButtons=['Abonelik','Düzenli Gider','Düzenli Gelir'];
+  const defaultCategory=isIncome?(existing?.category||'Kurye Geliri'):(existing?.category||'Abonelik');
+  document.getElementById('modal').innerHTML=`<div class="sheet recurring-sheet ${isIncome?'recurring-income-sheet':''}"><button class="close" onclick="closeModal()">×</button><div class="support-kicker"><span class="support-kicker-icon">${isIncome?iconSvg('incomeTrend'):'↻'}</span> ${isIncome?'DÜZENLİ GELİR':'DÜZENLİ GİDER'}</div><h2>${existing?(isIncome?'Düzenli Geliri Düzenle':'Düzenli Gideri Düzenle'):(isIncome?'Düzenli Gelir Ekle':'Abonelik / Düzenli Gider Ekle')}</h2><div class="settings-sub">${isIncome?'Ödeme günü sabit, tutar değişken olabilir. Gerçek bakiyeye otomatik gelir yazılmaz.':'Bu kayıt planlama içindir; gerçek bakiyene otomatik gider yazmaz.'}</div><div class="form"><label>Tür</label><div class="type recurring-type-grid">${typeButtons.map(x=>`<button class="${type===x?'active':''}" onclick="openRecurringModalType('${x}',${existing?`'${safeId}'`:'null'})">${x}</button>`).join('')}</div><label>Ad</label><input id="recTitle" value="${esc(existing?.title||'')}" placeholder="${isIncome?'Örn. Çalıştığım Firma':'Örn. Netflix, Kira, İnternet'}"><label>Tutar${isIncome?' (isteğe bağlı)':''}</label><input id="recAmount" inputmode="decimal" value="${existing&&Number(existing.amount)>0?String(existing.amount):''}" placeholder="${isIncome?'Tutar değişkense boş bırak':'₺0,00'}"><label>Tekrar</label><select id="recFrequency"><option ${freq==='Haftalık'?'selected':''}>Haftalık</option><option ${freq==='Aylık'?'selected':''}>Aylık</option><option ${freq==='3 Aylık'?'selected':''}>3 Aylık</option><option ${freq==='Yıllık'?'selected':''}>Yıllık</option></select><label>Sonraki ödeme günü</label><input id="recNextDate" type="date" value="${esc(existing?.nextDate||localDateISO())}"><label class="recurring-check"><input id="recUpcoming" type="checkbox" ${existing?.addToUpcoming!==false?'checked':''}> ${isIncome?'Yaklaşan gelirlerde takip et':'Yaklaşan ödemelerde de takip et'}</label><label>Kategori</label><input id="recCategory" value="${esc(existing?.category||defaultCategory)}" placeholder="${isIncome?'Kurye Geliri / Maaş':'Örn. Fatura'}"><label>Not</label><input id="recNote" value="${esc(existing?.note||'')}" placeholder="İsteğe bağlı"><button class="save" onclick="saveRecurring(${existing?`'${safeId}'`:'null'},'${type}')">${existing?'Değişiklikleri Kaydet':'Kaydet'}</button>${existing?`<button type="button" class="delete recurring-delete" onclick='deleteRecurring(${JSON.stringify(String(existing.id))})'>Kaydı Sil</button>`:''}</div></div>`;
 }
+
 function openRecurringModalType(type,editId=null){
   const list=Array.isArray(state.recurring)?state.recurring:[]; const existing=editId?list.find(x=>String(x.id)===String(editId)):null;
   const title=document.getElementById('recTitle')?.value||existing?.title||''; const amount=document.getElementById('recAmount')?.value||existing?.amount||''; const frequency=document.getElementById('recFrequency')?.value||existing?.frequency||'Aylık'; const nextDate=document.getElementById('recNextDate')?.value||existing?.nextDate||localDateISO(); const category=document.getElementById('recCategory')?.value||existing?.category||'Abonelik'; const note=document.getElementById('recNote')?.value||existing?.note||'';
@@ -2996,20 +3052,27 @@ function openRecurringModalType(type,editId=null){
 function saveRecurring(editId=null,type='Abonelik'){
   const title=document.getElementById('recTitle')?.value.trim();
   const amount=Number(String(document.getElementById('recAmount')?.value||0).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.'))||0;
-  const frequency=document.getElementById('recFrequency')?.value||'Aylık'; const nextDate=document.getElementById('recNextDate')?.value||localDateISO(); const addToUpcoming=document.getElementById('recUpcoming')?.checked!==false; const category=document.getElementById('recCategory')?.value.trim()||'Abonelik'; const note=document.getElementById('recNote')?.value.trim()||'';
-  if(!title){showToast('Ad gerekli.');return} if(amount<=0){showToast('Tutar gerekli.');return}
-  const item={id:editId?String(editId):Date.now().toString(),type:type==='Düzenli Gider'?'Düzenli Gider':'Abonelik',title,amount,frequency,nextDate,category,note,active:true,addToUpcoming};
-  if(editId){const i=state.recurring.findIndex(x=>String(x.id)===String(editId));if(i>=0)state.recurring[i]=item;}
+  const frequency=document.getElementById('recFrequency')?.value||'Haftalık'; const nextDate=document.getElementById('recNextDate')?.value||localDateISO(); const addToUpcoming=document.getElementById('recUpcoming')?.checked!==false; const isIncome=type==='Düzenli Gelir'; const category=document.getElementById('recCategory')?.value.trim()||(isIncome?'Kurye Geliri':'Abonelik'); const note=document.getElementById('recNote')?.value.trim()||'';
+  if(!title){showToast('Ad gerekli.');return}
+  if(!isIncome&&amount<=0){showToast('Tutar gerekli.');return}
+  const normalizedType=isIncome?'Düzenli Gelir':(type==='Düzenli Gider'?'Düzenli Gider':'Abonelik');
+  const item={id:editId?String(editId):Date.now().toString(),type:normalizedType,title,amount:Math.max(0,amount),frequency,nextDate,category,note,active:true,addToUpcoming};
+  const previous=editId?listById(state.recurring,editId):null;
+  const upcomingId=editId?(previous?.upcomingId||null):null;
+  if(editId){const i=state.recurring.findIndex(x=>String(x.id)===String(editId));if(i>=0){item.upcomingId=upcomingId;state.recurring[i]=item;}}
   else state.recurring.unshift(item);
-  const upcomingId=editId?(state.recurring.find(x=>String(x.id)===String(editId))?.upcomingId||null):null;
   if(addToUpcoming){
     const upId=upcomingId||('rec-'+item.id); item.upcomingId=upId; const found=(state.upcoming||[]).find(x=>String(x.id)===String(upId));
-    if(found){found.kind='payment';found.title=title;found.amount=amount;found.date=nextDate;found.note=`${type} · ${frequency}`;}
-    else state.upcoming.unshift({id:upId,kind:'payment',title,amount,date:nextDate,note:`${type} · ${frequency}`});
-  } else if(upcomingId){state.upcoming=(state.upcoming||[]).filter(x=>String(x.id)!==String(upcomingId)); item.upcomingId=null;}
-  persist();closeModal();state.page='smartCenter';render();showToast(editId?'Düzenli gider güncellendi.':'Düzenli gider kaydedildi.');
+    const kind=isIncome?'income':'payment';
+    const upNote=`${normalizedType} · ${frequency}`;
+    if(found){found.kind=kind;found.title=title;found.amount=Math.max(0,amount);found.date=nextDate;found.note=upNote;}
+    else state.upcoming.unshift({id:upId,kind,title,amount:Math.max(0,amount),date:nextDate,note:upNote});
+  } else if(upcomingId){state.upcoming=(state.upcoming||[]).filter(x=>String(x.id)!==String(upcomingId));item.upcomingId=null;}
+  persist();closeModal();state.page='smartCenter';render();showToast(editId?(isIncome?'Düzenli gelir güncellendi.':'Düzenli gider güncellendi.'):(isIncome?'Düzenli gelir kaydedildi.':'Düzenli gider kaydedildi.'));
 }
-function deleteRecurring(id){state.recurring=(state.recurring||[]).filter(x=>String(x.id)!==String(id));persist();render();showToast('Düzenli gider silindi.');}
+function listById(list,id){return (list||[]).find(x=>String(x.id)===String(id))||null;}
+
+function deleteRecurring(id){const item=(state.recurring||[]).find(x=>String(x.id)===String(id));if(item?.upcomingId)state.upcoming=(state.upcoming||[]).filter(x=>String(x.id)!==String(item.upcomingId));state.recurring=(state.recurring||[]).filter(x=>String(x.id)!==String(id));persist();render();showToast(item?.type==='Düzenli Gelir'?'Düzenli gelir silindi.':'Düzenli gider silindi.');}
 
 function smartAbnormalMovements(current, previous){
   /* 13.3.84 — #12 Olağandışı Hareketler.
@@ -3244,26 +3307,27 @@ function smartCenter(){
     </div>
     <div class="smart-two-col">${smartDebtAnalysis()}${smartUpcomingPayments()}</div>
     <div class="smart-two-col">${smartShoppingBudget(current, previous)}${smartRecurringExpenses()}</div>
+    ${smartRecurringIncome()}
     <div class="smart-two-col">${smartAbnormalMovements(current, previous)}${smartRecommendations(current, previous)}</div>
     <div class="smart-two-col">${smartAssistant()}${smartInvestmentResearch()}</div>
     <div class="smart-two-col">${smartFinancialGoals()}${smartProactiveSystem(current, previous)}</div>
     <section class="smart-mini-grid">${`<div class="card smart-mini"><small>En yüksek gider</small><b>${topCat?esc(topCat[0]):'—'}</b><span>${topCat?money(topCat[1]):'Veri yok'}</span></div><div class="card smart-mini"><small>Borç / Alacak</small><b>${money(debtBorç-debtAlacak)}</b><span>Net yükümlülük</span></div><div class="card smart-mini"><small>Yaklaşan ödeme</small><b>${paymentCount}</b><span>Bugünden sonraki</span></div><div class="card smart-mini"><small>Tasarruf Oranı</small><b>%${Math.max(-100,Math.min(100,savingsRate))}</b><span>Gelirden kalan</span></div>`}</section>
   </div>`;
 }
-function upcoming(){const list=state.upcoming||[];const payments=list.filter(x=>x.kind==='payment');const reminders=list.filter(x=>x.kind==='reminder');const card=(x)=>`<div class="upcoming-row"><div class="upcoming-info"><b>${esc(x.title)}</b><small>${esc(x.date)} · ${esc(x.note||'')}</small></div><strong class="upcoming-amount">${x.kind==='payment'?money(Number(x.amount)||0):'Hatırlatma'}</strong><div class="upcoming-actions"><button type="button" class="edit-upcoming" aria-label="Düzenle" title="Düzenle" onclick="editUpcoming('${x.id}')">${iconSvg('edit').replace('stroke="currentColor"','stroke="#b996ff"')}</button><button type="button" class="delete-upcoming" aria-label="Sil" title="Sil" onclick="deleteUpcoming('${x.id}')">${iconSvg('trash').replace('stroke="currentColor"','stroke="#ff6574"')}</button></div></div>`;return `<div class="upcoming-head"><div><h1>Yaklaşan</h1><p>Ödeme ve hatırlatmalarını buradan takip et.</p></div></div><section class="card section upcoming-card"><div class="section-title upcoming-section-title"><span>Yaklaşan Ödemeler</span><button class="mini-add" onclick="openUpcomingModal('payment')" aria-label="Yaklaşan ödeme ekle">＋</button></div>${payments.length?payments.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('payment')"><span>${iconSvg('calendar')}</span><b>Yaklaşan ödeme ekle</b><small>Vade tarihi ve tutarı takip et</small></button>`}</section><section class="card section upcoming-card"><div class="section-title upcoming-section-title"><span>Hatırlatmalar</span><button class="mini-add" onclick="openUpcomingModal('reminder')" aria-label="Hatırlatma ekle">＋</button></div>${reminders.length?reminders.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('reminder')"><span>${iconSvg('bell')}</span><b>Hatırlatma ekle</b><small>Önemli işleri zamanında hatırla</small></button>`}</section>`}
+function upcoming(){const list=state.upcoming||[];const payments=list.filter(x=>x.kind==='payment');const incomes=list.filter(x=>x.kind==='income');const reminders=list.filter(x=>x.kind==='reminder');const card=(x)=>`<div class="upcoming-row"><div class="upcoming-info"><b>${esc(x.title)}</b><small>${esc(x.date)} · ${esc(x.note||'')}</small></div><strong class="upcoming-amount ${x.kind==='income'?'green':''}">${x.kind==='payment'?money(Number(x.amount)||0):x.kind==='income'?(Number(x.amount)>0?money(Number(x.amount)):'Tutar bekleniyor'):'Hatırlatma'}</strong><div class="upcoming-actions">${x.kind==='income'?`<button type="button" class="edit-upcoming income-action" aria-label="Gelir olarak ekle" title="Gelir olarak ekle" onclick="openRecurringIncomeEntry('${String(x.id).replace(/'/g,"\\'")}')">${iconSvg('incomeTrend')}</button>`:''}<button type="button" class="edit-upcoming" aria-label="Düzenle" title="Düzenle" onclick="editUpcoming('${x.id}')">${iconSvg('edit').replace('stroke="currentColor"','stroke="#b996ff"')}</button><button type="button" class="delete-upcoming" aria-label="Sil" title="Sil" onclick="deleteUpcoming('${x.id}')">${iconSvg('trash').replace('stroke="currentColor"','stroke="#ff6574"')}</button></div></div>`;return `<div class="upcoming-head"><div><h1>Yaklaşan</h1><p>Ödeme ve hatırlatmalarını buradan takip et.</p></div></div><section class="card section upcoming-card"><div class="section-title upcoming-section-title"><span>Yaklaşan Ödemeler</span><button class="mini-add" onclick="openUpcomingModal('payment')" aria-label="Yaklaşan ödeme ekle">＋</button></div>${payments.length?payments.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('payment')"><span>${iconSvg('calendar')}</span><b>Yaklaşan ödeme ekle</b><small>Vade tarihi ve tutarı takip et</small></button>`}</section><section class="card section upcoming-card"><div class="section-title upcoming-section-title"><span>Yaklaşan Gelirler</span><button class="mini-add" onclick="openRecurringModal(null,'Düzenli Gelir')" aria-label="Düzenli gelir ekle">＋</button></div>${incomes.length?incomes.map(card).join(''):`<button class="empty-action" onclick="openRecurringModal(null,'Düzenli Gelir')"><span>${iconSvg('incomeTrend')}</span><b>Düzenli gelir ekle</b><small>Ödeme günü sabit, tutar değişken olabilir</small></button>`}</section><section class="card section upcoming-card"><div class="section-title upcoming-section-title"><span>Hatırlatmalar</span><button class="mini-add" onclick="openUpcomingModal('reminder')" aria-label="Hatırlatma ekle">＋</button></div>${reminders.length?reminders.map(card).join(''):`<button class="empty-action" onclick="openUpcomingModal('reminder')"><span>${iconSvg('bell')}</span><b>Hatırlatma ekle</b><small>Önemli işleri zamanında hatırla</small></button>`}</section>`}
 function showUpcoming(){state.page='upcoming';render()}
 function openUpcomingModal(kind,editId){
   const existing=editId?((state.upcoming||[]).find(x=>String(x.id)===String(editId))||null):null;
   const currentKind=existing?.kind||kind;
   document.getElementById('modal').classList.remove('hidden');
   const safeId=existing?String(existing.id).replace(/'/g,"\\'"):'';
-  document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>${existing?(currentKind==='payment'?'Yaklaşan Ödemeyi Düzenle':'Hatırlatmayı Düzenle'):(currentKind==='payment'?'Yaklaşan Ödeme':'Hatırlatma Ekle')}</h2><div class="form"><label>Başlık</label><input id="upTitle" value="${esc(existing?.title||'')}" placeholder="${currentKind==='payment'?'Kredi kartı ödemesi':'Örneğin: Fatura öde'}"><label>${currentKind==='payment'?'Tutar':''}</label>${currentKind==='payment'?`<input id="upAmount" inputmode="decimal" value="${existing?String(existing.amount||''):''}" placeholder="₺0,00">`:''}<label>Tarih</label><input id="upDate" type="date" value="${esc(existing?.date||localDateISO())}"><label>Not</label><input id="upNote" value="${esc(existing?.note||'')}" placeholder="Not ekleyin..."><button class="save" onclick="saveUpcoming('${currentKind}',${existing?`'${safeId}'`:'null'})">${existing?'Güncelle':'Kaydet'}</button></div></div>`
+  document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>${existing?(currentKind==='payment'?'Yaklaşan Ödemeyi Düzenle':currentKind==='income'?'Yaklaşan Geliri Düzenle':'Hatırlatmayı Düzenle'):(currentKind==='payment'?'Yaklaşan Ödeme':currentKind==='income'?'Yaklaşan Gelir':'Hatırlatma Ekle')}</h2><div class="form"><label>Başlık</label><input id="upTitle" value="${esc(existing?.title||'')}" placeholder="${currentKind==='payment'?'Kredi kartı ödemesi':currentKind==='income'?'Çalıştığım Firma':'Örneğin: Fatura öde'}"><label>${currentKind==='payment'||currentKind==='income'?'Tutar':''}</label>${currentKind==='payment'||currentKind==='income'?`<input id="upAmount" inputmode="decimal" value="${existing&&Number(existing.amount)>0?String(existing.amount):''}" placeholder="${currentKind==='income'?'Değişkense boş bırak':'₺0,00'}">`:''}<label>Tarih</label><input id="upDate" type="date" value="${esc(existing?.date||localDateISO())}"><label>Not</label><input id="upNote" value="${esc(existing?.note||'')}" placeholder="Not ekleyin..."><button class="save" onclick="saveUpcoming('${currentKind}',${existing?`'${safeId}'`:'null'})">${existing?'Güncelle':'Kaydet'}</button></div></div>`
 }
 function editUpcoming(id){const x=(state.upcoming||[]).find(v=>String(v.id)===String(id));if(!x)return;openUpcomingModal(x.kind,String(x.id))}
 function saveUpcoming(kind,editId){
   const title=document.getElementById('upTitle')?.value.trim();
   if(!title){showToast('Başlık gerekli.');return}
-  const amount=kind==='payment'?Number(String(document.getElementById('upAmount')?.value||0).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.')):0;
+  const amount=(kind==='payment'||kind==='income')?Number(String(document.getElementById('upAmount')?.value||0).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.')):0;
   const date=document.getElementById('upDate')?.value||localDateISO();
   const note=document.getElementById('upNote')?.value.trim()||'';
   if(editId){
@@ -3924,6 +3988,17 @@ function exportExcelFile(){
 
 
 <style id="fix-smart-13396-cash-premium">
+
+/* 13.3.102 — Düzenli Gelir: kullanıcı onaylı, değişken tutarlı premium akış */
+.smart-income-card{overflow:hidden}
+.smart-income-note{display:flex;gap:9px;align-items:center;padding:9px 10px;margin-bottom:8px;border:1px solid rgba(32,217,155,.18);background:rgba(32,217,155,.035);border-radius:11px}
+.smart-income-note-icon{width:29px;height:29px;flex:0 0 29px;display:grid;place-items:center;border-radius:9px;color:#49dfb0;background:rgba(32,217,155,.08);border:1px solid rgba(32,217,155,.22)}
+.smart-income-note-icon svg{width:16px;height:16px}
+.smart-income-note b{display:block;font-size:8.5px;color:#d9fff1}.smart-income-note small{display:block;margin-top:2px;color:#858b9e;font-size:7px;line-height:1.4}
+.smart-income-status{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 8px;margin-bottom:4px;border:1px solid #171f39;border-radius:9px;background:#090e1d}.smart-income-status span{font-size:7px;color:#8d95a8}.smart-income-status b{font-size:7px;color:#49dfb0}
+.smart-income-list{display:grid}.smart-income-row{display:grid;grid-template-columns:29px minmax(0,1fr) auto;gap:7px;align-items:center;padding:8px 1px;border-top:1px solid #12182b}.smart-income-row>div{min-width:0}.smart-income-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:#49dfb0;background:#09131b;border:1px solid rgba(32,217,155,.2)}.smart-income-icon svg{width:15px;height:15px}.smart-income-row b{display:block;font-size:8.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.smart-income-row small{display:block;color:#687084;font-size:6.6px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.smart-income-row>strong{font-size:7.5px;white-space:nowrap;text-align:right}.smart-income-add{grid-column:2 / 4;justify-self:end;height:28px;padding:0 10px;border-radius:9px;border:1px solid rgba(32,217,155,.35);background:rgba(32,217,155,.05);color:#49dfb0;font-size:7.5px;font-weight:800}.smart-income-add span{margin-left:3px}.smart-income-add-head{height:28px;padding:0 10px;border-radius:9px;border:1px solid rgba(32,217,155,.35);background:rgba(32,217,155,.05);color:#49dfb0;font-size:8px;font-weight:800;white-space:nowrap}.smart-income-empty{margin-top:7px;border:1px dashed #26314a;background:#090e1d;color:#a7aabc;border-radius:10px;padding:9px}.smart-income-empty b{display:block;font-size:8px;color:#dbe2f0}.smart-income-empty span{display:block;margin-top:3px;font-size:7px;line-height:1.4;color:#7e879b}.recurring-type-grid{grid-template-columns:repeat(3,1fr)!important}.recurring-income-sheet .recurring-type-grid button.active{border-color:rgba(32,217,155,.5);background:rgba(32,217,155,.09);color:#49dfb0}.recurring-income-sheet .save{border-color:rgba(32,217,155,.45)!important;background:rgba(32,217,155,.1)!important;color:#49dfb0!important}.smart-cash-income{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;margin-top:8px;padding:8px 9px;border:1px solid rgba(32,217,155,.16);border-radius:10px;background:rgba(32,217,155,.03)}.smart-cash-income>span{width:27px;height:27px;display:grid;place-items:center;border-radius:8px;color:#49dfb0;background:rgba(32,217,155,.07)}.smart-cash-income>span svg{width:15px;height:15px}.smart-cash-income div{min-width:0}.smart-cash-income small,.smart-cash-income em{display:block;color:#687084;font-size:6.5px;line-height:1.3;font-style:normal}.smart-cash-income b{display:block;font-size:8px;margin:2px 0}.smart-cash-income button{height:27px;padding:0 8px;border-radius:8px;border:1px solid rgba(32,217,155,.32);background:transparent;color:#49dfb0;font-size:6.8px;font-weight:800}.upcoming-amount.green{color:#49dfb0!important}.income-action{color:#49dfb0!important;border-color:rgba(32,217,155,.2)!important;background:rgba(32,217,155,.05)!important}
+@media(max-width:420px){.recurring-type-grid{gap:4px!important}.recurring-type-grid button{font-size:7px!important;padding:0 3px!important}.smart-income-row{grid-template-columns:27px minmax(0,1fr) auto}.smart-income-add{grid-column:2 / 4}.smart-cash-income{grid-template-columns:27px minmax(0,1fr)}.smart-cash-income button{grid-column:2;justify-self:start}.smart-income-add-head{font-size:7px;padding:0 8px}}
+
 /* 13.3.96 — Nakit Akışı: kompakt premium kart + hizalı cüzdan SVG. Hesaplamalara dokunulmaz. */
 .smart-cash-card{padding:12px!important;background:linear-gradient(145deg,#0d1225 0%,#090d1b 62%,#080b16 100%);border-color:rgba(91,108,165,.28);box-shadow:0 12px 34px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.025)}
 .smart-cash-card .smart-section-title{margin-bottom:9px}.smart-cash-card .smart-section-title>b{font-size:13px}.smart-cash-card .smart-section-title>span{font-size:7px;color:#737b91}
@@ -4330,7 +4405,8 @@ document.getElementById('modal')?.addEventListener('click',handleModalBackdropCl
 function openTxDetail(i){const t=state.transactions[i];if(!t)return;const isTransfer=t[4]==='Transfer';const val=isTransfer?Math.abs(Number(t[10])||0):Number(t[1]);const walletText=isTransfer?`${t[8]||'Banka'} → ${t[9]||'Nakit'}`:(t[7]||'Banka');document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>İşlem Detayı</h2><div class="detail-box"><b>${esc(t[0])}</b><span class="${isTransfer?'':val>=0?'green':'red'}">${isTransfer?'⇄ ':val>=0?'+':'-'}${money(val)}</span><small>Kategori: ${esc(t[0]||'')}</small><small>Cüzdan: ${esc(walletText)}</small><small>Tarih: ${esc(t[6]||'17 Ağustos 2026')}</small><small>${esc(t[5]||t[3]||'')}</small></div><div class="detail-actions"><button class="edit" onclick="editTx(${i})">Düzenle</button><button class="delete" onclick="deleteTx(${i})">Sil</button></div></div>`}
 function editTx(i){const t=state.transactions[i];if(!t)return;state.editIndex=i;state.type=t[4]||((Number(t[1])<0)?'Gider':'Gelir');state.selectedCat=t[0]||'Diğer';document.getElementById('modal').classList.remove('hidden');const opts=categoryOptions(state.type);if(!opts.some(x=>x[1]===state.selectedCat))state.selectedCat=opts[0][1];const wallet=t[7]==='Nakit'?'Nakit':'Banka';const from=t[8]||'Banka',to=t[9]||'Nakit';document.getElementById('modal').innerHTML=`<div class="sheet add-sheet"><button class="close" onclick="closeModal()">×</button><h2>İşlemi Düzenle</h2><div class="type">${['Gelir','Gider','Transfer'].map(x=>`<button class="${state.type===x?'active':''}" onclick="state.editIndex=${i};state.selectedCat=null;openModal('${x}')">${x}</button>`).join('')}</div><div class="form"><label>Tutar</label><input id="amount" inputmode="decimal" value="${Math.abs(Number(t[1])||Number(t[10])||0)}"><label>Kategori</label><button class="category-picker" onclick="openCategoryPicker()"><span id="selectedCatLabel">${esc(state.selectedCat)}</span><span>⌄</span></button>${state.type==='Transfer'?`<label>Transfer</label><div class="wallet-transfer-premium"><div class="wallet-transfer-side"><span>Nereden</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('from')"><span class="wallet-select-icon">${from==='Nakit'?'💵':'🏦'}</span><strong>${from}</strong><span class="wallet-select-chevron">⌄</span></button></div><div class="transfer-arrow">→</div><div class="wallet-transfer-side"><span>Nereye</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('to')"><span class="wallet-select-icon">${to==='Nakit'?'💵':'🏦'}</span><strong>${to}</strong><span class="wallet-select-chevron">⌄</span></button></div></div>`:`<label>Cüzdan</label><div class="wallet-choice"><button type="button" data-wallet="Nakit" aria-pressed="${wallet==='Nakit'?'true':'false'}" class="${wallet==='Nakit'?'active':''}" onclick="selectWallet('Nakit')">💵 Nakit</button><button type="button" data-wallet="Banka" aria-pressed="${wallet==='Banka'?'true':'false'}" class="${wallet==='Banka'?'active':''}" onclick="selectWallet('Banka')">🏦 Banka</button></div><input type="hidden" id="wallet" value="${wallet}">`}<label>Tarih</label><input id="txDate" type="date" value="${esc(t[6]||localDateISO())}"><label>Not</label><input id="note" value="${esc(t[5]||'')}"><button class="save" onclick="saveTx()">Değişiklikleri Kaydet</button></div></div>`}
 function deleteTx(i){if(!state.transactions[i])return;confirmAction('İşlemi Sil','Bu işlem kalıcı olarak silinecek. Bu işlem geri alınamaz.',()=>{state.transactions.splice(i,1);persist();closeModal();render();showToast('İşlem silindi.')})}
-function saveTx(){const a=document.getElementById('amount')?.value||'0';const n=state.selectedCat||categoryOptions(state.type)[0][1];const num=Number(String(a).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.'))||0;if(!num)return;const note=document.getElementById('note')?.value.trim()||'';const date=document.getElementById('txDate')?.value||localDateISO();const editing=Number.isInteger(state.editIndex);const old=editing?state.transactions[state.editIndex]:null;const createdAt=txCreatedAt(old)||new Date().toISOString();let record;if(state.type==='Transfer'){const from=document.getElementById('walletFrom')?.value||state.txDraft?.from||'Banka';const to=document.getElementById('walletTo')?.value||state.txDraft?.to||'Nakit';if(from===to){showToast('Nereden ve nereye farklı olmalı.');return}record=['Transfer',0,'blue','', 'Transfer',note,date,'Transfer',from,to,Math.abs(num),createdAt]}else{const wallet=document.getElementById('wallet')?.value||state.txDraft?.wallet||'Banka';const val=state.type==='Gider'?-Math.abs(num):Math.abs(num);const color=state.type==='Gider'?'orange':'green';record=[n,val,color,'',state.type,note,date,wallet,createdAt]}if(editing){state.transactions[state.editIndex]=record;state.editIndex=null}else{state.transactions.unshift(record)}persist();state.txDraft=null;closeModal();state.page='transactions';render()}
+function saveTx(){const a=document.getElementById('amount')?.value||'0';const n=state.selectedCat||categoryOptions(state.type)[0][1];const num=Number(String(a).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.'))||0;if(!num)return;const note=document.getElementById('note')?.value.trim()||'';const date=document.getElementById('txDate')?.value||localDateISO();const editing=Number.isInteger(state.editIndex);const old=editing?state.transactions[state.editIndex]:null;const recurringId=state.txDraft?.recurringId||null;const createdAt=txCreatedAt(old)||new Date().toISOString();let record;if(state.type==='Transfer'){const from=document.getElementById('walletFrom')?.value||state.txDraft?.from||'Banka';const to=document.getElementById('walletTo')?.value||state.txDraft?.to||'Nakit';if(from===to){showToast('Nereden ve nereye farklı olmalı.');return}record=['Transfer',0,'blue','', 'Transfer',note,date,'Transfer',from,to,Math.abs(num),createdAt]}else{const wallet=document.getElementById('wallet')?.value||state.txDraft?.wallet||'Banka';const val=state.type==='Gider'?-Math.abs(num):Math.abs(num);const color=state.type==='Gider'?'orange':'green';record=[n,val,color,'',state.type,note,date,wallet,createdAt]}if(editing){state.transactions[state.editIndex]=record;state.editIndex=null}else{state.transactions.unshift(record)}if(recurringId&&state.type==='Gelir')advanceRecurringIncomeSchedule(recurringId);persist();state.txDraft=null;closeModal();state.page='transactions';render();if(recurringId)showToast('Gelir kaydedildi; sonraki ödeme günü güncellendi.');}
+
 if(localStorage.getItem('fix_profile_photo_clean_13274')!=='1'){
   localStorage.removeItem('fix_profile_photo');
   localStorage.setItem('fix_profile_photo_clean_13274','1');
