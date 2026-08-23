@@ -2083,6 +2083,41 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .upcoming-collapse-bar span:last-child{font-size:15px;line-height:1}
 .upcoming-row.is-hidden-upcoming{display:none}
 </style>
+
+<style id="fix-smart-133107">
+/* 13.3.107 — Harcama Dağılımı boş durum + Düzenli Gelir kompakt UX.
+   Yalnızca sunum katmanı; veri ve hesaplamalara dokunmaz. */
+.smart-expense-empty-visual{width:100%;height:100%;min-height:150px;display:grid;place-items:center;text-align:center;border:1px dashed #202846;border-radius:14px;background:radial-gradient(circle at center,rgba(116,60,255,.035),transparent 68%);color:#8d93a7}
+.smart-expense-empty-visual div{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px}
+.smart-expense-empty-visual span{font-size:13px;font-weight:800;color:#dfe3ef}
+.smart-expense-empty-visual small{font-size:8px;line-height:1.4;color:#737b90}
+.smart-income-card{padding:12px!important}
+.smart-income-card .smart-section-title{margin-bottom:7px!important}
+.smart-income-card .smart-section-title>b{font-size:15px!important}
+.smart-income-card .smart-income-add-head{height:27px!important;padding:0 9px!important;border-radius:9px!important;font-size:8px!important}
+.smart-income-card .smart-recurring-source{display:none!important}
+.smart-income-card .smart-income-note{margin:0 0 7px!important;padding:7px 8px!important;gap:7px!important;border-radius:10px!important}
+.smart-income-card .smart-income-note-icon{width:25px!important;height:25px!important;flex-basis:25px!important;border-radius:8px!important}
+.smart-income-card .smart-income-note-icon svg{width:14px!important;height:14px!important}
+.smart-income-card .smart-income-note b{font-size:8px!important;line-height:1.2!important}
+.smart-income-card .smart-income-note small{font-size:6.8px!important;line-height:1.3!important;margin-top:2px!important}
+.smart-income-card .smart-income-status{padding:6px 8px!important;margin-bottom:2px!important}
+.smart-income-card .smart-income-list{margin-top:0!important}
+.smart-income-card .smart-income-row{grid-template-columns:26px minmax(0,1fr) auto!important;gap:6px!important;padding:7px 0!important}
+.smart-income-card .smart-income-icon{width:25px!important;height:25px!important;border-radius:7px!important}
+.smart-income-card .smart-income-row b{font-size:8px!important}
+.smart-income-card .smart-income-row small{font-size:6.4px!important}
+.smart-income-card .smart-income-row>strong{font-size:7.5px!important}
+.smart-income-card .smart-income-add{grid-column:2/4!important;height:26px!important;padding:0 9px!important;font-size:7px!important;border-radius:8px!important;margin-top:1px!important}
+.smart-income-card .smart-income-empty{margin-top:5px!important;padding:8px!important}
+.smart-income-card .smart-income-empty b{font-size:8px!important}
+.smart-income-card .smart-income-empty span{font-size:6.8px!important}
+@media(max-width:430px){
+  .smart-expense-card{padding:12px!important}
+  .smart-expense-visual{min-height:145px!important}
+  .smart-expense-empty-visual{min-height:145px!important}
+}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -2714,7 +2749,7 @@ function smartExpenseDistribution(current, previous){
   const palette=['var(--gold)','var(--purple)','var(--cyan)','var(--green)','var(--red)','#a874ff'];
   let cursor=0;
   const stops=top.map(([name,val],i)=>{const pct=total?val/total*100:0;const from=cursor;cursor+=pct;return `${palette[i%palette.length]} ${from.toFixed(2)}% ${cursor.toFixed(2)}%`}).join(',');
-  const donut=total?`<div class="smart-expense-donut" style="background:conic-gradient(${stops})"><div><small>Toplam Gider</small><b>${money(total)}</b></div></div>`:`<div class="smart-expense-donut empty"><div><small>Gider</small><b>—</b></div></div>`;
+  const donut=total?`<div class="smart-expense-donut" style="background:conic-gradient(${stops})"><div><small>Toplam Gider</small><b>${money(total)}</b></div></div>`:`<div class="smart-expense-empty-visual"><div><span>Gider yok</span><small>Bu dönemde kayıtlı gider bulunmuyor.</small></div></div>`;
   const iconFor=(name)=>{
     const custom=[...(state.customCategories?.Gider||[])];
     const found=custom.find(x=>(typeof x==='string'?x:x?.name)===name);
@@ -3963,6 +3998,41 @@ function exportExcelFile(){
 .smart-recurring-insight{padding:8px 9px;background:#0b1020;border-radius:9px;margin-top:7px}.smart-recurring-insight b{display:block;color:var(--gold);font-size:7.8px}.smart-recurring-insight span{display:block;color:#8b91a3;font-size:7px;line-height:1.35;margin-top:3px}
 .smart-recurring-list{display:grid;margin-top:5px}.smart-recurring-row{display:grid;grid-template-columns:28px 1fr auto;gap:7px;align-items:center;padding:7px 1px;border-top:1px solid #12182b}.smart-recurring-icon{width:27px;height:27px;border-radius:8px;display:grid;place-items:center;color:var(--purple);background:#0c1120;border:1px solid rgba(116,60,255,.22);font-size:13px}.smart-recurring-row>div{min-width:0}.smart-recurring-row b{display:block;font-size:7.8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.smart-recurring-row small{display:block;color:#686f83;font-size:6.3px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.smart-recurring-row>strong{font-size:7.2px;white-space:nowrap;text-align:right}.smart-recurring-row>strong small{display:inline;font-size:6px;margin-left:2px}.smart-recurring-empty{margin-top:7px;border:1px dashed #252d4a;background:#090e1d;color:#a7aabc;border-radius:10px;padding:9px;font-size:8px}
 @media(max-width:360px){.smart-recurring-metrics{gap:4px}.smart-recurring-metrics>div{padding:8px 5px}.smart-recurring-metrics b{font-size:10px}.smart-recurring-note small{font-size:6.6px}}
+</style>
+
+<style id="fix-smart-133107">
+/* 13.3.107 — Harcama Dağılımı boş durum + Düzenli Gelir kompakt UX.
+   Yalnızca sunum katmanı; veri ve hesaplamalara dokunmaz. */
+.smart-expense-empty-visual{width:100%;height:100%;min-height:150px;display:grid;place-items:center;text-align:center;border:1px dashed #202846;border-radius:14px;background:radial-gradient(circle at center,rgba(116,60,255,.035),transparent 68%);color:#8d93a7}
+.smart-expense-empty-visual div{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px}
+.smart-expense-empty-visual span{font-size:13px;font-weight:800;color:#dfe3ef}
+.smart-expense-empty-visual small{font-size:8px;line-height:1.4;color:#737b90}
+.smart-income-card{padding:12px!important}
+.smart-income-card .smart-section-title{margin-bottom:7px!important}
+.smart-income-card .smart-section-title>b{font-size:15px!important}
+.smart-income-card .smart-income-add-head{height:27px!important;padding:0 9px!important;border-radius:9px!important;font-size:8px!important}
+.smart-income-card .smart-recurring-source{display:none!important}
+.smart-income-card .smart-income-note{margin:0 0 7px!important;padding:7px 8px!important;gap:7px!important;border-radius:10px!important}
+.smart-income-card .smart-income-note-icon{width:25px!important;height:25px!important;flex-basis:25px!important;border-radius:8px!important}
+.smart-income-card .smart-income-note-icon svg{width:14px!important;height:14px!important}
+.smart-income-card .smart-income-note b{font-size:8px!important;line-height:1.2!important}
+.smart-income-card .smart-income-note small{font-size:6.8px!important;line-height:1.3!important;margin-top:2px!important}
+.smart-income-card .smart-income-status{padding:6px 8px!important;margin-bottom:2px!important}
+.smart-income-card .smart-income-list{margin-top:0!important}
+.smart-income-card .smart-income-row{grid-template-columns:26px minmax(0,1fr) auto!important;gap:6px!important;padding:7px 0!important}
+.smart-income-card .smart-income-icon{width:25px!important;height:25px!important;border-radius:7px!important}
+.smart-income-card .smart-income-row b{font-size:8px!important}
+.smart-income-card .smart-income-row small{font-size:6.4px!important}
+.smart-income-card .smart-income-row>strong{font-size:7.5px!important}
+.smart-income-card .smart-income-add{grid-column:2/4!important;height:26px!important;padding:0 9px!important;font-size:7px!important;border-radius:8px!important;margin-top:1px!important}
+.smart-income-card .smart-income-empty{margin-top:5px!important;padding:8px!important}
+.smart-income-card .smart-income-empty b{font-size:8px!important}
+.smart-income-card .smart-income-empty span{font-size:6.8px!important}
+@media(max-width:430px){
+  .smart-expense-card{padding:12px!important}
+  .smart-expense-visual{min-height:145px!important}
+  .smart-expense-empty-visual{min-height:145px!important}
+}
 </style>
 </head><body>${table}
 <style id="fix-smart-13381-financial-goals">
