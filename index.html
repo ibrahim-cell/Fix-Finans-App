@@ -6156,3 +6156,55 @@ body.font-size-system .app{font-size:inherit}
 
 </style>
 </style>
+
+<style id="fix-13399-theme-wallet-tab-final">
+/* 13.3.99 — Premium Soft Light: Net Bakiye küresi + Özet sekmesi tema rengine bağlandı. */
+.light .balance.card .ff-sphere{
+  background:
+    radial-gradient(circle at 31% 24%,rgba(255,255,255,.96) 0 2%,color-mix(in srgb,var(--theme-accent) 35%,white) 4%,transparent 14%),
+    radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--theme-accent) 58%,white) 0%,var(--theme-accent) 30%,color-mix(in srgb,var(--theme-accent-2) 72%,#11152b) 64%,color-mix(in srgb,var(--theme-accent-2) 48%,#05060d) 100%)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 62%,white)!important;
+  box-shadow:
+    0 0 9px color-mix(in srgb,var(--theme-accent) 82%,transparent),
+    0 0 24px color-mix(in srgb,var(--theme-accent) 62%,transparent),
+    0 0 46px color-mix(in srgb,var(--theme-accent) 30%,transparent),
+    inset -10px -10px 20px rgba(11,2,31,.18),
+    inset 7px 6px 15px rgba(255,255,255,.52)!important;
+}
+.light .balance.card .ff-sphere:before{border-color:color-mix(in srgb,var(--theme-accent) 30%,white)!important}
+.light .balance.card .ff-sphere:after{border-color:color-mix(in srgb,var(--theme-accent) 18%,white)!important}
+.light .balance.card .ff-lira{
+  color:#fff!important;
+  text-shadow:0 0 5px rgba(255,255,255,.95),0 0 12px color-mix(in srgb,var(--theme-accent) 78%,transparent),0 0 20px color-mix(in srgb,var(--theme-accent) 48%,transparent)!important;
+  filter:drop-shadow(0 2px 2px color-mix(in srgb,var(--theme-accent-2) 60%,#101426))!important;
+}
+.light .balance.card .ff-ring{
+  border-color:color-mix(in srgb,var(--theme-accent) 62%,white)!important;
+  box-shadow:0 0 7px color-mix(in srgb,var(--theme-accent) 52%,transparent),inset 0 0 5px color-mix(in srgb,var(--theme-accent) 14%,white)!important;
+}
+.light .balance.card .ff-ring:after{
+  background:color-mix(in srgb,var(--theme-accent) 86%,white)!important;
+  box-shadow:0 0 7px color-mix(in srgb,var(--theme-accent) 78%,transparent),0 0 13px color-mix(in srgb,var(--theme-accent) 52%,transparent)!important;
+}
+.light .balance.card .ff-particle{background:color-mix(in srgb,var(--theme-accent) 48%,white)!important;box-shadow:0 0 7px color-mix(in srgb,var(--theme-accent) 72%,transparent)!important}
+
+/* Özet / Grafikler / Yaklaşan: aktif bar seçili tema rengini kullanır. */
+.light .tabs button.active,
+.light .reference-tabs button.active{
+  background:linear-gradient(135deg,var(--theme-accent-2),var(--theme-accent))!important;
+  border-color:var(--theme-accent)!important;
+  color:#fff!important;
+  box-shadow:0 7px 20px color-mix(in srgb,var(--theme-accent) 28%,transparent)!important;
+}
+.light .tabs button.active:after,
+.light .reference-tabs button.active:after{
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--theme-accent) 55%,white),transparent)!important;
+}
+.light .bottom .add{
+  background:linear-gradient(145deg,color-mix(in srgb,var(--theme-accent) 88%,white 12%),var(--theme-accent) 52%,var(--theme-accent-2) 100%)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 68%,white 32%)!important;
+  box-shadow:0 9px 24px color-mix(in srgb,var(--theme-accent) 30%,transparent),0 0 0 5px color-mix(in srgb,var(--theme-accent) 9%,transparent)!important;
+}
+.light .bottom .nav.active,.light .nav.active .nav-icon,.light .nav.active small{color:var(--theme-accent)!important}
+.light .type button.active{background:linear-gradient(135deg,var(--theme-accent-2),var(--theme-accent))!important;border-color:var(--theme-accent)!important;color:#fff!important}
+</style>
