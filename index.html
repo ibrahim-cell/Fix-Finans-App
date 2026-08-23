@@ -2118,6 +2118,23 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
   .smart-expense-empty-visual{min-height:145px!important}
 }
 </style>
+
+<style id="fix-13399-v5-profile-light-refinement">
+/* 13.3.99 V5 — Profile light-theme accents. Visual-only; no feature/calculation changes. */
+.light .bottom .add{
+  --fab-accent:#743cff!important;
+  --fab-accent-2:#4c1ed4!important;
+  background:radial-gradient(circle at 34% 27%,rgba(255,255,255,.34),transparent 23%),linear-gradient(145deg,#7c3cff 0%,#743cff 48%,#4c1ed4 100%)!important;
+  border-color:#9b70ff!important;
+  color:#fff!important;
+  box-shadow:0 10px 28px rgba(116,60,255,.28),0 0 0 5px rgba(116,60,255,.08)!important;
+}
+.light .profile-menu .current-palette{color:#c58a16!important;font-weight:800!important}
+.light .profile-menu .setting-button:has(.danger){color:#df4055!important}
+.light .profile-menu .setting-button:has(.danger) .setting-main i,
+.light .profile-menu .setting-button:has(.danger) .danger{color:#df4055!important}
+.light .profile-menu .setting-button:has(.danger){border-top-color:#f0dfe2!important}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -3509,7 +3526,7 @@ function profile(){
       <div class="firebase-auth-state">${authHtml}</div>
     </div>
   </section>
-  <section class="card settings profile-menu">${items.map(([icon,name,action])=>`<button class="setting setting-button" onclick="${action}"><span class="setting-main"><i>${icon}</i><span>${name}</span></span><span>${name.startsWith('Tema & Renk')?'<b class="current-palette">'+(paletteNames[currentPalette]||'Mor')+'</b> ›':'›'}</span></button>`).join('')}<button class="setting logout setting-button" onclick="logoutProfile()"><span class="setting-main"><i>⎋</i><span class="danger">${user?'Google Bağlantısını Kes':'Çıkış Yap'}</span></span><span>›</span></button></section>`;
+  <section class="card settings profile-menu">${items.map(([icon,name,action])=>`<button class="setting setting-button" onclick="${action}"><span class="setting-main"><i>${icon}</i><span>${name}</span></span><span>${name.startsWith('Tema & Renk')?'<b class="current-palette">'+(paletteNames[currentPalette]||'Mor')+'</b> ›':'›'}</span></button>`).join('')}<button class="setting logout setting-button" onclick="logoutProfile()"><span class="setting-main"><i>${user?'⛓':'⎋'}</i><span class="danger">${user?'Google Bağlantısını Kes':'Çıkış Yap'}</span></span><span class="danger">›</span></button></section>`;
 }
 
 function goHome(){state.page='home';render()}
@@ -5226,6 +5243,183 @@ document.addEventListener('pointerdown',function(e){
 }
 </style>
 
+
+<style id="fix-premium-soft-light-final-13399-v4">
+/* 13.3.99 V4 — Premium Soft Light: deep surface neutralization. Dark theme untouched. */
+.light .smart-health-hero,
+.light .smart-health-main,
+.light .smart-period-card,
+.light .smart-summary-card,
+.light .smart-advice-card,
+.light .smart-debt-card,
+.light .smart-shopping-card,
+.light .smart-recurring-card,
+.light .smart-investment-card,
+.light .smart-goal-card,
+.light .smart-abnormal-card,
+.light .smart-recommendations-card,
+.light .smart-assistant-card,
+.light .smart-proactive-card,
+.light .smart-expense-card,
+.light .smart-cash-card {
+  background:linear-gradient(145deg,#ffffff 0%,#f9faff 100%)!important;
+  color:#151b36!important;
+  border-color:#dfe4ee!important;
+  box-shadow:0 8px 24px rgba(48,61,96,.055)!important;
+}
+.light .smart-health-main{background:linear-gradient(145deg,#ffffff,#f7f8fd)!important}
+.light .smart-health-ring{background:conic-gradient(#2bd9a4 0deg,#f3bc38 145deg,#743cff var(--score),#e7eaf2 var(--score) 360deg)!important}
+.light .smart-health-ring:after{background:#fff!important;border-color:#e2e6ef!important}
+.light .smart-health-score b{color:#151b36!important}
+.light .smart-health-score small,.light .smart-health-copy p,.light .smart-health-safe{color:#69738a!important}
+.light .smart-health-copy>b{color:#159b70!important}
+.light .smart-detail-btn{background:#fff!important;color:#6333cf!important;border-color:#d8c9f7!important}
+.light .smart-health-bars i{background:#edf0f5!important}
+
+.light .smart-periods{background:#f5f6fa!important;border-color:#dfe4ee!important;box-shadow:0 4px 14px rgba(48,61,96,.04)!important}
+.light .smart-periods button{color:#566078!important}
+.light .smart-periods button.active{background:linear-gradient(135deg,#7b3ff0,#8b4cf5)!important;color:#fff!important}
+.light .smart-summary-card{background:linear-gradient(145deg,#fff,#f8f9fd)!important;border-color:#dfe4ee!important}
+.light .smart-summary-card small{color:#69738a!important}
+.light .smart-summary-card b{color:#151b36!important}
+.light .smart-summary-icon{background:#f1ebff!important;color:#6635d5!important;border:1px solid #e3d9fb!important}
+.light .smart-metric,.light .smart-mini{background:#fff!important;border:1px solid #e0e5ee!important;color:#151b36!important;box-shadow:0 4px 12px rgba(48,61,96,.035)!important}
+.light .smart-metric small,.light .smart-mini small{color:#69738a!important}
+.light .smart-metric b,.light .smart-mini b{color:#151b36!important}
+.light .smart-metric span,.light .smart-mini span{color:#69738a!important}
+.light .smart-advice{background:#f7f4ff!important;border-color:#e2d9f7!important;color:#151b36!important}
+.light .smart-advice small{color:#69738a!important}
+.light .smart-advice-icon{background:#efe8ff!important;color:#6d35df!important;border-color:#ddd0f8!important}
+.light .smart-progress{background:#edf0f5!important}
+
+.light .smart-score{color:#151b36!important}
+.light .smart-score-ring{background:conic-gradient(#2bd9a4 0deg 86deg,#f3bc38 86deg 176deg,#743cff 176deg var(--home-score),#e7eaf2 var(--home-score) 360deg)!important}
+.light .smart-score-ring:after{background:#fff!important;border-color:#e2e6ef!important}
+.light .smart-score-inner strong{color:#151b36!important}
+.light .smart-score-inner small{color:#69738a!important}
+.light .smart-score>b{color:#69738a!important}
+
+.light .smart-expense-visual{background:radial-gradient(circle at center,rgba(116,60,255,.055),transparent 68%)!important;border-color:#dfe4ee!important}
+.light .smart-expense-legend-row{border-color:#e7eaf0!important}
+.light .smart-expense-legend-row b{color:#151b36!important}
+.light .smart-expense-legend-pct{color:#69738a!important}
+.light .smart-expense-legend-row strong{color:#35405a!important}
+.light .smart-expense-icon{background:#f5f6fb!important;border-color:#dfe4ee!important}
+.light .smart-expense-main div span{color:#4e5870!important}
+.light .smart-expense-main i{background:#edf0f5!important}
+.light .smart-expense-highlight small{color:#69738a!important}
+.light .smart-expense-highlight b{color:#151b36!important}
+.light .smart-expense-highlight span{color:#69738a!important}
+.light .smart-expense-footer{border-color:#e5e8ef!important}
+.light .smart-expense-footer b{color:#151b36!important}
+.light .smart-expense-footer span{color:#69738a!important}
+
+.light .smart-cash-note{background:linear-gradient(135deg,#f6f1ff,#f3fbf8)!important;border-color:#e2d9f7!important}
+.light .smart-cash-note b{color:#5f35c7!important}
+.light .smart-cash-note small{color:#69738a!important}
+.light .smart-cash-lock{background:#f0eaff!important;color:#6d35df!important;border-color:#d9cdf6!important;box-shadow:none!important}
+.light .smart-cash-lock svg{stroke:#6d35df!important;filter:none!important}
+.light .smart-cash-metric{background:#fff!important;border-color:#dfe4ee!important;color:#151b36!important}
+.light .smart-cash-metric small,.light .smart-cash-metric span{color:#69738a!important}
+.light .smart-cash-metric.actual b{color:#5d35c8!important}
+.light .smart-cash-arrow{background:#f5f6fa!important;border-color:#dfe4ee!important;color:#69738a!important}
+.light .smart-cash-breakdown{border-color:#e5e8ef!important;color:#69738a!important}
+.light .smart-cash-next{background:#f8f9fc!important;border-color:#e3e7ef!important}
+.light .smart-cash-next span,.light .smart-cash-next small{color:#69738a!important}
+.light .smart-cash-empty{background:#f8f9fc!important;border-color:#d9deea!important;color:#69738a!important}
+
+/* Transactions / upcoming: remove legacy black action surfaces. */
+.light .tx-more,
+.light .upcoming-collapse-bar,
+.light .smart-list-more{
+  background:linear-gradient(145deg,#ffffff,#f8f9fd)!important;
+  color:#5e35c9!important;
+  border:1px solid #ddd3f7!important;
+  box-shadow:0 4px 12px rgba(48,61,96,.045)!important;
+}
+.light .tx-more.subtle{color:#69738a!important;border-color:#e0e5ee!important}
+.light .empty-action{background:#fff!important;color:#151b36!important;border-color:#dfe4ee!important}
+.light .empty-action span{background:#f0eaff!important;color:#6d35df!important;border-color:#ddd1f7!important}
+.light .empty-action small{color:#69738a!important}
+.light .upcoming-row{border-color:#e5e8ef!important}
+.light .upcoming-row small{color:#69738a!important}
+.light .mini-add{background:#fff!important;color:#6d35df!important;border-color:#d8c9f7!important}
+
+/* Category icons and rows. */
+.light .category-icon,
+.light .smart-expense-icon,
+.light .support-card-icon,
+.light .support-action-icon{background:#f3f5fa!important;border-color:#dfe4ee!important}
+.light .category-row{background:#fff!important;color:#151b36!important;border-color:#dfe4ee!important}
+.light .category-row.selected{background:#f2ecff!important}
+
+/* Profile / support / data export sheets. */
+.light .profile-menu .setting:active{background:#f3f5fa!important}
+.light .current-palette{color:#c08a19!important}
+.light .support-hero,
+.light .support-version-card,
+.light .support-card,
+.light .support-action-card,
+.light .support-ai-card{
+  background:linear-gradient(145deg,#fff,#f8f9fd)!important;
+  color:#151b36!important;
+  border-color:#dfe4ee!important;
+  box-shadow:0 6px 18px rgba(48,61,96,.045)!important;
+}
+.light .support-hero-icon,.light .support-action-icon{background:#f3f5fa!important;border-color:#dfe4ee!important}
+.light .support-hero-copy small,.light .support-hero-copy span,.light .support-card small,.light .support-action-card small,.light .support-ai-copy em{color:#69738a!important}
+.light .support-version-card small,.light .support-section-title small{color:#69738a!important}
+.light .support-version-card b,.light .support-card b,.light .support-ai-copy b,.light .support-action-card b{color:#151b36!important}
+.light .support-version-divider{background:#dfe4ee!important}
+.light .support-ai-icon{background:#f0eaff!important;border-color:#ddd1f7!important}
+.light .support-note{background:#fff!important;border-color:#dfe4ee!important;color:#69738a!important}
+
+.light .export-center-icon{background:linear-gradient(145deg,#f0eaff,#fff)!important;border-color:#d8c9f7!important;color:#d79c24!important;box-shadow:none!important}
+.light .export-center-status{background:#f8f9fc!important;border-color:#dfe4ee!important;color:#151b36!important}
+.light .export-option{background:#fff!important;color:#151b36!important;border-color:#dfe4ee!important;box-shadow:0 6px 18px rgba(48,61,96,.05)!important}
+.light .export-option.primary{background:linear-gradient(145deg,#fff9ed,#fff)!important;border-color:#e6cf9d!important}
+.light .export-option-icon{background:#f3f5fa!important;color:#d79c24!important}
+.light .export-option.json .export-option-icon{color:#7040df!important;background:#f0eaff!important}
+.light .export-center-note{background:#fff!important;border-color:#dfe4ee!important;color:#69738a!important}
+.light .export-center-title,.light .export-option-copy b{color:#151b36!important}
+
+/* Settings / forms / recurring controls that were still using hard-coded dark fills. */
+.light .feature-card,
+.light .font-size-option,
+.light .quick-settings button,
+.light .theme-mode-btn,
+.light .rec-frequency-trigger,
+.light .rec-frequency-menu,
+.light .recurring-check,
+.light .recurring-sheet .type button,
+.light .smart-assistant-answer,
+.light .smart-assistant-chips button,
+.light .smart-investment-tabs button,
+.light .smart-investment-focus,
+.light .smart-investment-checks i,
+.light .smart-recurring-source,
+.light .smart-recurring-row,
+.light .smart-debt-list .smart-debt-row{
+  background:#fff!important;
+  color:#151b36!important;
+  border-color:#dfe4ee!important;
+}
+.light .feature-card span,.light .font-size-option small,.light .recurring-check,.light .smart-assistant-answer p,.light .smart-investment-focus,.light .smart-recurring-source span,.light .smart-recurring-source b{color:#69738a!important}
+.light .feature-card b,.light .font-size-option b,.light .smart-assistant-answer p,.light .smart-investment-focus{color:#151b36!important}
+.light .smart-assistant-chips button{color:#58627a!important}
+.light .smart-assistant-chips button.active,.light .smart-investment-tabs button.active{background:#f0eaff!important;color:#6635d5!important;border-color:#cdb9f7!important}
+.light .smart-investment-checks i{background:#f0eaff!important;color:#7040df!important}
+.light .smart-recurring-source{background:#f8f9fc!important}
+.light .smart-debt-list .smart-debt-row{border-top-color:#e5e8ef!important}
+
+/* Catch-all for known dark presentation classes while remaining strictly light-theme scoped. */
+.light .dark-surface,
+.light .dark-card,
+.light .dark-panel,
+.light [class*="dark-surface"],
+.light [class*="dark-card"],
+.light [class*="dark-panel"]{background:#fff!important;color:#151b36!important;border-color:#dfe4ee!important}
+</style>
 </body></html>
 
 
@@ -5935,7 +6129,7 @@ body.font-size-system .app{font-size:inherit}
 .light .badge{background:#6f36df!important;color:#fff!important}
 .light .bottom .nav{color:#69738a!important}
 .light .bottom .nav.active{color:#6f35e5!important}
-.light .bottom .add{background:linear-gradient(145deg,#8b4cf5,#6d32d9)!important;border-color:#a77af5!important;color:#fff!important;box-shadow:0 9px 24px rgba(109,50,217,.25)!important}
+.light .bottom .add{background:linear-gradient(145deg,color-mix(in srgb,var(--theme-accent) 88%,white 12%),var(--theme-accent) 52%,var(--theme-accent-2) 100%)!important;border-color:color-mix(in srgb,var(--theme-accent) 68%,white 32%)!important;color:#fff!important;box-shadow:0 9px 24px color-mix(in srgb,var(--theme-accent) 30%,transparent),0 0 0 5px color-mix(in srgb,var(--theme-accent) 9%,transparent)!important}
 .light .notification-item b,.light .notification-item p{color:#151b36!important}
 .light .notification-item p{color:#69738a!important}
 .light .backup-status{background:#fff!important;border-color:#dfe4ed!important}
