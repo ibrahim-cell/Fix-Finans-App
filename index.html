@@ -2118,6 +2118,7 @@ function periodBounds(){
 function reportTransactions(){const b=periodBounds();return state.transactions.filter(t=>{const d=new Date(txDateValue(t)+'T12:00:00');return d>=b.start&&d<=b.end});}
 function reportTrend(list){
   const buckets={};
+  const weekKeys=[];
   const add=(key,t)=>{
     if(!buckets[key])buckets[key]={income:0,expense:0};
     const v=Number(t[1])||0;
@@ -2129,7 +2130,6 @@ function reportTrend(list){
   if(state.reportPeriod==='week'){
     // Bu Hafta: yalnızca Pazartesi → bugün aralığını üret; her gün tam olarak bir sütundur.
     list.forEach(t=>{if(!isTransferTx(t))add(txDateValue(t),t)});
-    const weekKeys=[];
     for(let d=new Date(b.start);d<=b.end;d.setDate(d.getDate()+1)){
       const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
       weekKeys.push(k);
