@@ -2650,8 +2650,9 @@ function smartExpenseDistribution(current, previous){
   const cats=buildCats(current), prevCats=buildCats(previous);
   const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
   const total=sorted.reduce((a,[,v])=>a+v,0);
-  const top=sorted.slice(0,3);
-  const hiddenCount=Math.max(0,sorted.length-top.length);
+  // Ana kartta uzun liste yerine hedef tasarımdaki kompakt 6 kalemlik dağılım.
+  // İlk 5 kategori korunur, kalan tüm kategoriler tek bir "Diğer" diliminde birleşir.
+  const top=sorted.slice(0,5);
   const rest=sorted.slice(top.length).reduce((a,[,v])=>a+v,0);
   if(rest>0)top.push(['Diğer',rest]);
   const palette=['var(--gold)','var(--purple)','var(--cyan)','var(--green)','var(--red)','#a874ff'];
@@ -2663,17 +2664,13 @@ function smartExpenseDistribution(current, previous){
     const found=custom.find(x=>(typeof x==='string'?x:x?.name)===name);
     return found?(typeof found==='string'?categoryIcon(found,'Gider'):(found.icon||categoryIcon(found.name,'Gider'))):categoryIcon(name,'Gider');
   };
-  const rows=top.map(([name,val],i)=>{
+  const legend=top.map(([name,val],i)=>{
     const pct=total?Math.round(val/total*100):0;
-    const prevVal=prevCats[name]||0;
-    const delta=prevVal?Math.round((val-prevVal)/prevVal*100):null;
-    const trend=delta===null?(prevVal?'—':'Yeni'):delta===0?'→ %0':`${delta>0?'↑':'↓'} %${Math.abs(delta)}`;
-    const trendClass=delta===null?'amber':delta>0?'red':'green';
-    return `<div class="smart-expense-row"><span class="smart-expense-icon" style="--expense-color:${palette[i%palette.length]}">${iconFor(name)}</span><div class="smart-expense-main"><div><b>${esc(name)}</b><span>${money(val)} · %${pct}</span></div><i><em style="width:${pct}%"></em></i></div><small class="${trendClass}">${trend}</small></div>`;
-  }).join('')||`<div class="smart-chart-empty">Bu dönemde gider kaydı yok.</div>`;
+    return `<div class="smart-expense-legend-row"><span class="smart-expense-legend-dot" style="--expense-color:${palette[i%palette.length]}"></span><b>${esc(name)}</b><span class="smart-expense-legend-pct">%${pct}</span><strong>${money(val)}</strong></div>`;
+  }).join('')||`<div class="smart-expense-legend-empty">Bu dönemde gider kaydı yok.</div>`;
   const highest=sorted[0];
   const highestText=highest?`${esc(highest[0])} · ${money(highest[1])}`:'Henüz gider yok';
-  return `<section class="card smart-card smart-expense-card"><div class="smart-section-title"><b>Harcama Dağılımı</b><button class="detail" onclick="state.page='reports';state.reportPeriod='month';render()">Detaylı Rapor ›</button></div><div class="smart-expense-summary"><div class="smart-expense-visual">${donut}</div><div class="smart-expense-highlight"><small>En yüksek harcama</small><b>${highestText}</b><span>${total?`Giderlerin %${Math.round((highest?highest[1]:0)/total*100)}'ini oluşturuyor.`:'Kategori verisi bekleniyor.'}</span></div></div>${hiddenCount?`<div class="smart-list-summary"><span>${sorted.length} kategori</span><small>Detaylı dağılım raporda</small></div>`:''}</section>`;
+  return `<section class="card smart-card smart-expense-card"><div class="smart-section-title"><b>Harcama Dağılımı</b><button class="detail" onclick="state.page='reports';state.reportPeriod='month';render()">Detaylı Rapor ›</button></div><div class="smart-expense-summary"><div class="smart-expense-visual">${donut}</div><div class="smart-expense-legend">${legend}</div></div></section>`;
 }
 
 function smartCashFlow(period=state.smartPeriod){
@@ -5349,3 +5346,57 @@ body.font-size-system .app{font-size:inherit}
 /* 13.3.93 — Abonelik giriş akışı + Borç/Alacak kompakt mobil kayıtları. */
 .smart-recurring-source{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;margin-bottom:7px;border:1px solid #171f39;border-radius:9px;background:#090e1d}.smart-recurring-source span{font-size:7px;color:#686f83}.smart-recurring-source b{font-size:7px;color:#a7aabc;text-align:right}.smart-recurring-add{height:28px;padding:0 10px;border-radius:9px;border:1px solid rgba(247,196,79,.42);background:rgba(247,196,79,.05);color:#f7c44f;font-size:8px;font-weight:800;white-space:nowrap}.smart-recurring-list{gap:0}.smart-recurring-row{grid-template-columns:28px minmax(0,1fr) auto;min-height:44px}.smart-recurring-row>div{min-width:0}.smart-recurring-row b{font-size:8.5px}.smart-recurring-row small{font-size:6.8px}.smart-recurring-row>strong{font-size:8px}.smart-recurring-row>strong small{font-size:6px}.smart-recurring-row.is-manual{cursor:pointer}.smart-recurring-row.is-manual:active{background:rgba(139,92,246,.06)}.recurring-delete{margin-top:6px!important;background:transparent!important;border:1px solid rgba(255,70,91,.28)!important;color:#ff7480!important}.recurring-sheet .settings-sub{margin-bottom:10px}.recurring-check{display:flex!important;align-items:center;gap:8px;padding:9px 10px;border:1px solid #171f39;border-radius:10px;background:#090e1d;color:#a7aabc;font-size:8px!important}.recurring-check input{accent-color:#8b5cf6}.recurring-sheet .type{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}.recurring-sheet .type button{min-height:38px;border:1px solid #242b47;background:#0b1020;color:#9da3b5;border-radius:11px;font-weight:700}.recurring-sheet .type button.active{border-color:#8b5cf6;background:#21124c;color:#e8ddff}.smart-debt-card .smart-debt-row{min-height:48px}.smart-debt-name-line{display:flex;align-items:center;gap:6px;min-width:0}.smart-debt-name-line b{flex:1;min-width:0}.smart-debt-type{font-style:normal;font-size:6px;line-height:1;padding:3px 5px;border-radius:999px;font-weight:800;white-space:nowrap}.smart-debt-type.debt{color:#ff7480;background:rgba(255,70,91,.08);border:1px solid rgba(255,70,91,.16)}.smart-debt-type.receivable{color:#49dfb0;background:rgba(32,217,155,.08);border:1px solid rgba(32,217,155,.16)}.smart-debt-card .smart-debt-main small{line-height:1.3}.smart-debt-card .smart-debt-row strong{font-size:10px}.smart-debt-card .smart-debt-icon{width:28px;height:28px}.smart-debt-list{gap:0}.smart-debt-list .smart-debt-row{border-top:1px solid #12182b}.smart-debt-list .smart-debt-row:first-child{border-top:0}@media(max-width:360px){.smart-recurring-add{font-size:7px;padding:0 8px}.smart-recurring-source b{font-size:6.5px}.smart-debt-card .smart-debt-row{grid-template-columns:28px minmax(0,1fr) auto;gap:7px}.smart-debt-card .smart-debt-row strong{font-size:9px}.smart-debt-name-line b{font-size:9px}}
 </style>
+<style id="fix-smart-13397-score-expense-reference">
+/* 13.3.97 — Finans Skoru kompakt ölçek + Harcama Dağılımı referans hizası.
+   Yalnızca sunum katmanı; hesaplama, veri ve mevcut işlemler korunur. */
+.smart-health-hero{padding:11px!important;border-radius:16px!important}
+.smart-health-hero .smart-section-title{margin-bottom:8px!important;min-height:22px!important}
+.smart-health-hero .smart-section-title>b{font-size:14px!important}
+.smart-health-hero .smart-section-title>span{font-size:8px!important}
+.smart-health-main{grid-template-columns:100px minmax(0,1fr)!important;gap:10px!important;padding:10px!important;border-radius:13px!important}
+.smart-health-ring{width:88px!important;height:88px!important;padding:7px!important;background:conic-gradient(#29d69a 0 24%,#f3c23f 24% 49%,#6e39ef 49% var(--score),#20253a var(--score) 360deg)!important;box-shadow:0 0 20px rgba(116,60,255,.13)!important}
+.smart-health-ring:after{inset:7px!important}
+.smart-health-score b{font-size:29px!important;line-height:1!important}
+.smart-health-score small{font-size:7px!important;margin-top:4px!important}
+.smart-health-copy>b{font-size:14px!important;line-height:1.1!important}
+.smart-health-copy p{margin:5px 0 7px!important;font-size:7.5px!important;line-height:1.42!important}
+.smart-detail-btn{padding:6px 9px!important;font-size:7px!important;gap:5px!important}
+.smart-health-bars{gap:6px!important;margin-top:8px!important}
+.smart-health-bars span,.smart-health-bars b{font-size:6.5px!important}
+.smart-health-bars i{height:4px!important}
+.smart-health-safe{padding-top:6px!important;margin-top:7px!important;font-size:6.5px!important}
+
+.smart-expense-card{padding:12px!important}
+.smart-expense-summary{grid-template-columns:148px minmax(0,1fr)!important;gap:10px!important;align-items:center!important;margin-bottom:0!important}
+.smart-expense-visual{min-height:148px!important;border:0!important;background:radial-gradient(circle at center,rgba(116,60,255,.055),transparent 68%)!important;border-radius:14px!important}
+.smart-expense-donut{width:126px!important;height:126px!important;box-shadow:0 0 24px rgba(116,60,255,.13)!important}
+.smart-expense-donut:after{inset:29px!important}
+.smart-expense-donut>div{font-size:inherit!important}
+.smart-expense-donut small{font-size:7px!important}
+.smart-expense-donut b{font-size:12px!important;margin-top:3px!important}
+.smart-expense-legend{display:grid;gap:5px;min-width:0}
+.smart-expense-legend-row{display:grid;grid-template-columns:7px minmax(0,1fr) auto auto;gap:5px;align-items:center;min-width:0;padding:5px 0;border-bottom:1px solid #151b30}
+.smart-expense-legend-row:last-child{border-bottom:0}
+.smart-expense-legend-dot{width:7px;height:7px;border-radius:50%;background:var(--expense-color);box-shadow:0 0 7px color-mix(in srgb,var(--expense-color) 28%,transparent)}
+.smart-expense-legend-row b{font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#dfe1ea}
+.smart-expense-legend-pct{font-size:6.5px;color:#7d8497;white-space:nowrap}
+.smart-expense-legend-row strong{font-size:7px;color:#c8cbd6;white-space:nowrap}
+.smart-expense-legend-empty{padding:20px 6px;text-align:center;color:#70778c;font-size:8px}
+@media(max-width:360px){
+  .smart-health-main{grid-template-columns:92px minmax(0,1fr)!important;gap:8px!important;padding:8px!important}
+  .smart-health-ring{width:82px!important;height:82px!important}
+  .smart-health-score b{font-size:27px!important}
+  .smart-health-copy>b{font-size:12px!important}
+  .smart-health-copy p{font-size:7px!important}
+  .smart-expense-summary{grid-template-columns:122px minmax(0,1fr)!important;gap:7px!important}
+  .smart-expense-visual{min-height:122px!important}
+  .smart-expense-donut{width:108px!important;height:108px!important}
+  .smart-expense-donut:after{inset:25px!important}
+  .smart-expense-legend{gap:3px}
+  .smart-expense-legend-row{padding:4px 0;gap:4px}
+  .smart-expense-legend-row b{font-size:6.8px}
+  .smart-expense-legend-pct{font-size:6px}
+  .smart-expense-legend-row strong{font-size:6.5px}
+}
+</style>
+
