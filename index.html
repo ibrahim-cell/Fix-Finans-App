@@ -2192,6 +2192,40 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 
 /* The home quick action opens the same dedicated Goal form as the Goal tab. */
 </style>
+<style id="fix-13400-dark-theme-sphere">
+/* 13.4.00 — Koyu tema: Net Bakiye küresi seçili tema rengine bağlanır. */
+body:not(.light) .balance.card .ff-sphere{
+  background:
+    radial-gradient(circle at 31% 24%,rgba(255,255,255,.94) 0 2%,color-mix(in srgb,var(--theme-accent) 42%,white) 4%,transparent 14%),
+    radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--theme-accent) 68%,white) 0%,var(--theme-accent) 30%,color-mix(in srgb,var(--theme-accent-2) 76%,#11152b) 64%,color-mix(in srgb,var(--theme-accent-2) 52%,#05060d) 100%)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 72%,white)!important;
+  box-shadow:
+    0 0 9px color-mix(in srgb,var(--theme-accent) 90%,transparent),
+    0 0 24px color-mix(in srgb,var(--theme-accent) 70%,transparent),
+    0 0 46px color-mix(in srgb,var(--theme-accent) 38%,transparent),
+    inset -10px -10px 20px color-mix(in srgb,var(--theme-accent-2) 32%,#05060d),
+    inset 7px 6px 15px color-mix(in srgb,var(--theme-accent) 18%,white)!important;
+}
+body:not(.light) .balance.card .ff-sphere:before{border-color:color-mix(in srgb,var(--theme-accent) 34%,white)!important}
+body:not(.light) .balance.card .ff-sphere:after{border-color:color-mix(in srgb,var(--theme-accent) 22%,white)!important}
+body:not(.light) .balance.card .ff-lira{
+  color:color-mix(in srgb,var(--theme-accent) 30%,white)!important;
+  text-shadow:0 0 5px rgba(255,255,255,.95),0 0 12px color-mix(in srgb,var(--theme-accent) 88%,transparent),0 0 20px color-mix(in srgb,var(--theme-accent) 58%,transparent)!important;
+  filter:drop-shadow(0 2px 2px color-mix(in srgb,var(--theme-accent-2) 72%,#05060d))!important;
+}
+body:not(.light) .balance.card .ff-ring{
+  border-color:color-mix(in srgb,var(--theme-accent) 72%,white)!important;
+  box-shadow:0 0 7px color-mix(in srgb,var(--theme-accent) 64%,transparent),inset 0 0 5px color-mix(in srgb,var(--theme-accent) 18%,white)!important;
+}
+body:not(.light) .balance.card .ff-ring:after{
+  background:color-mix(in srgb,var(--theme-accent) 88%,white)!important;
+  box-shadow:0 0 7px color-mix(in srgb,var(--theme-accent) 82%,transparent),0 0 13px color-mix(in srgb,var(--theme-accent) 58%,transparent)!important;
+}
+body:not(.light) .balance.card .ff-particle{
+  background:color-mix(in srgb,var(--theme-accent) 58%,white)!important;
+  box-shadow:0 0 7px color-mix(in srgb,var(--theme-accent) 78%,transparent)!important;
+}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
