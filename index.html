@@ -1706,7 +1706,7 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 @media(max-width:380px){.smart-home-orb{width:38px!important;height:38px!important;flex-basis:38px!important}.smart-home-orb svg{width:19px!important;height:19px!important}.trend-scale-note{display:none}}
 /* 13.3.94 — Rapor grafik dönem uyumu (13.3.96 çakışan tekrarları buraya birleştirildi) */
 .trend-bars-week{grid-template-columns:repeat(var(--trend-count,7),minmax(0,1fr))!important;gap:6px!important;width:100%!important;min-width:0!important}
-.trend-bars-month{grid-template-columns:repeat(var(--trend-count,23),minmax(46px,1fr))!important;gap:9px!important;width:max-content!important;min-width:max-content!important;align-items:end!important}
+.trend-bars-month{grid-template-columns:repeat(var(--trend-count,23),minmax(0,1fr))!important;gap:3px!important;width:100%!important;min-width:0!important;align-items:end!important}
 .trend-bars-3m{grid-template-columns:repeat(var(--trend-count,3),minmax(72px,1fr))!important;gap:10px!important;width:max-content;min-width:100%}
 .trend-bars-all{grid-template-columns:repeat(var(--trend-count,6),minmax(58px,1fr))!important;gap:7px!important;width:max-content;min-width:100%}
 .trend-bars-month .trend-col small{font-size:6.5px}.trend-bars-month .trend-col{height:100%;grid-template-rows:28px 1fr 20px}.trend-bars-month .trend-track{min-height:0}.trend-bars-month .trend-track i{width:8px}.trend-bars-month .trend-values{min-width:0;overflow:hidden}.trend-bars-month .trend-values span{font-size:6px}
@@ -2175,6 +2175,11 @@ function reportTrend(list){
     return `<div class="trend-col"><div class="trend-values"><span>${a.income?money(a.income):''}</span><span>${a.expense?money(a.expense):''}</span></div><div class="trend-track"><i class="trend-income" style="height:${ih}%"></i><i class="trend-expense" style="height:${eh}%"></i></div><small>${labels[i]}</small></div>`;
   }).join('')}</div></div></div>`;
 }
+function setReportPeriod(period){
+  if(!['week','month','3m','all'].includes(period))return;
+  state.reportPeriod=period;
+  render();
+}
 function reports(){
   const list=reportTransactions();
   const summary=financialSummary(list);
@@ -2208,7 +2213,7 @@ function reports(){
     const pct=expense?Math.round(val/expense*100):0;
     return `<div class="barrow"><span class="catlabel"><span class="caticon c${idx}">${catIcons[name]||iconFor(name)}</span>${esc(name)}</span><div class="bar"><i style="width:${pct}%"></i></div><span>${money(val)}　${pct}%</span></div>`;
   }).join('')||'<div class="empty">Henüz gider verisi yok.</div>';
-  return `<div class="periods">${[['week','Bu Hafta'],['month','Bu Ay'],['3m','3 Ay'],['all','Tümü']].map(([v,l])=>`<button class="${state.reportPeriod===v?'active':''}" onclick="state.reportPeriod='${v}';render()">${l}</button>`).join('')}</div><section class="card report"><b>Genel Bakış</b><div class="muted" style="font-size:8px;margin:5px 0 13px">${labels[state.reportPeriod]}</div><div class="donutrow"><div class="donut-stage"><div class="donut" style="background:conic-gradient(${stops||'var(--line) 0 100%'})"><div class="donut-center"><small>Gider</small><b>${money(expense)}</b></div></div><div class="donut-bubbles">${bubbles}</div></div><div class="legend"><span>🟢 Gelir<b>${money(income)}</b></span><span>🔴 Gider<b class="red">${money(expense)}</b></span><span>🟣 Net<b>${money(net)}</b></span></div></div></section><section class="card report"><div class="list-head"><b>Grafik</b><span class="muted" style="font-size:8px">Gelir / Gider</span></div>${reportTrend(list)}</section><section class="card report"><div class="list-head"><b>Kategori Dağılımı</b><button class="detail" onclick="openExpenseDetails()">Detaylar ›</button></div>${catRows}</section>`;
+  return `<div class="periods">${[['week','Bu Hafta'],['month','Bu Ay'],['3m','3 Ay'],['all','Tümü']].map(([v,l])=>`<button class="${state.reportPeriod===v?'active':''}" onclick="setReportPeriod('${v}')">${l}</button>`).join('')}</div><section class="card report"><b>Genel Bakış</b><div class="muted" style="font-size:8px;margin:5px 0 13px">${labels[state.reportPeriod]}</div><div class="donutrow"><div class="donut-stage"><div class="donut" style="background:conic-gradient(${stops||'var(--line) 0 100%'})"><div class="donut-center"><small>Gider</small><b>${money(expense)}</b></div></div><div class="donut-bubbles">${bubbles}</div></div><div class="legend"><span>🟢 Gelir<b>${money(income)}</b></span><span>🔴 Gider<b class="red">${money(expense)}</b></span><span>🟣 Net<b>${money(net)}</b></span></div></div></section><section class="card report"><div class="list-head"><b>Grafik</b><span class="muted" style="font-size:8px">Gelir / Gider</span></div>${reportTrend(list)}</section><section class="card report"><div class="list-head"><b>Kategori Dağılımı</b><button class="detail" onclick="openExpenseDetails()">Detaylar ›</button></div>${catRows}</section>`;
 }
 
 function openExpenseDetails(){
