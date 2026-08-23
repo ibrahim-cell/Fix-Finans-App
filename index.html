@@ -1704,6 +1704,14 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .smart-home-orb{font-size:0!important;width:42px!important;height:42px!important;flex-basis:42px!important}
 .smart-home-orb svg{width:21px!important;height:21px!important;stroke:#f7c44f!important;filter:drop-shadow(0 0 4px rgba(247,196,79,.45))}
 @media(max-width:380px){.smart-home-orb{width:38px!important;height:38px!important;flex-basis:38px!important}.smart-home-orb svg{width:19px!important;height:19px!important}.trend-scale-note{display:none}}
+/* 13.3.94 — Rapor grafik dönem uyumu */
+.trend-bars-month{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important}
+.trend-bars-3m{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+.trend-bars-all{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:7px!important}
+.trend-bars-month .trend-col small{font-size:6.5px}
+.trend-bars-3m .trend-col small,.trend-bars-all .trend-col small{font-size:7px}
+.trend-values{line-height:1.05}
+
 </style>
 
 </head><body>
@@ -2110,19 +2118,73 @@ function periodBounds(){
 function reportTransactions(){const b=periodBounds();return state.transactions.filter(t=>{const d=new Date(txDateValue(t)+'T12:00:00');return d>=b.start&&d<=b.end});}
 function reportTrend(list){
   const buckets={};
-  list.forEach(t=>{if(isTransferTx(t))return;const d=txDateValue(t);let key=d;if(state.reportPeriod==='3m'||state.reportPeriod==='all')key=d.slice(0,7);buckets[key]??={income:0,expense:0};const v=Number(t[1])||0;if(v>0)buckets[key].income+=v;else if(v<0)buckets[key].expense+=Math.abs(v)});
-  let keys=Object.keys(buckets).sort();
+  const add=(key,t)=>{
+    if(!buckets[key])buckets[key]={income:0,expense:0};
+    const v=Number(t[1])||0;
+    if(v>0)buckets[key].income+=v;
+    else if(v<0)buckets[key].expense+=Math.abs(v);
+  };
+  const b=periodBounds();
+
   if(state.reportPeriod==='week'){
-    const b=periodBounds(), days=[];for(let d=new Date(b.start);d<=b.end;d.setDate(d.getDate()+1))days.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
-    keys=days;days.forEach(k=>buckets[k]??={income:0,expense:0});
+    // Bu Hafta: günlük görünüm, yalnızca gelir/gider; transferler yok.
+    list.forEach(t=>{if(!isTransferTx(t))add(txDateValue(t),t)});
+    for(let d=new Date(b.start);d<=b.end;d.setDate(d.getDate()+1)){
+      const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      if(!buckets[k])buckets[k]={income:0,expense:0};
+    }
   } else if(state.reportPeriod==='month'){
-    const b=periodBounds(), days=[];const start=new Date(Math.max(b.start.getTime(),b.end.getTime()-6*86400000));for(let d=new Date(start);d<=b.end;d.setDate(d.getDate()+1))days.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);keys=days;days.forEach(k=>buckets[k]??={income:0,expense:0});
+    // Bu Ay: ayın tamamını kapsayan haftalık özet. Böylece Genel Bakış ile
+    // grafik aynı dönemi temsil ederken mobil ekranda okunabilir kalır.
+    list.forEach(t=>{
+      if(isTransferTx(t))return;
+      const d=new Date(txDateValue(t)+'T12:00:00');
+      const day=d.getDate();
+      const weekStart=Math.floor((day-1)/7)*7+1;
+      const weekEnd=Math.min(weekStart+6,b.end.getDate());
+      const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(weekStart).padStart(2,'0')}`;
+      if(!buckets[key])buckets[key]={income:0,expense:0,weekEnd};
+      buckets[key].weekEnd=weekEnd;
+      const v=Number(t[1])||0;
+      if(v>0)buckets[key].income+=v;else if(v<0)buckets[key].expense+=Math.abs(v);
+    });
+    for(let start=1;start<=b.end.getDate();start+=7){
+      const end=Math.min(start+6,b.end.getDate());
+      const key=`${b.end.getFullYear()}-${String(b.end.getMonth()+1).padStart(2,'0')}-${String(start).padStart(2,'0')}`;
+      if(!buckets[key])buckets[key]={income:0,expense:0,weekEnd:end};
+      else buckets[key].weekEnd=end;
+    }
+  } else {
+    // 3 Ay / Tümü: aylık görünüm. Tümü'nde mobil okunabilirlik için son 6 ay.
+    list.forEach(t=>{if(!isTransferTx(t)){const d=txDateValue(t);add(d.slice(0,7),t)}});
+    let months=[];
+    const cursor=new Date(b.start.getFullYear(),b.start.getMonth(),1);
+    const endMonth=new Date(b.end.getFullYear(),b.end.getMonth(),1);
+    while(cursor<=endMonth){months.push(`${cursor.getFullYear()}-${String(cursor.getMonth()+1).padStart(2,'0')}`);cursor.setMonth(cursor.getMonth()+1)}
+    if(state.reportPeriod==='all')months=months.slice(-6);
+    months.forEach(k=>{if(!buckets[k])buckets[k]={income:0,expense:0};});
   }
-  if(state.reportPeriod==='3m'||state.reportPeriod==='all') keys=keys.slice(-6);
+
+  let keys=Object.keys(buckets).sort();
   if(!keys.length)return '<div class="chart-empty">Bu dönem için grafik verisi yok.</div>';
+
   const max=Math.max(1,...keys.map(k=>Math.max(buckets[k]?.income||0,buckets[k]?.expense||0)));
-  const labels=keys.map(k=>{if(k.length===7){const [y,m]=k.split('-');return new Date(+y,+m-1,1).toLocaleDateString('tr-TR',{month:'short'}).replace('.','')}const d=new Date(k+'T12:00:00');return `${d.getDate()} ${d.toLocaleDateString('tr-TR',{month:'short'}).replace('.','')}`});
-  return `<div class="trend-chart"><div class="trend-legend"><span><i class="income-dot"></i>Gelir</span><span><i class="expense-dot"></i>Gider</span><span class="trend-scale-note">Ölçek: ${money(max)}</span></div><div class="trend-bars">${keys.map((k,i)=>{const a=buckets[k]||{income:0,expense:0};const ih=a.income?Math.max(4,Math.round(a.income/max*100)):0;const eh=a.expense?Math.max(4,Math.round(a.expense/max*100)):0;return `<div class="trend-col"><div class="trend-values"><span>${a.income?money(a.income):''}</span><span>${a.expense?money(a.expense):''}</span></div><div class="trend-track"><i class="trend-income" style="height:${ih}%"></i><i class="trend-expense" style="height:${eh}%"></i></div><small>${labels[i]}</small></div>`}).join('')}</div></div>`;
+  const labels=keys.map(k=>{
+    if(k.length===7){
+      const [y,m]=k.split('-');
+      return new Date(+y,+m-1,1).toLocaleDateString('tr-TR',{month:'short'}).replace('.','');
+    }
+    const d=new Date(k+'T12:00:00');
+    if(state.reportPeriod==='month')return `${d.getDate()}-${buckets[k]?.weekEnd||d.getDate()} ${d.toLocaleDateString('tr-TR',{month:'short'}).replace('.','')}`;
+    return `${d.getDate()} ${d.toLocaleDateString('tr-TR',{month:'short'}).replace('.','')}`;
+  });
+
+  return `<div class="trend-chart"><div class="trend-legend"><span><i class="income-dot"></i>Gelir</span><span><i class="expense-dot"></i>Gider</span><span class="trend-scale-note">Maks. ölçek: ${money(max)}</span></div><div class="trend-bars trend-bars-${state.reportPeriod}">${keys.map((k,i)=>{
+    const a=buckets[k]||{income:0,expense:0};
+    const ih=a.income?Math.max(2,Math.round(a.income/max*100)):0;
+    const eh=a.expense?Math.max(2,Math.round(a.expense/max*100)):0;
+    return `<div class="trend-col"><div class="trend-values"><span>${a.income?money(a.income):''}</span><span>${a.expense?money(a.expense):''}</span></div><div class="trend-track"><i class="trend-income" style="height:${ih}%"></i><i class="trend-expense" style="height:${eh}%"></i></div><small>${labels[i]}</small></div>`;
+  }).join('')}</div></div>`;
 }
 function reports(){
   const list=reportTransactions();
