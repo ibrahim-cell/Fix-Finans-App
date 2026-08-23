@@ -2027,6 +2027,45 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 }
 
 </style>
+
+<style id="fix-smart-133100">
+/* 13.3.100 — Finans Skoru / Harcama Dağılımı son mobil hizalama ve kompakt üst başlık.
+   Yalnızca sunum katmanı; veri, hesaplama ve çalışan özelliklere dokunmaz. */
+.smart-center-head{gap:12px!important;padding:4px 0 11px!important;margin:2px 0 12px!important;align-items:center!important}
+.smart-center-head h1{font-size:23px!important;line-height:1.08!important;letter-spacing:-.55px!important;white-space:nowrap!important}
+.smart-center-head p{font-size:9.5px!important;line-height:1.38!important;margin:5px 0 0!important;max-width:420px!important}
+.smart-kicker{font-size:8.5px!important;letter-spacing:.14em!important;margin-bottom:5px!important}
+.smart-orb{flex:0 0 44px!important;width:44px!important;height:44px!important;border-radius:13px!important}
+.smart-orb svg{width:21px!important;height:21px!important}
+.smart-expense-donut{overflow:hidden!important}
+.smart-expense-donut:after{inset:24px!important}
+.smart-expense-donut>div{width:78px!important;height:52px!important;max-width:78px!important;overflow:hidden!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important}
+.smart-expense-donut small{font-size:6.5px!important;line-height:1!important;white-space:nowrap!important}
+.smart-expense-donut b{font-size:11px!important;line-height:1.05!important;letter-spacing:-.35px!important;margin-top:4px!important;white-space:nowrap!important;max-width:100%!important;transform:scaleX(.92)!important;transform-origin:center!important}
+@media(max-width:560px){
+  .smart-center-head{gap:9px!important;padding:2px 0 9px!important;margin-bottom:10px!important}
+  .smart-center-head h1{font-size:20px!important;letter-spacing:-.45px!important}
+  .smart-center-head p{font-size:8.5px!important;line-height:1.35!important;margin-top:4px!important;max-width:280px!important}
+  .smart-kicker{font-size:7.5px!important;margin-bottom:4px!important}
+  .smart-orb{flex-basis:40px!important;width:40px!important;height:40px!important;border-radius:12px!important}
+  .smart-orb svg{width:19px!important;height:19px!important}
+  .smart-expense-donut{width:122px!important;height:122px!important}
+  .smart-expense-donut:after{inset:24px!important}
+  .smart-expense-donut>div{width:70px!important;height:50px!important}
+  .smart-expense-donut b{font-size:10px!important;letter-spacing:-.4px!important;transform:scaleX(.88)!important}
+  .smart-expense-donut small{font-size:6px!important}
+}
+@media(max-width:360px){
+  .smart-center-head h1{font-size:18px!important}
+  .smart-center-head p{font-size:7.5px!important;max-width:235px!important}
+  .smart-orb{flex-basis:36px!important;width:36px!important;height:36px!important}
+  .smart-expense-donut{width:108px!important;height:108px!important}
+  .smart-expense-donut:after{inset:21px!important}
+  .smart-expense-donut>div{width:62px!important;height:44px!important}
+  .smart-expense-donut b{font-size:8.7px!important;transform:scaleX(.86)!important}
+  .smart-expense-donut small{font-size:5.5px!important}
+}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
