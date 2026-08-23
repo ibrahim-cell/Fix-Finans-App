@@ -3222,6 +3222,11 @@ if(localStorage.getItem('fix_profile_photo_clean_13274')!=='1'){
 applyFontSize();
 render();
 
+/* Otomatik yedekleme: uygulama açılışında ve uygulama açık kaldığında periyodik kontrol.
+   Veri hesaplamalarına ve mevcut yedek formatına dokunmaz. */
+setTimeout(()=>{try{maybeAutoBackup(false)}catch(e){console.warn("Auto backup check:",e)}},1200);
+setInterval(()=>{try{maybeAutoBackup(false)}catch(e){console.warn("Auto backup check:",e)}},15*60*1000);
+
 let pullStartY=null,pullStartX=null,pullTriggered=false,pullResetTimer=null;
 function resetPullGesture(){
   pullStartY=null; pullStartX=null; pullTriggered=false;
