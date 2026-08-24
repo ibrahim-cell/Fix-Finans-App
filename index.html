@@ -4300,6 +4300,60 @@ function exportExcelFile(){
   .smart-expense-empty-visual{min-height:145px!important}
 }
 </style>
+
+<style id="fix-13399-v17-recurring-income-final">
+/* V17 — Düzenli Gelir: premium compact action + category control.
+   Presentation-only; recurring-income data and save logic are untouched. */
+.smart-income-card .smart-section-title{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
+.smart-income-card .smart-income-add-head{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;min-width:52px!important;height:30px!important;padding:0 9px!important;
+  border-radius:9px!important;border:1px solid rgba(73,223,176,.42)!important;
+  background:rgba(73,223,176,.08)!important;color:#49dfb0!important;
+  font-size:8px!important;font-weight:850!important;line-height:1!important;white-space:nowrap!important;
+  box-shadow:0 4px 12px rgba(73,223,176,.08)!important;
+}
+.smart-income-card .smart-income-add-head:active{transform:scale(.98)!important}
+.smart-income-card .smart-income-row{grid-template-columns:32px minmax(0,1fr) auto auto!important;align-items:center!important;gap:7px!important;padding:9px 1px!important}
+.smart-income-card .smart-income-add{
+  height:28px!important;min-width:0!important;padding:0 8px!important;margin:0!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  border-radius:8px!important;border:1px solid rgba(73,223,176,.42)!important;
+  background:rgba(73,223,176,.08)!important;color:#49dfb0!important;
+  font-size:7.5px!important;font-weight:850!important;white-space:nowrap!important;
+  box-shadow:0 4px 12px rgba(73,223,176,.07)!important;
+}
+.smart-income-card .smart-income-add span{font-size:9px!important;margin-left:3px!important}
+.light .smart-income-card .smart-income-add-head,
+.light .smart-income-card .smart-income-add{
+  border-color:#bfe9d9!important;background:#effbf6!important;color:#15966f!important;
+  box-shadow:0 4px 12px rgba(21,150,111,.08)!important;
+}
+/* Recurring-income category: same compact premium control used elsewhere, not native-looking grey select. */
+.recurring-income-sheet #recCategory{
+  appearance:none!important;-webkit-appearance:none!important;
+  width:100%!important;min-height:42px!important;padding:0 38px 0 12px!important;
+  border-radius:11px!important;font-size:10px!important;font-weight:750!important;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%)!important;
+  background-position:calc(100% - 17px) 17px,calc(100% - 12px) 17px!important;
+  background-size:5px 5px,5px 5px!important;background-repeat:no-repeat!important;
+}
+.recurring-income-sheet #recCategory option{font-size:10px!important}
+.dark .recurring-income-sheet #recCategory,.recurring-income-sheet #recCategory{
+  background-color:#0b1020!important;color:#e6e8f1!important;border:1px solid #242b47!important;
+}
+.light .recurring-income-sheet #recCategory{
+  background-color:#fff!important;color:#151b36!important;border:1px solid #dfe4ed!important;
+  box-shadow:0 4px 12px rgba(48,61,96,.035)!important;
+  background-image:linear-gradient(45deg,transparent 50%,#7a8192 50%),linear-gradient(135deg,#7a8192 50%,transparent 50%)!important;
+}
+@media(max-width:380px){
+ .smart-income-card .smart-income-row{grid-template-columns:30px minmax(0,1fr) auto!important;gap:7px!important}
+ .smart-income-card .smart-income-row>strong{grid-column:2;grid-row:2;font-size:8px!important}
+ .smart-income-card .smart-income-add{grid-column:3;grid-row:1 / span 2}
+ .smart-income-card .smart-income-add-head{min-width:49px;height:29px!important;padding:0 8px!important}
+}
+</style>
 </head><body>${table}
 <style id="fix-smart-13381-financial-goals">
 /* 13.3.81 — Akıllı Finans Merkezi #09: Finansal Hedefler */
