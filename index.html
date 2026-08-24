@@ -2078,6 +2078,26 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .recurring-category-select{height:49px;border-radius:12px;border:1px solid #242b47;background:#080c18;color:#fff;padding:0 12px;font-size:14px;outline:none;width:100%}
 .light .recurring-category-select{background:#fff;color:#151827;border-color:#d7deea}
 
+.recurring-category-picker{width:100%;min-height:46px;padding:0 11px;border:1px solid color-mix(in srgb,var(--theme-accent) 42%,#242b47);border-radius:12px;background:color-mix(in srgb,var(--theme-accent) 6%,#080c18);color:#eef0f8;display:flex;align-items:center;justify-content:space-between;text-align:left;box-shadow:0 4px 14px rgba(0,0,0,.08);font:inherit;cursor:pointer}
+.recurring-category-picker-main{display:flex;align-items:center;gap:9px;min-width:0}
+.recurring-category-picker-icon{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:color-mix(in srgb,var(--theme-accent) 12%,#11182a);border:1px solid color-mix(in srgb,var(--theme-accent) 24%,#202846);font-size:15px;flex:0 0 29px}
+.recurring-category-picker-main #recCategoryLabel{font-size:10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recurring-category-picker-chevron{font-size:14px;color:var(--theme-accent);margin-left:8px}
+.recurring-category-sheet{max-height:86dvh!important;overflow:auto!important}
+.recurring-category-list{gap:6px!important;margin-top:4px}
+.recurring-category-row{height:50px!important;grid-template-columns:34px minmax(0,1fr) 20px!important;padding:0 10px!important;border-radius:12px!important}
+.recurring-category-row .category-icon{width:27px;height:27px;border-radius:8px;font-size:14px}
+.recurring-category-row span:nth-child(2){min-width:0;display:flex;flex-direction:column;gap:2px}
+.recurring-category-row b{font-size:10px;line-height:1.1}
+.recurring-category-row small{font-size:6.5px;color:#747d92;line-height:1.1}
+.recurring-category-check{font-size:12px;color:#747d92;text-align:center}
+.recurring-category-row.selected .recurring-category-check{color:var(--theme-accent);font-weight:900}
+.recurring-category-manage{margin-top:9px!important}
+.light .recurring-category-picker{background:color-mix(in srgb,var(--theme-accent) 5%,white);color:#151827;border-color:color-mix(in srgb,var(--theme-accent) 36%,#dfe4ed)}
+.light .recurring-category-picker-icon{background:color-mix(in srgb,var(--theme-accent) 9%,white);border-color:color-mix(in srgb,var(--theme-accent) 20%,#dfe4ed)}
+.light .recurring-category-row{background:#fff;color:#151827;border-color:#dfe4ed}
+.light .recurring-category-row.selected{background:color-mix(in srgb,var(--theme-accent) 9%,white);border-color:var(--theme-accent)}
+
 /* Yaklaşan listeleri: ilk birkaç kayıt görünür, devamı kompakt devam barında. */
 .upcoming-collapse-bar{width:100%;height:40px;margin-top:8px;border:1px solid color-mix(in srgb,var(--theme-accent) 35%,#242b47);background:color-mix(in srgb,var(--theme-accent) 7%,#080b16);color:var(--theme-accent);border-radius:11px;display:flex;align-items:center;justify-content:space-between;padding:0 11px;font-size:9px;font-weight:800}
 .upcoming-collapse-bar span:last-child{font-size:15px;line-height:1}
@@ -3377,13 +3397,14 @@ function openRecurringModal(editId=null,typeOverride=null){
   const type=rawType==='Abonelik'?'Düzenli Gider':rawType;
   const isIncome=type==='Düzenli Gelir';
   document.getElementById('modal').classList.remove('hidden');
+  state.__recurringFormMeta={editId:existing?String(existing.id):null,type};
   const safeId=existing?String(existing.id).replace(/'/g,"\\'"):'';
   const defaultCategory=isIncome?(existing?.category||'Kurye Geliri'):(existing?.category||'Market');
   const categoryType=isIncome?'Gelir':'Gider';
   const categories=categoryOptions(categoryType);
   const selectedCategory=existing?.category&&categories.some(x=>x[1]===existing.category)?existing.category:defaultCategory;
   const categoryOptionsHtml=categories.map(([ic,name])=>`<option value="${esc(name)}" ${name===selectedCategory?'selected':''}>${esc(ic)} ${esc(name)}</option>`).join('');
-  document.getElementById('modal').innerHTML=`<div class="sheet recurring-sheet ${isIncome?'recurring-income-sheet':''}"><button class="close" onclick="closeModal()">×</button><div class="support-kicker"><span class="support-kicker-icon">${isIncome?iconSvg('incomeTrend'):'↻'}</span> ${isIncome?'DÜZENLİ GELİR':'DÜZENLİ GİDER'}</div><h2>${existing?(isIncome?'Düzenli Geliri Düzenle':'Düzenli Gideri Düzenle'):(isIncome?'Düzenli Gelir Ekle':'Düzenli Gider Ekle')}</h2><div class="settings-sub">${isIncome?'Ödeme günü sabit, tutar değişken olabilir. Gerçek bakiyeye otomatik gelir yazılmaz.':'Bu kayıt planlama içindir; gerçek bakiyene otomatik gider yazmaz.'}</div><div class="form"><label>Tür</label><div class="type recurring-type-grid"><button class="${type==='Düzenli Gider'?'active':''}" onclick="openRecurringModalType('Düzenli Gider',${existing?`'${safeId}'`:'null'})">Düzenli Gider</button><button class="${type==='Düzenli Gelir'?'active':''}" onclick="openRecurringModalType('Düzenli Gelir',${existing?`'${safeId}'`:'null'})">Düzenli Gelir</button></div><label>Ad</label><input id="recTitle" value="${esc(existing?.title||'')}" placeholder="${isIncome?'Örn. Çalıştığım Firma':'Örn. Kira, İnternet, Market'}"><label>Tutar${isIncome?' (isteğe bağlı)':''}</label><input id="recAmount" inputmode="decimal" value="${existing&&Number(existing.amount)>0?String(existing.amount):''}" placeholder="${isIncome?'Tutar değişkense boş bırak':'₺0,00'}"><label>Tekrar</label><div class="rec-frequency-field"><input id="recFrequency" type="hidden" value="${esc(freq)}"><button type="button" id="recFrequencyTrigger" class="rec-frequency-trigger" onclick="toggleRecurringFrequencyPicker()"><span id="recFrequencyLabel">${esc(freq)}</span><span class="rec-frequency-chevron">⌄</span></button><div id="recFrequencyMenu" class="rec-frequency-menu hidden"><button type="button" onclick="selectRecurringFrequency('Haftalık')">Haftalık</button><button type="button" onclick="selectRecurringFrequency('Aylık')">Aylık</button><button type="button" onclick="selectRecurringFrequency('3 Aylık')">3 Aylık</button><button type="button" onclick="selectRecurringFrequency('Yıllık')">Yıllık</button></div></div><label>Sonraki ödeme günü</label><input id="recNextDate" type="date" value="${esc(existing?.nextDate||localDateISO())}"><label class="recurring-check"><input id="recUpcoming" type="checkbox" ${existing?.addToUpcoming!==false?'checked':''}> ${isIncome?'Yaklaşan gelirlerde takip et':'Yaklaşan ödemelerde de takip et'}</label><label>Kategori</label><select id="recCategory" class="recurring-category-select">${categoryOptionsHtml}</select><label>Not</label><input id="recNote" value="${esc(existing?.note||'')}" placeholder="İsteğe bağlı"><button class="save" onclick="saveRecurring(${existing?`'${safeId}'`:'null'},'${type}')">${existing?'Değişiklikleri Kaydet':'Kaydet'}</button>${existing?`<button type="button" class="delete recurring-delete" onclick='deleteRecurring(${JSON.stringify(String(existing.id))})'>Kaydı Sil</button>`:''}</div></div>`;
+  document.getElementById('modal').innerHTML=`<div class="sheet recurring-sheet ${isIncome?'recurring-income-sheet':''}"><button class="close" onclick="closeModal()">×</button><div class="support-kicker"><span class="support-kicker-icon">${isIncome?iconSvg('incomeTrend'):'↻'}</span> ${isIncome?'DÜZENLİ GELİR':'DÜZENLİ GİDER'}</div><h2>${existing?(isIncome?'Düzenli Geliri Düzenle':'Düzenli Gideri Düzenle'):(isIncome?'Düzenli Gelir Ekle':'Düzenli Gider Ekle')}</h2><div class="settings-sub">${isIncome?'Ödeme günü sabit, tutar değişken olabilir. Gerçek bakiyeye otomatik gelir yazılmaz.':'Bu kayıt planlama içindir; gerçek bakiyene otomatik gider yazmaz.'}</div><div class="form"><label>Tür</label><div class="type recurring-type-grid"><button class="${type==='Düzenli Gider'?'active':''}" onclick="openRecurringModalType('Düzenli Gider',${existing?`'${safeId}'`:'null'})">Düzenli Gider</button><button class="${type==='Düzenli Gelir'?'active':''}" onclick="openRecurringModalType('Düzenli Gelir',${existing?`'${safeId}'`:'null'})">Düzenli Gelir</button></div><label>Ad</label><input id="recTitle" value="${esc(existing?.title||'')}" placeholder="${isIncome?'Örn. Çalıştığım Firma':'Örn. Kira, İnternet, Market'}"><label>Tutar${isIncome?' (isteğe bağlı)':''}</label><input id="recAmount" inputmode="decimal" value="${existing&&Number(existing.amount)>0?String(existing.amount):''}" placeholder="${isIncome?'Tutar değişkense boş bırak':'₺0,00'}"><label>Tekrar</label><div class="rec-frequency-field"><input id="recFrequency" type="hidden" value="${esc(freq)}"><button type="button" id="recFrequencyTrigger" class="rec-frequency-trigger" onclick="toggleRecurringFrequencyPicker()"><span id="recFrequencyLabel">${esc(freq)}</span><span class="rec-frequency-chevron">⌄</span></button><div id="recFrequencyMenu" class="rec-frequency-menu hidden"><button type="button" onclick="selectRecurringFrequency('Haftalık')">Haftalık</button><button type="button" onclick="selectRecurringFrequency('Aylık')">Aylık</button><button type="button" onclick="selectRecurringFrequency('3 Aylık')">3 Aylık</button><button type="button" onclick="selectRecurringFrequency('Yıllık')">Yıllık</button></div></div><label>Sonraki ödeme günü</label><input id="recNextDate" type="date" value="${esc(existing?.nextDate||localDateISO())}"><label class="recurring-check"><input id="recUpcoming" type="checkbox" ${existing?.addToUpcoming!==false?'checked':''}> ${isIncome?'Yaklaşan gelirlerde takip et':'Yaklaşan ödemelerde de takip et'}</label><label>Kategori</label><input type="hidden" id="recCategory" value="${esc(selectedCategory)}"><button type="button" class="recurring-category-picker" onclick="openRecurringCategoryPicker()"><span class="recurring-category-picker-main"><span class="recurring-category-picker-icon">${categoryIcon(selectedCategory,categoryType)}</span><span id="recCategoryLabel">${esc(selectedCategory)}</span></span><span class="recurring-category-picker-chevron">⌄</span></button><label>Not</label><input id="recNote" value="${esc(existing?.note||'')}" placeholder="İsteğe bağlı"><button class="save" onclick="saveRecurring(${existing?`'${safeId}'`:'null'},'${type}')">${existing?'Değişiklikleri Kaydet':'Kaydet'}</button>${existing?`<button type="button" class="delete recurring-delete" onclick='deleteRecurring(${JSON.stringify(String(existing.id))})'>Kaydı Sil</button>`:''}</div></div>`;
 }
 
 function toggleRecurringFrequencyPicker(){
@@ -3398,6 +3419,38 @@ function selectRecurringFrequency(value){
   if(input)input.value=value;
   if(label)label.textContent=value;
   if(menu)menu.classList.add('hidden');
+}
+
+function openRecurringCategoryPicker(){
+  const meta=state.__recurringFormMeta||{editId:null,type:'Düzenli Gider'};
+  const categoryType=meta.type==='Düzenli Gelir'?'Gelir':'Gider';
+  const categories=categoryOptions(categoryType);
+  state.__recurringDraft={
+    title:document.getElementById('recTitle')?.value||'',
+    amount:document.getElementById('recAmount')?.value||'',
+    frequency:document.getElementById('recFrequency')?.value||'Haftalık',
+    nextDate:document.getElementById('recNextDate')?.value||localDateISO(),
+    upcoming:document.getElementById('recUpcoming')?.checked!==false,
+    category:document.getElementById('recCategory')?.value||'',
+    note:document.getElementById('recNote')?.value||''
+  };
+  const backId=meta.editId?`'${String(meta.editId).replace(/'/g,"\\'")}'`:'null';
+  document.getElementById('modal').innerHTML=`<div class="sheet recurring-category-sheet"><button class="close" onclick="openRecurringModal(${backId},'${meta.type}')">×</button><div class="support-kicker"><span class="support-kicker-icon">${categoryType==='Gelir'?iconSvg('incomeTrend'):'↻'}</span> KATEGORİ SEÇ</div><h2>${categoryType==='Gelir'?'Gelir Kategorisi':'Gider Kategorisi'}</h2><div class="settings-sub">Fix Finans tasarım diline uygun kategori seçimini buradan yap.</div><div class="category-list recurring-category-list">${categories.map(([icon,name])=>`<button type="button" class="category-row recurring-category-row ${state.__recurringDraft.category===name?'selected':''}" onclick="selectRecurringCategory('${String(name).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')"><span class="category-icon">${icon}</span><span><b>${esc(name)}</b><small>${categoryType==='Gelir'?'Gelir kategorisi':'Gider kategorisi'}</small></span><span class="recurring-category-check">${state.__recurringDraft.category===name?'✓':'›'}</span></button>`).join('')}</div><button class="wide recurring-category-manage" type="button" onclick="openCategoryManager('${categoryType}')">＋ Kategori Ekle / Yönet</button></div>`;
+}
+function selectRecurringCategory(name){
+  const meta=state.__recurringFormMeta||{editId:null,type:'Düzenli Gider'};
+  const draft=state.__recurringDraft||{};
+  draft.category=name;
+  state.__recurringDraft=draft;
+  openRecurringModal(meta.editId,meta.type);
+  requestAnimationFrame(()=>{
+    const d=state.__recurringDraft||{};
+    [['recTitle',d.title],['recAmount',d.amount],['recFrequency',d.frequency],['recNextDate',d.nextDate],['recCategory',d.category],['recNote',d.note]].forEach(([id,v])=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v});
+    const upcoming=document.getElementById('recUpcoming'); if(upcoming)upcoming.checked=d.upcoming!==false;
+    const label=document.getElementById('recCategoryLabel'); if(label)label.textContent=d.category||'Kategori seç';
+    const icon=document.querySelector('.recurring-category-picker-icon'); if(icon)icon.textContent=categoryIcon(d.category,meta.type==='Düzenli Gelir'?'Gelir':'Gider');
+    delete state.__recurringDraft;
+  });
 }
 
 function openRecurringModalType(type,editId=null){
