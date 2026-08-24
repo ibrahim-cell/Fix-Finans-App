@@ -2420,6 +2420,18 @@ body:not(.light) .balance.card .ff-particle{
 .financial-score-detail-safe{font-size:7px!important;line-height:1.35!important}
 @media(max-width:360px){.financial-score-detail-sheet{width:calc(100% - 12px)!important;padding:12px!important}.financial-score-detail-row{min-height:42px!important;padding:8px!important}.financial-score-detail-row span{font-size:9px!important}.financial-score-detail-row b{font-size:9px!important}.financial-score-detail-head>strong{font-size:21px!important}}
 </style>
+<style id="fix-debt-balance-v22">
+.debt-form-sheet .wallet-choice{margin:0 0 10px!important}
+.debt-form-sheet .wallet-choice button{height:42px!important;font-size:10px!important}
+.debt-detail-sheet .detail-box small{display:block;margin-top:5px}
+.debt-detail-sheet .detail-actions{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:6px}
+.collect-debt{border:1px solid rgba(32,217,155,.42)!important;background:rgba(32,217,155,.08)!important;color:#49dfb0!important;border-radius:10px!important;font-weight:800!important}
+.collect-debt.undo{border-color:rgba(247,185,44,.38)!important;background:rgba(247,185,44,.07)!important;color:#f7c44f!important}
+.debt-settled-note{margin-top:9px;padding:8px 10px;border:1px solid rgba(32,217,155,.18);background:rgba(32,217,155,.04);border-radius:10px;color:#6d7d8e;font-size:8px;line-height:1.4}
+.amber{color:#f7c44f!important}
+@media(max-width:360px){.debt-detail-sheet .detail-actions{grid-template-columns:1fr 1fr}.debt-detail-sheet .collect-debt{grid-column:1/-1}.debt-form-sheet .wallet-choice button{font-size:9px!important}}
+.light .collect-debt{background:#ecfbf6!important;color:#168f68!important;border-color:#a8dfcf!important}.light .collect-debt.undo{background:#fff8e8!important;color:#a56b00!important;border-color:#e8ca83!important}.light .debt-settled-note{background:#f0faf6;border-color:#cceee1;color:#647084}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -2488,7 +2500,22 @@ function financialSummary(list=state.transactions){
   return {income,expense,net:income-expense,transfers,financialCount,totalCount:income||expense?financialCount+transfers:transfers};
 }
 const totals=()=>financialSummary(state.transactions);
-const walletTotals=()=>{let cash=0;state.transactions.forEach(t=>{const type=t[4]||'';if(type==='Transfer'&&t[7]==='Transfer'){const amount=Math.abs(Number(t[10])||0),from=t[8]||'Banka',to=t[9]||'Nakit';if(from==='Nakit')cash-=amount;if(to==='Nakit')cash+=amount;return;}if(isTransferTx(t))return;const v=Number(t[1])||0;if(t[7]==='Nakit')cash+=v;});const net=totals().net;return {cash,bank:net-cash};};
+/* 13.3.99 v22 — Alacak cüzdanı + vade + tahsilat bakiyesi */
+function isDebtSettled(d){return String(d?.[6]||'')==='Tahsil Edildi';}
+function debtWallet(d){return d?.[5]==='Nakit'?'Nakit':'Banka';}
+function debtDueDate(d){return String(d?.[7]||'');}
+function debtOutstandingReceivables(){
+  let total=0,cash=0,bank=0;
+  (Array.isArray(state.debts)?state.debts:[]).forEach(d=>{
+    if(d?.[0]!=='Alacak' || isDebtSettled(d)) return;
+    const amount=Math.abs(Number(d?.[1])||0); if(!amount) return;
+    total+=amount;
+    if(debtWallet(d)==='Nakit') cash+=amount; else bank+=amount;
+  });
+  return {total,cash,bank};
+}
+function availableBalance(){return totals().net-debtOutstandingReceivables().total;}
+const walletTotals=()=>{let cash=0;state.transactions.forEach(t=>{const type=t[4]||'';if(type==='Transfer'&&t[7]==='Transfer'){const amount=Math.abs(Number(t[10])||0),from=t[8]||'Banka',to=t[9]||'Nakit';if(from==='Nakit')cash-=amount;if(to==='Nakit')cash+=amount;return;}if(isTransferTx(t))return;const v=Number(t[1])||0;if(t[7]==='Nakit')cash+=v;});const net=totals().net;const receivables=debtOutstandingReceivables();cash-=receivables.cash;return {cash,bank:net-cash-receivables.bank};};
 const persist=()=>{localStorage.removeItem('fix_notifications_cleared');localStorage.setItem(STORAGE_KEY,JSON.stringify(state.transactions));localStorage.setItem(DEBT_KEY,JSON.stringify(state.debts));localStorage.setItem('fix_upcoming',JSON.stringify(state.upcoming||[]));localStorage.setItem(RECURRING_KEY,JSON.stringify(state.recurring||[]));localStorage.setItem(GOAL_KEY,JSON.stringify(state.financialGoals||[]));localStorage.setItem('fix_custom_categories',JSON.stringify(state.customCategories||{Gelir:[],Gider:[]}));if(typeof maybeAutoBackup==='function')setTimeout(()=>maybeAutoBackup(false),0);};
 
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
@@ -2554,8 +2581,8 @@ function calculateFinancialScore(t){
   if(!t || !t.income) return null;
   const savingsRate=t.net/t.income;
   const expenseRate=t.expense/t.income;
-  const debt=state.debts.filter(d=>d[0]==='Borç').reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
-  const receivable=state.debts.filter(d=>d[0]==='Alacak').reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
+  const debt=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
+  const receivable=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const netDebt=Math.max(0,debt-receivable);
   const debtRate=netDebt/t.income;
   /* 40 Tasarruf + 35 Gider Kontrolü + 25 Borç Baskısı.
@@ -2569,8 +2596,8 @@ const calculateHomeFinancialScore=calculateFinancialScore;
 function smartHomeSummary(t){
   const expenseRatio=t.income?Math.round(t.expense/t.income*100):0;
   const netRatio=t.income?Math.round(t.net/t.income*100):0;
-  const debtBorç=state.debts.filter(d=>d[0]==='Borç').reduce((a,d)=>a+Math.abs(Number(d[1]||0)),0);
-  const debtAlacak=state.debts.filter(d=>d[0]==='Alacak').reduce((a,d)=>a+Math.abs(Number(d[1]||0)),0);
+  const debtBorç=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1]||0)),0);
+  const debtAlacak=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1]||0)),0);
   const netDebt=Math.max(0,debtBorç-debtAlacak);
   const hasData=t.income>0 || t.expense>0 || debtBorç>0 || debtAlacak>0;
   let score=calculateFinancialScore(t), tone='Veri bekleniyor',toneClass='amber';
@@ -2615,11 +2642,11 @@ function homeBalanceTrend(){
   return {icon:'•',text:'Bu hafta dengeli seyrediyor',tone:'flat'};
 }
 function home(){
-  const t=totals();const month=financialSummary(currentMonthTransactions());const w=walletTotals();const hidden=localStorage.getItem('fix_balance_hidden')==='1';const smart=smartHomeSummary(month);const trend=homeBalanceTrend();
+  const t=totals();const available=availableBalance();const month=financialSummary(currentMonthTransactions());const w=walletTotals();const hidden=localStorage.getItem('fix_balance_hidden')==='1';const smart=smartHomeSummary(month);const trend=homeBalanceTrend();
   const recent=state.transactions.length?homeRecentGrouped(state.transactions):'<button type="button" class="empty empty-clickable" onclick="openModal()" aria-label="İşlem ekle">Henüz işlem eklenmedi.<br><span style="opacity:.7">İlk gelir veya giderini + butonundan ekleyebilirsin.</span></button>';
   const circumference=2*Math.PI*42; const dash=(smart.score/100*circumference).toFixed(1);
   return `<div class="tabs reference-tabs"><button class="active" onclick="state.page='home';render()">${iconSvg('home')}<span>Özet</span></button><button onclick="state.page='reports';render()">${iconSvg('chart')}<span>Grafikler</span></button><button onclick="state.page='upcoming';render()">${iconSvg('calendar')}<span>Yaklaşan</span></button></div>
-  <section class="card balance"><div class="label balance-label">Net Bakiye <button class="eye-btn" aria-label="Bakiyeyi göster/gizle" onclick="toggleBalanceVisibility()">${iconSvg(hidden?'eyeOff':'eye')}</button></div><div class="balance-line"><div class="balance-main"><span class="amount net-balance-counter" data-balance-value="${t.net}">${hidden?'••••••':money(t.net)}</span><div class="balance-status-row"><span class="status ${t.net>0?'':t.net<0?'status-negative':'status-neutral'}">${t.net>0?'↗ Pozitif':t.net<0?'↘ Negatif':'• Nötr'}</span><span class="balance-trend ${trend.tone}">${trend.icon} ${esc(trend.text)}</span></div></div><div class="wallet ff-balance-animation" aria-label="Finans animasyonu" aria-hidden="true"><div class="ff-finance-art"><div class="ff-particle p1"></div><div class="ff-particle p2"></div><div class="ff-particle p3"></div><div class="ff-particle p4"></div><div class="ff-ring ring-a"></div><div class="ff-ring ring-b"></div><div class="ff-ring ring-c"></div><div class="ff-sphere"><span class="ff-lira">₺</span><span class="ff-glint"></span></div><span class="ff-coin coin-a">₺</span><span class="ff-coin coin-b">₺</span><span class="ff-coin coin-c">₺</span><span class="ff-coin coin-d">₺</span></div></div></div><div class="wallet-mini-row"><div class="wallet-mini cash"><span class="wallet-mini-icon">💵</span><span><small>Nakit</small><b>${hidden?'••••••':money(w.cash)}</b></span></div><div class="wallet-mini bank"><span class="wallet-mini-icon">🏦</span><span><small>Banka</small><b>${hidden?'••••••':money(w.bank)}</b></span></div></div></section>
+  <section class="card balance"><div class="label balance-label">Net Bakiye <button class="eye-btn" aria-label="Bakiyeyi göster/gizle" onclick="toggleBalanceVisibility()">${iconSvg(hidden?'eyeOff':'eye')}</button></div><div class="balance-line"><div class="balance-main"><span class="amount net-balance-counter" data-balance-value="${available}">${hidden?'••••••':money(available)}</span><div class="balance-status-row"><span class="status ${available>0?'':available<0?'status-negative':'status-neutral'}">${available>0?'↗ Pozitif':available<0?'↘ Negatif':'• Nötr'}</span><span class="balance-trend ${trend.tone}">${trend.icon} ${esc(trend.text)}</span></div></div><div class="wallet ff-balance-animation" aria-label="Finans animasyonu" aria-hidden="true"><div class="ff-finance-art"><div class="ff-particle p1"></div><div class="ff-particle p2"></div><div class="ff-particle p3"></div><div class="ff-particle p4"></div><div class="ff-ring ring-a"></div><div class="ff-ring ring-b"></div><div class="ff-ring ring-c"></div><div class="ff-sphere"><span class="ff-lira">₺</span><span class="ff-glint"></span></div><span class="ff-coin coin-a">₺</span><span class="ff-coin coin-b">₺</span><span class="ff-coin coin-c">₺</span><span class="ff-coin coin-d">₺</span></div></div></div><div class="wallet-mini-row"><div class="wallet-mini cash"><span class="wallet-mini-icon">💵</span><span><small>Nakit</small><b>${hidden?'••••••':money(w.cash)}</b></span></div><div class="wallet-mini bank"><span class="wallet-mini-icon">🏦</span><span><small>Banka</small><b>${hidden?'••••••':money(w.bank)}</b></span></div></div></section>
   <section class="card smart-home-card">
     <div class="smart-home-head">
       <div class="smart-home-brand"><span class="smart-home-orb">${iconSvg('sparkle')}</span><div class="smart-home-brand-copy">
@@ -3074,7 +3101,7 @@ function smartExpenseDistribution(current, previous){
 
 function smartCashFlow(period=state.smartPeriod){
   /* 13.3.102 — Nakit Akışı: planlı gelirler tutarı bilinmiyorsa tahmine eklenmez. */
-  const actual=financialSummary(state.transactions).net;
+  const actual=availableBalance();
   const today=localDateISO();
   const futurePayments=(state.upcoming||[]).filter(x=>x.kind==='payment' && smartDateISO(x.date) && smartDateISO(x.date)>=today);
   const futureIncome=(state.upcoming||[]).filter(x=>x.kind==='income' && smartDateISO(x.date) && smartDateISO(x.date)>=today);
@@ -3118,12 +3145,12 @@ function smartDebtAnalysis(){
   const rows=visibleDebtRows.map(x=>row(x.d,x.type)).join('');
   let insight='';
   if(!debts.length) insight='Henüz borç veya alacak kaydı yok. Kayıt eklediğinde toplam yükümlülüğünü burada ayrı olarak görebileceksin.';
-  else if(totalDebt===0) insight=`Toplam ${money(totalReceivable)} alacağın görünüyor. Bu tutar gerçek bakiyene eklenmez; tahsil edildiğinde ayrıca gelir işlemi olarak kaydedilmelidir.`;
-  else if(totalReceivable>=totalDebt) insight=`Alacakların borçlarını karşılayabilecek seviyede. Net finansal pozisyonun ${money(Math.abs(netPosition))} ${netPosition>=0?'alacak yönünde':'yükümlülük yönünde'}.`;
+  else if(totalDebt===0) insight=`Toplam ${money(totalReceivable)} alacağın görünüyor. Bu tutar seçilen cüzdandaki kullanılabilir bakiyeden düşülür; tahsil edildiğinde aynı cüzdana geri eklenir.`;
+  else if(totalReceivable>=totalDebt) insight=`Alacakların borçlarını karşılayabilecek seviyede. Tahsil edilmemiş alacaklar seçilen cüzdandaki kullanılabilir bakiyeden düşülür. Net finansal pozisyonun ${money(Math.abs(netPosition))} ${netPosition>=0?'alacak yönünde':'yükümlülük yönünde'}.`;
   else insight=`Borçların alacaklarından ${money(netLiability)} daha yüksek. Bu tutarı gerçek net bakiyeden ayrı bir yükümlülük olarak takip et.`;
   return `<section class="card smart-card smart-debt-card">
     <div class="smart-section-title"><b>Borç &amp; Alacak Analizi</b><span>Gerçek nakitten ayrı</span></div>
-    <div class="smart-debt-note"><span class="smart-debt-note-icon">⚖️</span><div><b>Bakiyene otomatik eklenmez</b><small>Borç ve alacak kayıtları yalnızca yükümlülük/pozisyon analizi için kullanılır.</small></div></div>
+    <div class="smart-debt-note"><span class="smart-debt-note-icon">⚖️</span><div><b>Bakiyene otomatik eklenmez</b><small>Borçlar ayrı takip edilir; açık alacaklar seçilen cüzdandaki kullanılabilir bakiyeyi azaltır ve tahsil edilince geri eklenir.</small></div></div>
     <div class="smart-debt-metrics">
       <div><small>Toplam Borç</small><b class="red">${money(totalDebt)}</b><span>${debtRows.length} kayıt</span></div>
       <div><small>Toplam Alacak</small><b class="green">${money(totalReceivable)}</b><span>${receivableRows.length} kayıt</span></div>
@@ -3207,7 +3234,7 @@ function smartFinancialGoals(){
   const card=(g,i)=>{
     const target=Math.max(0,Number(g.target)||0), saved=Math.max(0,Number(g.saved)||0);
     const pct=target?Math.min(100,Math.round(saved/target*100)):0, remain=Math.max(0,target-saved);
-    const actual=financialSummary(state.transactions).net;
+    const actual=availableBalance();
     const ratio=actual>0?Math.round(saved/actual*100):null;
     const targetDate=g.date?formatDateTR(g.date):'Tarih belirtilmedi';
     return `<div class="smart-goal-item">
@@ -3681,8 +3708,8 @@ function smartFinancialHealthScore(t,current,previous){
   const cls=score===null?'amber':score>=65?'green':score>=50?'amber':'red';
   const savings=t.income?Math.round(t.net/t.income*100):0;
   const expenseRate=t.income?Math.round(t.expense/t.income*100):0;
-  const debt=state.debts.filter(d=>d[0]==='Borç').reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
-  const receivable=state.debts.filter(d=>d[0]==='Alacak').reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
+  const debt=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
+  const receivable=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const netDebt=Math.max(0,debt-receivable);
   const explanation=score===null?'Gelir verisi oluştuğunda skor; tasarruf, gider kontrolü ve net borç baskısını birlikte değerlendirecek.':score>=80?'Tasarruf alanın güçlü, gider kontrolün iyi ve net borç baskın düşük görünüyor.':score>=65?'Finansal dengen genel olarak iyi; tasarruf ve gider oranını korumaya odaklanabilirsin.':score>=50?'Denge korunuyor ancak gider oranı, tasarruf veya borç baskısından en az biri dikkat gerektiriyor.':'Gider ve/veya borç baskısı yüksek. Öncelikle nakit dengesini güçlendirmek daha önemli.';
   const scoreValue=score===null?0:Math.max(0,Math.min(100,score));
@@ -3696,8 +3723,8 @@ function smartCenter(){
   const expenseRatio=t.income?Math.round(t.expense/t.income*100):0, savingsRate=t.income?Math.round(t.net/t.income*100):0;
   const cats={};current.forEach(x=>{const v=Number(x[1])||0;if(v<0){const k=String(x[0]||'Diğer');cats[k]=(cats[k]||0)+Math.abs(v)}});
   const topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0]||null;
-  const debtBorç=state.debts.filter(d=>d[0]==='Borç').reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
-  const debtAlacak=state.debts.filter(d=>d[0]==='Alacak').reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
+  const debtBorç=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
+  const debtAlacak=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const today=localDateISO(), paymentCount=(state.upcoming||[]).filter(x=>x.kind==='payment'&&smartDateISO(x.date)>=today).length;
   let score=calculateFinancialScore(t),tone='Veri bekleniyor',toneClass='amber';
   if(score!==null){tone=score>=80?'İyi':score>=65?'Dengeli':score>=50?'Dikkat':'Riskli';toneClass=score>=65?'green':score>=50?'amber':'red';}
@@ -3791,27 +3818,70 @@ function saveUpcoming(kind,editId){
 function deleteUpcoming(id){state.upcoming=(state.upcoming||[]).filter(x=>String(x.id)!==String(id));persist();showUpcoming()}
 
 function debts(){
-  const borc=state.debts.filter(d=>d[0]==='Borç');
-  const alacak=state.debts.filter(d=>d[0]==='Alacak');
-  const tb=borc.reduce((a,d)=>a+Number(d[1]),0),ta=alacak.reduce((a,d)=>a+Number(d[1]),0);
+  const borc=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d));
+  const alacak=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d));
+  const tb=borc.reduce((a,d)=>a+Math.abs(Number(d[1])||0),0),ta=alacak.reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const active=state.debtTab==='Alacak'?'Alacak':'Borç';
   const list=active==='Borç'?borc:alacak;
   const listTitle=active==='Borç'?'Borçlarım':'Alacaklarım';
+  const settled=state.debts.filter(d=>d[0]===active&&isDebtSettled(d));
   return `<div class="title"><h1>Borç / Alacak</h1></div>
   <div class="debt-tabs"><button class="${active==='Borç'?'active':''}" onclick="state.debtTab='Borç';render()">${iconSvg('debt')} Borçlar</button><button class="${active==='Alacak'?'active':''}" onclick="state.debtTab='Alacak';render()">Alacaklar</button></div>
   <div class="debt-sum"><div class="debtbox"><small>🔴 Toplam Borç</small><b class="red">${money(tb)}</b></div><div class="debtbox"><small>🟢 Toplam Alacak</small><b class="green">${money(ta)}</b></div></div>
-  <section class="card section"><div class="list-head"><b>${listTitle}</b><button class="detail debt-head-add" aria-label="${active} ekle" title="${active} ekle" onclick="openDebtModal('${active}')">${iconSvg('plus')}</button></div>${list.length?list.map(debtRow).join(''):`<button type="button" class="empty empty-clickable" onclick="openDebtModal('${active}')" aria-label="${active} ekle">Henüz kayıt yok.</button>`}</section>`
+  <section class="card section"><div class="list-head"><b>${listTitle}</b><button class="detail debt-head-add" aria-label="${active} ekle" title="${active} ekle" onclick="openDebtModal('${active}')">${iconSvg('plus')}</button></div>${list.length?list.map(debtRow).join(''):`<button type="button" class="empty empty-clickable" onclick="openDebtModal('${active}')" aria-label="${active} ekle">Henüz kayıt yok.</button>`}${settled.length?`<div class="debt-settled-note">${settled.length} ${active.toLocaleLowerCase('tr-TR')} kaydı tahsil edildi ve bakiyeye dahil değil.</div>`:''}</section>`
 }
-function debtRow(d){const idx=state.debts.indexOf(d);const date=d[4]||'';return `<button type="button" class="debt-item debt-item-button" onclick="openDebtDetail(${idx})"><span class="avatar ${d[0]==='Borç'?'p':'g'}">${d[0]==='Borç'?'₺':'↗'}</span><div><div class="rname">${esc(d[2])}</div><div class="rsub">${esc(d[3]||'Kayıtlı')}${date?' · '+esc(formatDateTR(date)):''}</div></div><div class="rval ${d[0]==='Borç'?'red':'green'}">${money(d[1])}</div></button>`}
+function debtRow(d){
+  const idx=state.debts.indexOf(d), date=d[4]||'', due=debtDueDate(d), wallet=debtWallet(d);
+  const dueText=due?`Vade ${formatDateTR(due)}`:'Vade belirtilmedi';
+  return `<button type="button" class="debt-item debt-item-button" onclick="openDebtDetail(${idx})"><span class="avatar ${d[0]==='Borç'?'p':'g'}">${d[0]==='Borç'?'₺':'↗'}</span><div><div class="rname">${esc(d[2])}</div><div class="rsub">${esc(wallet)} · ${esc(dueText)}${d[3]?' · '+esc(d[3]):''}</div></div><div class="rval ${d[0]==='Borç'?'red':'green'}">${money(d[1])}</div></button>`
+}
 function openDebtModal(type,editIndex=null){
   const editing=Number.isInteger(editIndex), existing=editing?state.debts[editIndex]:null;
-  const t=type||existing?.[0]||'Borç', today=existing?.[4]||localDateISO();
+  const t=type||existing?.[0]||'Borç', created=existing?.[4]||localDateISO(), wallet=existing?.[5]==='Nakit'?'Nakit':'Banka', due=existing?.[7]||'';
   document.getElementById('modal').classList.remove('hidden');
-  document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>${editing?'Borç / Alacak Düzenle':'Borç / Alacak Ekle'}</h2><div class="type">${['Borç','Alacak'].map(x=>`<button class="${t===x?'active':''}" onclick="openDebtModal('${x}',${editing?editIndex:'null'})">${x}</button>`).join('')}</div><div class="form"><label>Tutar</label><input id="debtAmount" inputmode="decimal" value="${editing?esc(existing?.[1]||''):''}" placeholder="₺0,00"><label>Kişi / Kurum</label><input id="debtName" value="${editing?esc(existing?.[2]||''):''}" placeholder="Örn. Ahmet"><label>Tarih</label><input id="debtDate" type="date" value="${today}"><label>Not</label><input id="debtNote" value="${editing?esc(existing?.[3]||''):''}" placeholder="İsteğe bağlı"><button class="save debt-save" onclick="saveDebt('${t}',${editing?editIndex:'null'})">${editing?'Değişiklikleri Kaydet':'Kaydet'}</button></div></div>`
+  document.getElementById('modal').innerHTML=`<div class="sheet debt-form-sheet"><button class="close" onclick="closeModal()">×</button><h2>${editing?'Borç / Alacak Düzenle':'Borç / Alacak Ekle'}</h2><div class="type">${['Borç','Alacak'].map(x=>`<button class="${t===x?'active':''}" onclick="openDebtModal('${x}',${editing?editIndex:'null'})">${x}</button>`).join('')}</div><div class="form"><label>Tutar</label><input id="debtAmount" inputmode="decimal" value="${editing?esc(existing?.[1]||''):''}" placeholder="₺0,00"><label>Kişi / Kurum</label><input id="debtName" value="${editing?esc(existing?.[2]||''):''}" placeholder="Örn. Ahmet"><label>İşlemin yapıldığı cüzdan</label><div class="wallet-choice"><button type="button" data-debt-wallet="Nakit" class="${wallet==='Nakit'?'active':''}" onclick="selectDebtWallet('Nakit')">💵 Nakit</button><button type="button" data-debt-wallet="Banka" class="${wallet==='Banka'?'active':''}" onclick="selectDebtWallet('Banka')">🏦 Banka</button></div><input type="hidden" id="debtWallet" value="${wallet}"><label>Kayıt tarihi</label><input id="debtDate" type="date" value="${created}"><label>Vade günü</label><input id="debtDueDate" type="date" value="${due}"><label>Not</label><input id="debtNote" value="${editing?esc(existing?.[3]||''):''}" placeholder="İsteğe bağlı"><button class="save debt-save" onclick="saveDebt('${t}',${editing?editIndex:'null'})">${editing?'Değişiklikleri Kaydet':'Kaydet'}</button></div></div>`
 }
-function saveDebt(type,editIndex=null){const raw=document.getElementById('debtAmount').value||'0';const num=Number(String(raw).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.'))||0;const name=document.getElementById('debtName').value.trim()||'Kayıt';const note=document.getElementById('debtNote').value.trim();const date=document.getElementById('debtDate')?.value||localDateISO();if(!num){showToast('Tutar gerekli.');return}const record=[type,Math.abs(num),name,note,date];if(Number.isInteger(editIndex)){state.debts[editIndex]=record}else state.debts.unshift(record);persist();closeModal();render()}
+function selectDebtWallet(wallet){
+  const input=document.getElementById('debtWallet'); if(input)input.value=wallet;
+  document.querySelectorAll('[data-debt-wallet]').forEach(btn=>btn.classList.toggle('active',btn.dataset.debtWallet===wallet));
+}
+function saveDebt(type,editIndex=null){
+  const raw=document.getElementById('debtAmount').value||'0';
+  const num=Number(String(raw).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.'))||0;
+  const name=document.getElementById('debtName').value.trim()||'Kayıt';
+  const note=document.getElementById('debtNote').value.trim();
+  const created=document.getElementById('debtDate')?.value||localDateISO();
+  const due=document.getElementById('debtDueDate')?.value||'';
+  const wallet=document.getElementById('debtWallet')?.value==='Nakit'?'Nakit':'Banka';
+  if(!num){showToast('Tutar gerekli.');return}
+  const existing=Number.isInteger(editIndex)?state.debts[editIndex]:null;
+  const status=existing?.[6]||'Açık';
+  const settledAt=existing?.[8]||'';
+  const record=[type,Math.abs(num),name,note,created,wallet,status,due,settledAt];
+  if(Number.isInteger(editIndex))state.debts[editIndex]=record;else state.debts.unshift(record);
+  persist();closeModal();render();
+  if(type==='Alacak'&&!isDebtSettled(record))showToast(`${money(num)} ${wallet} bakiyesinden düşüldü.`);
+}
+function collectDebt(i){
+  const d=state.debts[i]; if(!d||d[0]!=='Alacak'||isDebtSettled(d))return;
+  confirmAction('Alacağı Tahsil Et',`${money(d[1])} tutarındaki alacak ${debtWallet(d)} bakiyesine geri eklenecek.`,()=>{
+    d[6]='Tahsil Edildi';d[8]=localDateISO();persist();closeModal();render();showToast(`${money(d[1])} ${debtWallet(d)} bakiyesine eklendi.`);
+  });
+}
+function reverseDebtCollection(i){
+  const d=state.debts[i]; if(!d||d[0]!=='Alacak'||!isDebtSettled(d))return;
+  confirmAction('Tahsilatı Geri Al','Tahsilat geri alınacak ve tutar tekrar alacak olarak bakiyeden düşülecek.',()=>{
+    d[6]='Açık';d[8]='';persist();closeModal();render();showToast('Tahsilat geri alındı.');
+  });
+}
 function formatDateTR(v){if(!v)return '';const d=new Date(v+'T12:00:00');return Number.isNaN(d.getTime())?v:d.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'})}
-function openDebtDetail(i){const d=state.debts[i];if(!d)return;const type=d[0], amount=Number(d[1])||0;document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>${type} Detayı</h2><div class="detail-box"><b>${esc(d[2]||'Kayıt')}</b><span class="${type==='Borç'?'red':'green'}">${money(amount)}</span><small>Tarih: ${esc(formatDateTR(d[4]||localDateISO()))}</small><small>${esc(d[3]||'Not eklenmedi.')}</small></div><div class="detail-actions"><button class="edit" onclick="closeModal();openDebtModal('${type}',${i})">Düzenle</button><button class="delete" onclick="deleteDebt(${i})">Sil</button></div></div>`}
+function openDebtDetail(i){
+  const d=state.debts[i];if(!d)return;
+  const type=d[0], amount=Number(d[1])||0, settled=isDebtSettled(d), due=debtDueDate(d), wallet=debtWallet(d);
+  const dueLabel=due?(smartDateISO(due)<localDateISO()?'Vadesi geçti':smartDateISO(due)===localDateISO()?'Bugün vade':`Vade: ${formatDateTR(due)}`):'Vade günü belirtilmedi';
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').innerHTML=`<div class="sheet debt-detail-sheet"><button class="close" onclick="closeModal()">×</button><h2>${type} Detayı</h2><div class="detail-box"><b>${esc(d[2]||'Kayıt')}</b><span class="${type==='Borç'?'red':'green'}">${money(amount)}</span><small>Cüzdan: ${esc(wallet)}</small><small>Kayıt tarihi: ${esc(formatDateTR(d[4]||localDateISO()))}</small><small>${esc(dueLabel)}</small><small>${esc(d[3]||'Not eklenmedi.')}</small>${type==='Alacak'?`<small class="${settled?'green':'amber'}">${settled?'✓ Tahsil edildi: '+formatDateTR(d[8]||localDateISO()):'⏳ Tahsil edilmedi — tutar bakiyeden düşülmüş durumda.'}</small>`:''}</div><div class="detail-actions">${type==='Alacak'&&!settled?`<button class="collect-debt" onclick="collectDebt(${i})">Tahsilatı Al</button>`:''}${type==='Alacak'&&settled?`<button class="collect-debt undo" onclick="reverseDebtCollection(${i})">Tahsilatı Geri Al</button>`:''}<button class="edit" onclick="closeModal();openDebtModal('${type}',${i})">Düzenle</button><button class="delete" onclick="deleteDebt(${i})">Sil</button></div></div>`
+}
 function deleteDebt(i){if(!state.debts[i])return;confirmAction('Borç / Alacak Kaydını Sil','Bu kayıt kalıcı olarak silinecek. Bu işlem geri alınamaz.',()=>{state.debts.splice(i,1);persist();closeModal();render();showToast('Kayıt silindi.')})}
 
 function getProfilePhoto(){
@@ -4989,8 +5059,8 @@ function openFinancialScoreDetail(){
   const income=Number(t.income)||0;
   const expense=Number(t.expense)||0;
   const net=Number(t.net)||0;
-  const debt=state.debts.filter(d=>d[0]==='Borç').reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
-  const receivable=state.debts.filter(d=>d[0]==='Alacak').reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
+  const debt=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
+  const receivable=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const netDebt=Math.max(0,debt-receivable);
   const savingsRate=income?net/income:0;
   const expenseRate=income?expense/income:0;
