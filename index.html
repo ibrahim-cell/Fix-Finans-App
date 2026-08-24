@@ -2307,6 +2307,34 @@ body:not(.light) .balance.card .ff-particle{
   border-color: #dfe4ee !important;
 }
 </style>
+<style id="fix-financial-score-empty-v15">
+/* 13.3.99 V15 — Finans Sağlık Skoru: skor hesaplanamıyorsa ring tamamen nötr.
+   Ana Sayfa ve Akıllı Finans Merkezi aynı empty-state kuralını kullanır. */
+.smart-score.is-empty .smart-score-ring,
+.smart-score.is-empty .smart-score-ring::before,
+.smart-health-ring.is-empty {
+  background: #252a42 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+.smart-score.is-empty .smart-score-ring::after,
+.smart-health-ring.is-empty::after {
+  background: #090d1a !important;
+  border-color: #303750 !important;
+}
+.light .smart-score.is-empty .smart-score-ring,
+.light .smart-score.is-empty .smart-score-ring::before,
+.light .smart-health-ring.is-empty {
+  background: #e7eaf2 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+.light .smart-score.is-empty .smart-score-ring::after,
+.light .smart-health-ring.is-empty::after {
+  background: #ffffff !important;
+  border-color: #d8deea !important;
+}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -2517,8 +2545,8 @@ function home(){
       <p class="smart-home-summary">${smart.hasData?`Bu ay gelirlerin giderlerinden <b>${money(Math.abs(month.net))}</b> ${month.net>=0?'fazla':'daha az'}.`:'Verilerin geldikçe sana özel finansal özet oluşturacağız.'}</p>
     </div>
     <div class="smart-home-metrics">
-      <div class="smart-score ${smart.hasData?'':'is-empty'}" style="--home-score:${smart.hasData?smart.score*3.6:0}deg">
-        <div class="smart-score-ring"><div class="smart-score-inner"><strong>${smart.hasData?smart.score:'—'}</strong><small>/100</small></div></div>
+      <div class="smart-score ${smart.score!==null?'':'is-empty'}" style="--home-score:${smart.score!==null?smart.score*3.6:0}deg">
+        <div class="smart-score-ring"><div class="smart-score-inner"><strong>${smart.score!==null?smart.score:'—'}</strong><small>/100</small></div></div>
         <b class="${smart.toneClass}">${smart.tone}</b>
       </div>
       <div class="smart-stat income"><span>Gelir</span><i class="smart-trend-icon">${iconSvg('incomeTrend')}</i><b>${money(month.income)}</b><small>${month.income?'Bu ay toplam':'—'}</small></div>
