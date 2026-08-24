@@ -5030,6 +5030,7 @@ function openModal(type){
   const wallet=draft.wallet||'Banka';
   const from=draft.from||'Banka';
   const to=draft.to||'Nakit';
+  const isCardPayment=state.type==='Kredi Kartı Ödemesi';
   document.getElementById('modal').classList.remove('hidden');
   const walletField=state.type==='Transfer'
     ? `<label>Transfer</label><div class="wallet-transfer-premium"><div class="wallet-transfer-side"><span>Nereden</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('from')"><span class="wallet-select-icon">${from==='Nakit'?'💵':'🏦'}</span><strong>${from}</strong><span class="wallet-select-chevron">⌄</span></button></div><div class="transfer-arrow">→</div><div class="wallet-transfer-side"><span>Nereye</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('to')"><span class="wallet-select-icon">${to==='Nakit'?'💵':'🏦'}</span><strong>${to}</strong><span class="wallet-select-chevron">⌄</span></button></div></div>`
