@@ -2284,6 +2284,28 @@ body:not(.light) .balance.card .ff-particle{
   .smart-income-card .smart-income-add span{font-size:8.5px!important}
   .light .smart-income-card .smart-income-add{height:27px!important;min-height:27px!important;font-size:7.4px!important}
 }
+<style id="fix-donut-empty-v14">
+/* 13.3.99 V14 — Skor verisi yoksa donut/ring kesinlikle dolu görünmez. */
+.smart-score.is-empty .smart-score-ring,
+.smart-health-ring.is-empty {
+  background: #20253a !important;
+  box-shadow: none !important;
+}
+.smart-score.is-empty .smart-score-ring:after,
+.smart-health-ring.is-empty:after {
+  background: #090d1a !important;
+  border-color: #2a3149 !important;
+}
+.light .smart-score.is-empty .smart-score-ring,
+.light .smart-health-ring.is-empty {
+  background: #e7eaf2 !important;
+  box-shadow: none !important;
+}
+.light .smart-score.is-empty .smart-score-ring:after,
+.light .smart-health-ring.is-empty:after {
+  background: #fff !important;
+  border-color: #dfe4ee !important;
+}
 </style>
 </head><body>
 
@@ -2495,7 +2517,7 @@ function home(){
       <p class="smart-home-summary">${smart.hasData?`Bu ay gelirlerin giderlerinden <b>${money(Math.abs(month.net))}</b> ${month.net>=0?'fazla':'daha az'}.`:'Verilerin geldikçe sana özel finansal özet oluşturacağız.'}</p>
     </div>
     <div class="smart-home-metrics">
-      <div class="smart-score" style="--home-score:${smart.hasData?smart.score*3.6:0}deg">
+      <div class="smart-score ${smart.hasData?'':'is-empty'}" style="--home-score:${smart.hasData?smart.score*3.6:0}deg">
         <div class="smart-score-ring"><div class="smart-score-inner"><strong>${smart.hasData?smart.score:'—'}</strong><small>/100</small></div></div>
         <b class="${smart.toneClass}">${smart.tone}</b>
       </div>
@@ -3518,7 +3540,7 @@ function smartFinancialHealthScore(t,current,previous){
   const netDebt=Math.max(0,debt-receivable);
   const explanation=score===null?'Gelir verisi oluştuğunda skor; tasarruf, gider kontrolü ve net borç baskısını birlikte değerlendirecek.':score>=80?'Tasarruf alanın güçlü, gider kontrolün iyi ve net borç baskın düşük görünüyor.':score>=65?'Finansal dengen genel olarak iyi; tasarruf ve gider oranını korumaya odaklanabilirsin.':score>=50?'Denge korunuyor ancak gider oranı, tasarruf veya borç baskısından en az biri dikkat gerektiriyor.':'Gider ve/veya borç baskısı yüksek. Öncelikle nakit dengesini güçlendirmek daha önemli.';
   const scoreValue=score===null?0:Math.max(0,Math.min(100,score));
-  return `<section class="card smart-card smart-health-card smart-health-hero"><div class="smart-section-title"><b>Finans Sağlık Skoru</b><span class="${cls}">${tone}</span></div><div class="smart-health-main"><div class="smart-health-ring" style="--score:${scoreValue*3.6}deg"><div class="smart-health-score"><b>${score===null?'—':score}</b><small>/ 100</small></div></div><div class="smart-health-copy"><b>${esc(tone)}</b><p>${esc(explanation)}</p><button class="smart-detail-btn" type="button" onclick="document.querySelector('.smart-health-card')?.scrollIntoView({behavior:'smooth',block:'center'})">Detaylı Analiz <span>→</span></button></div></div><div class="smart-health-bars"><div><span>Tasarruf</span><b>${t.income?`%${Math.max(-100,Math.min(100,savings))}`:'—'}</b><i><em style="width:${score===null?0:Math.max(0,Math.min(100,savings*2))}%"></em></i></div><div><span>Gider kontrolü</span><b>${t.income?`%${Math.max(0,100-expenseRate)}`:'—'}</b><i><em style="width:${t.income?Math.max(0,Math.min(100,100-expenseRate)):0}%"></em></i></div><div><span>Net borç baskısı</span><b>${t.income?money(netDebt):'—'}</b><i><em style="width:${t.income?Math.max(0,Math.min(100,100-(netDebt/t.income*100))):0}%"></em></i></div></div><div class="smart-health-safe">🔒 Skor yalnızca mevcut finans verilerini değerlendirir; hiçbir kaydı veya bakiyeyi değiştirmez.</div></section>`;
+  return `<section class="card smart-card smart-health-card smart-health-hero"><div class="smart-section-title"><b>Finans Sağlık Skoru</b><span class="${cls}">${tone}</span></div><div class="smart-health-main"><div class="smart-health-ring ${score===null?'is-empty':''}" style="--score:${scoreValue*3.6}deg"><div class="smart-health-score"><b>${score===null?'—':score}</b><small>/ 100</small></div></div><div class="smart-health-copy"><b>${esc(tone)}</b><p>${esc(explanation)}</p><button class="smart-detail-btn" type="button" onclick="document.querySelector('.smart-health-card')?.scrollIntoView({behavior:'smooth',block:'center'})">Detaylı Analiz <span>→</span></button></div></div><div class="smart-health-bars"><div><span>Tasarruf</span><b>${t.income?`%${Math.max(-100,Math.min(100,savings))}`:'—'}</b><i><em style="width:${score===null?0:Math.max(0,Math.min(100,savings*2))}%"></em></i></div><div><span>Gider kontrolü</span><b>${t.income?`%${Math.max(0,100-expenseRate)}`:'—'}</b><i><em style="width:${t.income?Math.max(0,Math.min(100,100-expenseRate)):0}%"></em></i></div><div><span>Net borç baskısı</span><b>${t.income?money(netDebt):'—'}</b><i><em style="width:${t.income?Math.max(0,Math.min(100,100-(netDebt/t.income*100))):0}%"></em></i></div></div><div class="smart-health-safe">🔒 Skor yalnızca mevcut finans verilerini değerlendirir; hiçbir kaydı veya bakiyeyi değiştirmez.</div></section>`;
 }
 
 function smartCenter(){
