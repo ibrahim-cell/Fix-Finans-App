@@ -5002,40 +5002,69 @@ function removeCustomCategory(type,i){state.customCategories[type].splice(i,1);p
 function openCreditCardSettings(){const card=creditCardStats();document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet credit-card-sheet"><button class="close" onclick="closeModal()">×</button><div class="support-kicker"><span class="support-kicker-icon">💳</span> KREDİ KARTI</div><h2>Kredi Kartı</h2><div class="settings-sub">Kullanılabilir limitini tanımla. Kart harcaması Net Bakiye ve Finans Skoru'na yansır.</div><div class="credit-card-stats"><div><small>Toplam Limit</small><b>${money(card.limit)}</b></div><div><small>Kullanılan</small><b>${money(card.debt)}</b></div><div><small>Kullanılabilir</small><b>${money(card.available)}</b></div></div><div class="form"><label>Toplam Kredi Kartı Limiti</label><input id="creditLimit" inputmode="decimal" value="${card.limit||''}" placeholder="₺0,00"><button class="save" onclick="saveCreditCardSettings()">Kaydet</button></div></div>`}
 function saveCreditCardSettings(){const raw=document.getElementById('creditLimit')?.value||'0';const limit=Math.max(0,Number(String(raw).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.'))||0);const used=creditCardStats().debt;if(limit<used){showToast(`Limit kullanılan tutardan düşük olamaz: ${money(used)}`);return}state.creditCard={limit};persist();closeModal();render();showToast('Kredi kartı limiti güncellendi.')}
 function openModal(type){
-  const currentAmount=document.getElementById('amount')?.value;
-  const currentNote=document.getElementById('note')?.value;
-  const currentDate=document.getElementById('txDate')?.value;
-  const currentWallet=document.getElementById('wallet')?.value;
-  const currentFrom=document.getElementById('walletFrom')?.value;
-  const currentTo=document.getElementById('walletTo')?.value;
-  if(currentAmount!==undefined||currentNote!==undefined||currentDate!==undefined||currentWallet!==undefined||currentFrom!==undefined||currentTo!==undefined){
+  // İşlem formu: modal katmanının açılıp içeriğin oluşmaması durumunu engellemek için
+  // tüm form üretimi tek ve savunmacı bir akışta tutulur.
+  const modal=document.getElementById('modal');
+  if(!modal){return}
+  try{
+    const currentAmount=document.getElementById('amount')?.value;
+    const currentNote=document.getElementById('note')?.value;
+    const currentDate=document.getElementById('txDate')?.value;
+    const currentWallet=document.getElementById('wallet')?.value;
+    const currentFrom=document.getElementById('walletFrom')?.value;
+    const currentTo=document.getElementById('walletTo')?.value;
+    const hasDraftFields=[currentAmount,currentNote,currentDate,currentWallet,currentFrom,currentTo].some(v=>v!==undefined);
     const previous=state.txDraft||{};
-    state.txDraft={
-      amount:currentAmount!==undefined?(currentAmount||''):(previous.amount||''),
-      note:currentNote!==undefined?(currentNote||''):(previous.note||''),
-      date:currentDate!==undefined?(currentDate||localDateISO()):(previous.date||localDateISO()),
-      wallet:currentWallet!==undefined?(currentWallet||'Banka'):(previous.wallet||'Banka'),
-      from:currentFrom!==undefined?(currentFrom||'Banka'):(previous.from||'Banka'),
-      to:currentTo!==undefined?(currentTo||'Nakit'):(previous.to||'Nakit'),
-      recurringId:previous.recurringId||null,
-      upcomingId:previous.upcomingId||null
-    };
+    if(hasDraftFields){
+      state.txDraft={
+        amount:currentAmount!==undefined?currentAmount:(previous.amount||''),
+        note:currentNote!==undefined?currentNote:(previous.note||''),
+        date:currentDate!==undefined?(currentDate||localDateISO()):(previous.date||localDateISO()),
+        wallet:currentWallet!==undefined?(currentWallet||'Banka'):(previous.wallet||'Banka'),
+        from:currentFrom!==undefined?(currentFrom||'Banka'):(previous.from||'Banka'),
+        to:currentTo!==undefined?(currentTo||'Nakit'):(previous.to||'Nakit'),
+        recurringId:previous.recurringId||null,
+        upcomingId:previous.upcomingId||null
+      };
+    }
+
+    state.type=type||'Gelir';
+    if(!['Gelir','Gider','Transfer','Kredi Kartı Ödemesi'].includes(state.type)) state.type='Gelir';
+    const categoryType=state.type==='Kredi Kartı Ödemesi'?'Gider':state.type;
+    let opts=[];
+    try{opts=categoryOptions(categoryType)||[]}catch(e){opts=[]}
+    if(!opts.length) opts=categoryType==='Gider'?[['🍽️','Yemek']]:categoryType==='Transfer'?[['⇄','Transfer']]:[['💰','Diğer Gelirler']];
+    if(!state.selectedCat||!opts.some(x=>x[1]===state.selectedCat)) state.selectedCat=opts[0][1];
+
+    const draft=state.txDraft||{};
+    const wallet=draft.wallet||'Banka';
+    const from=draft.from||'Banka';
+    const to=draft.to||'Nakit';
+    const isTransfer=state.type==='Transfer';
+    const isCardPayment=state.type==='Kredi Kartı Ödemesi';
+
+    const walletField=isTransfer
+      ? `<label>Transfer</label><div class="wallet-transfer-premium"><div class="wallet-transfer-side"><span>Nereden</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('from')"><span class="wallet-select-icon">${from==='Nakit'?'💵':'🏦'}</span><strong>${esc(from)}</strong><span class="wallet-select-chevron">⌄</span></button></div><div class="transfer-arrow">→</div><div class="wallet-transfer-side"><span>Nereye</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('to')"><span class="wallet-select-icon">${to==='Nakit'?'💵':'🏦'}</span><strong>${esc(to)}</strong><span class="wallet-select-chevron">⌄</span></button></div></div>`
+      : `<label>Cüzdan</label><div class="wallet-choice"><button type="button" data-wallet="Nakit" aria-pressed="${wallet==='Nakit'?'true':'false'}" class="${wallet==='Nakit'?'active':''}" onclick="selectWallet('Nakit')">💵 Nakit</button><button type="button" data-wallet="Banka" aria-pressed="${wallet==='Banka'?'true':'false'}" class="${wallet==='Banka'?'active':''}" onclick="selectWallet('Banka')">🏦 Banka</button>${isCardPayment?'':`<button type="button" data-wallet="Kredi Kartı" aria-pressed="${wallet==='Kredi Kartı'?'true':'false'}" class="${wallet==='Kredi Kartı'?'active':''}" onclick="selectWallet('Kredi Kartı')">💳 Kredi Kartı</button>`}</div><input type="hidden" id="wallet" value="${isCardPayment?(wallet==='Nakit'?'Nakit':'Banka'):esc(wallet)}">`;
+
+    modal.classList.remove('hidden');
+    modal.innerHTML=`<div class="sheet add-sheet"><button class="close" type="button" onclick="closeModal()">×</button><h2>İşlem Ekle</h2><div class="type">${['Gelir','Gider','Transfer','Kredi Kartı Ödemesi'].map(x=>`<button type="button" class="${state.type===x?'active':''}" onclick="openModal('${x}')">${x}</button>`).join('')}</div><div class="form"><label>Toplam</label><input id="amount" inputmode="decimal" value="${esc(draft.amount||'')}" placeholder="₺0,00"><label>Kategori</label><button type="button" class="category-picker" onclick="openCategoryPicker()"><span id="selectedCatLabel">${esc(state.selectedCat)}</span><span>⌄</span></button>${walletField}<label>Tarih</label><input id="txDate" type="date" value="${esc(draft.date||localDateISO())}"><label>Not (isteğe bağlı)</label><input id="note" value="${esc(draft.note||'')}" placeholder="Not ekleyin..."><button type="button" class="save" onclick="saveTx()">Kaydet</button></div></div>`;
+  }catch(err){
+    console.error('Fix Finans işlem formu açılamadı:',err);
+    // Modal kararıp boş kalmasın: en sade güvenli formu mutlaka göster.
+    try{
+      state.type=type||'Gelir';
+      const safeType=state.type==='Gider'?'Gider':state.type==='Transfer'?'Transfer':state.type==='Kredi Kartı Ödemesi'?'Kredi Kartı Ödemesi':'Gelir';
+      state.type=safeType;
+      state.selectedCat=safeType==='Gider'?'Yemek':safeType==='Transfer'?'Transfer':'Diğer Gelirler';
+      modal.classList.remove('hidden');
+      modal.innerHTML=`<div class="sheet add-sheet"><button class="close" type="button" onclick="closeModal()">×</button><h2>İşlem Ekle</h2><div class="type">${['Gelir','Gider','Transfer','Kredi Kartı Ödemesi'].map(x=>`<button type="button" class="${safeType===x?'active':''}" onclick="openModal('${x}')">${x}</button>`).join('')}</div><div class="form"><label>Toplam</label><input id="amount" inputmode="decimal" placeholder="₺0,00"><label>Kategori</label><button type="button" class="category-picker" onclick="openCategoryPicker()"><span id="selectedCatLabel">${state.selectedCat}</span><span>⌄</span></button><label>Cüzdan</label><div class="wallet-choice"><button type="button" data-wallet="Nakit" class="active" onclick="selectWallet('Nakit')">💵 Nakit</button><button type="button" data-wallet="Banka" onclick="selectWallet('Banka')">🏦 Banka</button></div><input type="hidden" id="wallet" value="Banka"><label>Tarih</label><input id="txDate" type="date" value="${localDateISO()}"><label>Not (isteğe bağlı)</label><input id="note" placeholder="Not ekleyin..."><button type="button" class="save" onclick="saveTx()">Kaydet</button></div></div>`;
+    }catch(fallbackErr){
+      console.error('Fix Finans güvenli işlem formu da açılamadı:',fallbackErr);
+      modal.innerHTML='<div class="sheet add-sheet"><button class="close" type="button" onclick="closeModal()">×</button><h2>İşlem Ekle</h2><p>Form yüklenirken bir hata oluştu. Lütfen tekrar deneyin.</p></div>';
+      modal.classList.remove('hidden');
+    }
   }
-  state.type=type||'Gelir';
-  const categoryType=state.type==='Kredi Kartı Ödemesi'?'Gider':state.type;
-  const opts=categoryOptions(categoryType);
-  state.selectedCat=state.selectedCat||opts[0][1];
-  if(!opts.some(x=>x[1]===state.selectedCat))state.selectedCat=opts[0][1];
-  const draft=state.txDraft||{};
-  const wallet=draft.wallet||'Banka';
-  const from=draft.from||'Banka';
-  const to=draft.to||'Nakit';
-  const isCardPayment=state.type==='Kredi Kartı Ödemesi';
-  document.getElementById('modal').classList.remove('hidden');
-  const walletField=state.type==='Transfer'
-    ? `<label>Transfer</label><div class="wallet-transfer-premium"><div class="wallet-transfer-side"><span>Nereden</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('from')"><span class="wallet-select-icon">${from==='Nakit'?'💵':'🏦'}</span><strong>${from}</strong><span class="wallet-select-chevron">⌄</span></button></div><div class="transfer-arrow">→</div><div class="wallet-transfer-side"><span>Nereye</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('to')"><span class="wallet-select-icon">${to==='Nakit'?'💵':'🏦'}</span><strong>${to}</strong><span class="wallet-select-chevron">⌄</span></button></div></div>`
-    : `<label>Cüzdan</label><div class="wallet-choice"><button type="button" data-wallet="Nakit" aria-pressed="${wallet==='Nakit'?'true':'false'}" class="${wallet==='Nakit'?'active':''}" onclick="selectWallet('Nakit')">💵 Nakit</button><button type="button" data-wallet="Banka" aria-pressed="${wallet==='Banka'?'true':'false'}" class="${wallet==='Banka'?'active':''}" onclick="selectWallet('Banka')">🏦 Banka</button>${isCardPayment?'':`<button type="button" data-wallet="Kredi Kartı" aria-pressed="${wallet==='Kredi Kartı'?'true':'false'}" class="${wallet==='Kredi Kartı'?'active':''}" onclick="selectWallet('Kredi Kartı')">💳 Kredi Kartı</button>`}</div><input type="hidden" id="wallet" value="${isCardPayment?(wallet==='Nakit'?'Nakit':'Banka'):wallet}">`;
-  document.getElementById('modal').innerHTML=`<div class="sheet add-sheet"><button class="close" onclick="closeModal()">×</button><h2>İşlem Ekle</h2><div class="type">${['Gelir','Gider','Transfer','Kredi Kartı Ödemesi'].map(x=>`<button class="${state.type===x?'active':''}" onclick="openModal('${x}')">${x}</button>`).join('')}</div><div class="form"><label>Toplam</label><input id="amount" inputmode="decimal" value="${esc(draft.amount||'')}" placeholder="₺0,00"><label>Kategori</label><button class="category-picker" onclick="openCategoryPicker()"><span id="selectedCatLabel">${esc(state.selectedCat)}</span><span>⌄</span></button>${walletField}<label>Tarih</label><input id="txDate" type="date" value="${esc(draft.date||localDateISO())}"><label>Not (isteğe bağlı)</label><input id="note" value="${esc(draft.note||'')}" placeholder="Not ekleyin..."><button class="save" onclick="saveTx()">Kaydet</button></div></div>`
 }
 function selectWallet(wallet){
   const amount=document.getElementById('amount')?.value||'';
