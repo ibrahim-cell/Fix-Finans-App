@@ -5776,7 +5776,120 @@ document.addEventListener('pointerdown',function(e){
 .light [class*="dark-card"],
 .light [class*="dark-panel"]{background:#fff!important;color:#151b36!important;border-color:#dfe4ee!important}
 </style>
-</body></html>
+</body>
+<style id="fix-13399-v19-smart-income-card-final">
+/* V19 — Akıllı Finans Merkezi / Düzenli Gelir: kart dili son düzeltme.
+   Sunum katmanı; kayıt, hesaplama ve iş akışına dokunmaz. */
+.smart-income-card{
+  padding:14px!important;
+  border-radius:17px!important;
+  overflow:hidden!important;
+}
+.smart-income-card .smart-section-title{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:10px!important;margin:0 0 10px!important;min-height:32px!important;
+}
+.smart-income-card .smart-section-title>b{
+  display:block!important;font-size:16px!important;line-height:1.1!important;font-weight:850!important;
+  color:inherit!important;letter-spacing:-.2px!important;
+}
+.smart-income-card .smart-income-add-head{
+  flex:0 0 auto!important;width:auto!important;min-width:0!important;height:30px!important;
+  padding:0 11px!important;border-radius:9px!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;white-space:nowrap!important;
+  border:1px solid color-mix(in srgb,var(--green) 48%,transparent)!important;
+  background:color-mix(in srgb,var(--green) 9%,transparent)!important;
+  color:var(--green)!important;font-size:9px!important;font-weight:850!important;
+  line-height:1!important;box-shadow:0 4px 12px color-mix(in srgb,var(--green) 8%,transparent)!important;
+}
+.smart-income-card .smart-income-note{
+  display:flex!important;align-items:center!important;gap:9px!important;
+  margin:0 0 9px!important;padding:9px 10px!important;border-radius:12px!important;
+  border:1px solid color-mix(in srgb,var(--theme-accent) 18%,#252b43)!important;
+  background:color-mix(in srgb,var(--theme-accent) 4%,#0a0f1d)!important;
+}
+.smart-income-card .smart-income-note-icon{
+  width:30px!important;height:30px!important;flex:0 0 30px!important;border-radius:9px!important;
+  display:grid!important;place-items:center!important;color:var(--green)!important;
+  background:color-mix(in srgb,var(--green) 10%,transparent)!important;
+  border:1px solid color-mix(in srgb,var(--green) 25%,transparent)!important;
+}
+.smart-income-card .smart-income-note-icon svg{width:16px!important;height:16px!important}
+.smart-income-card .smart-income-note b,
+.smart-income-card .smart-income-note small{display:block!important}
+.smart-income-card .smart-income-note b{font-size:9px!important;line-height:1.2!important;color:inherit!important}
+.smart-income-card .smart-income-note small{font-size:7.2px!important;line-height:1.35!important;margin-top:3px!important;color:#858c9e!important}
+.smart-income-card .smart-income-status{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;
+  min-height:27px!important;padding:6px 8px!important;margin:0 0 3px!important;
+  border:1px solid #202741!important;border-radius:9px!important;background:#0a0f1c!important;
+}
+.smart-income-card .smart-income-status span{font-size:7.5px!important;color:#8e95a7!important}
+.smart-income-card .smart-income-status b{font-size:7.5px!important;color:var(--theme-accent)!important;white-space:nowrap!important}
+.smart-income-card .smart-income-list{display:grid!important;margin:0!important}
+.smart-income-card .smart-income-row{
+  display:grid!important;grid-template-columns:30px minmax(0,1fr) auto!important;
+  grid-template-rows:auto auto!important;column-gap:8px!important;row-gap:4px!important;
+  align-items:center!important;padding:9px 2px!important;border-top:1px solid #1b2136!important;
+}
+.smart-income-card .smart-income-icon{
+  grid-column:1;grid-row:1 / span 2!important;width:28px!important;height:28px!important;
+  border-radius:8px!important;display:grid!important;place-items:center!important;
+  color:var(--green)!important;background:color-mix(in srgb,var(--green) 9%,transparent)!important;
+  border:1px solid color-mix(in srgb,var(--green) 25%,transparent)!important;
+}
+.smart-income-card .smart-income-icon svg{width:15px!important;height:15px!important}
+.smart-income-card .smart-income-row>div{grid-column:2;grid-row:1 / span 2;min-width:0!important}
+.smart-income-card .smart-income-row>div>b,
+.smart-income-card .smart-income-row>div>small{display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.smart-income-card .smart-income-row>div>b{font-size:9px!important;line-height:1.2!important;font-weight:800!important;color:inherit!important;white-space:nowrap!important}
+.smart-income-card .smart-income-row>div>small{font-size:6.8px!important;line-height:1.25!important;margin-top:3px!important;color:#858c9e!important;white-space:nowrap!important}
+.smart-income-card .smart-income-row>strong{
+  grid-column:3;grid-row:1!important;align-self:start!important;justify-self:end!important;
+  font-size:8px!important;line-height:1.1!important;color:var(--green)!important;white-space:nowrap!important;
+}
+.smart-income-card .smart-income-row>strong small{font-size:6px!important;color:inherit!important}
+.smart-income-card .smart-income-add{
+  grid-column:3!important;grid-row:2!important;align-self:end!important;justify-self:end!important;
+  width:auto!important;min-width:0!important;height:25px!important;padding:0 8px!important;margin:0!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:3px!important;
+  border-radius:8px!important;border:1px solid color-mix(in srgb,var(--green) 48%,transparent)!important;
+  background:color-mix(in srgb,var(--green) 8%,transparent)!important;color:var(--green)!important;
+  font-size:7px!important;font-weight:850!important;line-height:1!important;white-space:nowrap!important;
+  box-shadow:none!important;
+}
+.smart-income-card .smart-income-add span{font-size:8px!important;color:inherit!important;margin-left:1px!important}
+.smart-income-card .smart-income-empty{margin-top:5px!important;padding:9px!important;border-radius:10px!important}
+.smart-income-card .smart-income-empty b,
+.smart-income-card .smart-income-empty span{display:block!important}
+.smart-income-card .smart-income-empty b{font-size:8.5px!important}
+.smart-income-card .smart-income-empty span{font-size:7px!important;line-height:1.35!important;margin-top:3px!important}
+.light .smart-income-card{
+  background:linear-gradient(145deg,#fff 0%,#fbfaff 100%)!important;border-color:#e0e4ee!important;
+  box-shadow:0 8px 22px rgba(55,65,100,.07)!important;color:#151b36!important;
+}
+.light .smart-income-card .smart-income-add-head{
+  border-color:#bfe8d9!important;background:#effaf5!important;color:#0e9f73!important;
+}
+.light .smart-income-card .smart-income-note{background:#fafbfe!important;border-color:#e3e6ee!important}
+.light .smart-income-card .smart-income-note small,
+.light .smart-income-card .smart-income-row>div>small{color:#737d91!important}
+.light .smart-income-card .smart-income-status{background:#f7f8fb!important;border-color:#e1e5ee!important}
+.light .smart-income-card .smart-income-status span{color:#69748a!important}
+.light .smart-income-card .smart-income-row{border-top-color:#eceef3!important}
+.light .smart-income-card .smart-income-add{border-color:#bfe8d9!important;background:#effaf5!important;color:#0e9f73!important}
+@media(max-width:380px){
+ .smart-income-card{padding:12px!important}
+ .smart-income-card .smart-section-title>b{font-size:15px!important}
+ .smart-income-card .smart-income-add-head{height:28px!important;padding:0 9px!important;font-size:8px!important}
+ .smart-income-card .smart-income-row{grid-template-columns:28px minmax(0,1fr) auto!important;column-gap:7px!important;padding:8px 1px!important}
+ .smart-income-card .smart-income-icon{width:27px!important;height:27px!important}
+ .smart-income-card .smart-income-row>div>b{font-size:8.5px!important}
+ .smart-income-card .smart-income-row>div>small{font-size:6.4px!important}
+ .smart-income-card .smart-income-add{height:24px!important;padding:0 7px!important;font-size:6.7px!important}
+}
+</style>
+</html>
 
 
 
