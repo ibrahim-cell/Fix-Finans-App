@@ -2191,6 +2191,51 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .light .smart-goal-meta{color:#69738a!important}
 
 /* The home quick action opens the same dedicated Goal form as the Goal tab. */
+/* 13.3.99 V16 — Financial Goals compact row alignment.
+   Presentation-only: keep goal data, calculations and actions unchanged. */
+.smart-goal-item{
+  padding:9px 10px!important;
+  border-radius:13px!important;
+}
+.smart-goal-head{
+  display:grid!important;
+  grid-template-columns:30px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:7px!important;
+  min-height:30px!important;
+}
+.smart-goal-icon{
+  width:30px!important;height:30px!important;border-radius:9px!important;
+  font-size:14px!important;
+}
+.smart-goal-title{
+  min-width:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+.smart-goal-title b{
+  font-size:9px!important;line-height:1.15!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+.smart-goal-title small{font-size:6.5px!important;line-height:1.15!important;margin-top:2px!important}
+.smart-goal-actions{
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;
+  gap:4px!important;white-space:nowrap!important;
+}
+.smart-goal-actions button{
+  width:27px!important;height:27px!important;min-width:27px!important;
+  border-radius:8px!important;font-size:12px!important;
+}
+.smart-goal-values{
+  margin-top:7px!important;
+  gap:5px!important;
+}
+.smart-goal-values span{font-size:6.5px!important;line-height:1.15!important}
+.smart-goal-values b{font-size:8px!important;margin-top:2px!important;line-height:1.05!important}
+.smart-goal-progress{height:5px!important;margin-top:7px!important}
+.smart-goal-meta{font-size:6.5px!important;line-height:1.15!important;margin-top:4px!important}
+.light .smart-goal-item{box-shadow:0 4px 13px rgba(48,61,96,.04)!important}
 </style>
 <style id="fix-13400-dark-theme-sphere">
 /* 13.4.00 — Koyu tema: Net Bakiye küresi seçili tema rengine bağlanır. */
