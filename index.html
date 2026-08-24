@@ -6022,6 +6022,65 @@ document.addEventListener('pointerdown',function(e){
 @media(max-width:380px){.wallet-mini-row{gap:4px!important}.wallet-mini-row .wallet-mini{height:54px!important;grid-template-columns:25px minmax(0,1fr) 9px!important;padding:6px 5px!important;gap:4px!important;border-radius:10px!important}.wallet-mini-row .wallet-mini-icon{width:25px!important;height:25px!important;font-size:12px!important}.wallet-mini-row .wallet-mini small{font-size:6.5px!important}.wallet-mini-row .wallet-mini b{font-size:9px!important}.wallet-mini-row .wallet-mini-arrow{font-size:15px!important}}
 .light .wallet-mini-row .wallet-mini{background:linear-gradient(145deg,#fff,#f7f9fd)!important;border-color:#dce2ec!important}.light .wallet-mini-row .wallet-mini+.wallet-mini{border-color:#dce2ec!important}
 </style>
+
+<style id="fix-v23-6-wallet-compact-readable">
+/* V23.6 — Ana ekran cüzdan kutuları: daha kısa, daha okunaklı; tutarlar asla kesilmez. */
+.wallet-mini-row{
+  gap:5px!important;
+  padding:6px 0 7px!important;
+  align-items:stretch!important;
+}
+.wallet-mini-row .wallet-mini{
+  height:50px!important;
+  min-height:50px!important;
+  grid-template-columns:25px minmax(0,1fr) 8px!important;
+  gap:5px!important;
+  padding:5px 6px!important;
+  border-radius:11px!important;
+}
+.wallet-mini-row .wallet-mini-icon{
+  width:25px!important;
+  height:25px!important;
+  border-radius:8px!important;
+  font-size:12px!important;
+}
+.wallet-mini-row .wallet-mini small{
+  font-size:7.5px!important;
+  line-height:1!important;
+  margin:0 0 2px!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+.wallet-mini-row .wallet-mini b{
+  font-size:10.5px!important;
+  line-height:1!important;
+  letter-spacing:-.45px!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  max-width:none!important;
+}
+.wallet-mini-row .wallet-mini-arrow{
+  font-size:16px!important;
+  line-height:1!important;
+}
+@media(max-width:380px){
+  .wallet-mini-row{gap:4px!important;padding:5px 0 6px!important}
+  .wallet-mini-row .wallet-mini{
+    height:48px!important;
+    min-height:48px!important;
+    grid-template-columns:23px minmax(0,1fr) 7px!important;
+    gap:4px!important;
+    padding:5px!important;
+    border-radius:10px!important;
+  }
+  .wallet-mini-row .wallet-mini-icon{width:23px!important;height:23px!important;font-size:11px!important}
+  .wallet-mini-row .wallet-mini small{font-size:7px!important}
+  .wallet-mini-row .wallet-mini b{font-size:9.7px!important;letter-spacing:-.5px!important}
+  .wallet-mini-row .wallet-mini-arrow{font-size:15px!important}
+}
+</style>
 </body>
 <style id="fix-13399-v19-smart-income-card-final">
 /* V19 — Akıllı Finans Merkezi / Düzenli Gelir: kart dili son düzeltme.
