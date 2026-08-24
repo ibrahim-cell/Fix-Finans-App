@@ -1212,13 +1212,13 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 <style id="fix-13-3-83-transactions-history">
 /* 13.3.83 — İşlemler: kompakt günlük özet + aç/kapa geçmiş */
 .tx-type-tabs{
-  display:grid!important;grid-template-columns:repeat(4,1fr);gap:8px;
+  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;
   margin:4px 0 10px;
 }
 .tx-type-tab{
-  height:38px;border:1px solid #1d2540!important;border-radius:12px!important;
+  height:38px;min-width:0;padding:0 3px;border:1px solid #1d2540!important;border-radius:12px!important;
   background:#090e1b!important;color:var(--muted)!important;font-weight:700!important;
-  font-size:12px!important;
+  font-size:10.5px!important;white-space:nowrap;letter-spacing:-.15px;
 }
 .tx-type-tab.active{
   color:#fff!important;background:color-mix(in srgb,var(--theme-accent) 78%,#10162a)!important;
@@ -1299,8 +1299,8 @@ body.font-size-large .font-size-option .sample{font-size:34px!important}
 .tx-more.subtle{color:var(--muted)!important}
 .tx-day-card:not(.expanded) .tx-day-items .txrow:nth-child(n+3){display:none}
 @media(max-width:370px){
-  .tx-type-tabs{gap:5px}
-  .tx-type-tab{font-size:11px!important}
+  .tx-type-tabs{gap:4px}
+  .tx-type-tab{font-size:9.5px!important;padding:0 2px!important}
   .tx-day-summary{grid-template-columns:minmax(0,1fr) auto!important}
   .tx-day-count{grid-column:2;grid-row:2}
 }
