@@ -2490,9 +2490,11 @@ const state={page:'home',type:'Gelir',debtTab:'Borç',transactions:Array.isArray
 const money=n=>'₺'+Number(Math.abs(n)).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
 /* 13.3.93 — Tek finans çekirdeği: transferler gelir/giderden tamamen ayrıdır. */
 function isTransferTx(t){return String(t?.[4]||'')==='Transfer';}
+function isDebtEventTx(t){return String(t?.[4]||'')==='Borç/Alacak';}
 function financialSummary(list=state.transactions){
   let income=0,expense=0,transfers=0,financialCount=0;
   (Array.isArray(list)?list:[]).forEach(t=>{
+    if(isDebtEventTx(t)) return;
     if(isTransferTx(t)){transfers++;return;}
     if(String(t?.[4]||'')==='Kredi Kartı Ödemesi'){financialCount++;return;}
     const v=Number(t?.[1])||0;
@@ -2502,10 +2504,13 @@ function financialSummary(list=state.transactions){
   return {income,expense,net:income-expense,transfers,financialCount,totalCount:income||expense?financialCount+transfers:transfers};
 }
 const totals=()=>financialSummary(state.transactions);
-/* 13.3.99 v22 — Alacak cüzdanı + vade + tahsilat bakiyesi */
+/* 13.3.100 — Borç/Alacak gerçek cüzdan hareketleri + tahsilat/ödeme kaynağı */
 function isDebtSettled(d){return String(d?.[6]||'')==='Tahsil Edildi';}
 function debtWallet(d){return d?.[5]==='Nakit'?'Nakit':'Banka';}
+function debtSettlementWallet(d){const w=d?.[10];return w==='Nakit'?'Nakit':w==='Banka'?'Banka':debtWallet(d);}
 function debtDueDate(d){return String(d?.[7]||'');}
+function debtId(d){return String(d?.[9]||'');}
+function debtEventAction(t){return String(t?.[8]||'');}
 function debtOutstandingReceivables(){
   let total=0,cash=0,bank=0;
   (Array.isArray(state.debts)?state.debts:[]).forEach(d=>{
@@ -2519,16 +2524,31 @@ function debtOutstandingReceivables(){
 function creditCardStats(){
   let debt=0;
   (Array.isArray(state.transactions)?state.transactions:[]).forEach(t=>{
+    if(isDebtEventTx(t)) return;
     if(String(t?.[7]||'')==='Kredi Kartı' && String(t?.[4]||'')==='Gider') debt+=Math.abs(Number(t?.[1])||0);
     if(String(t?.[4]||'')==='Kredi Kartı Ödemesi') debt-=Math.abs(Number(t?.[1])||0);
   });
   debt=Math.max(0,debt); const limit=Math.max(0,Number(state.creditCard?.limit)||0);
   return {limit,debt,available:Math.max(0,limit-debt),utilization:limit>0?Math.min(1,debt/limit):0};
 }
+function applyDebtWalletEffects(bal){
+  (Array.isArray(state.debts)?state.debts:[]).forEach(d=>{
+    const type=d?.[0], amount=Math.abs(Number(d?.[1])||0); if(!amount) return;
+    const source=debtWallet(d), settlement=debtSettlementWallet(d);
+    if(type==='Alacak'){
+      if(source==='Nakit') bal.cash-=amount; else bal.bank-=amount;
+      if(isDebtSettled(d)){ if(settlement==='Nakit') bal.cash+=amount; else bal.bank+=amount; }
+    }else if(type==='Borç'){
+      if(source==='Nakit') bal.cash+=amount; else bal.bank+=amount;
+      if(isDebtSettled(d)){ if(settlement==='Nakit') bal.cash-=amount; else bal.bank-=amount; }
+    }
+  });
+}
 function walletTotals(){
   let cash=0,bank=0;
   (Array.isArray(state.transactions)?state.transactions:[]).forEach(t=>{
     const type=String(t?.[4]||'');
+    if(isDebtEventTx(t)) return;
     if(type==='Transfer' && t?.[7]==='Transfer'){
       const amount=Math.abs(Number(t?.[10])||0),from=t?.[8]||'Banka',to=t?.[9]||'Nakit';
       if(from==='Nakit') cash-=amount; else if(from==='Banka') bank-=amount;
@@ -2539,9 +2559,10 @@ function walletTotals(){
     const wallet=String(t?.[7]||'Banka'); if(wallet==='Kredi Kartı') return;
     const v=Number(t?.[1])||0; if(wallet==='Nakit') cash+=v; else bank+=v;
   });
+  applyDebtWalletEffects({get cash(){return cash},set cash(v){cash=v},get bank(){return bank},set bank(v){bank=v}});
   return {cash,bank};
 }
-function availableBalance(){const w=walletTotals(),r=debtOutstandingReceivables().total,c=creditCardStats().debt;return w.cash+w.bank-r-c;}
+function availableBalance(){const w=walletTotals(),c=creditCardStats().debt;return w.cash+w.bank-c;}
 const persist=()=>{localStorage.removeItem('fix_notifications_cleared');localStorage.setItem(STORAGE_KEY,JSON.stringify(state.transactions));localStorage.setItem(DEBT_KEY,JSON.stringify(state.debts));localStorage.setItem('fix_upcoming',JSON.stringify(state.upcoming||[]));localStorage.setItem(RECURRING_KEY,JSON.stringify(state.recurring||[]));localStorage.setItem(GOAL_KEY,JSON.stringify(state.financialGoals||[]));localStorage.setItem('fix_credit_card',JSON.stringify(state.creditCard||{limit:0}));localStorage.setItem('fix_custom_categories',JSON.stringify(state.customCategories||{Gelir:[],Gider:[]}));if(typeof maybeAutoBackup==='function')setTimeout(()=>maybeAutoBackup(false),0);};
 
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
@@ -2744,7 +2765,9 @@ function txRangeList(){
 }
 function txTypeMatches(t){
   const f=state.txTypeFilter||'Tümü';
+  if(isDebtEventTx(t) && f!=='Tümü' && f!=='Borç/Alacak') return false;
   if(f==='Tümü') return true;
+  if(f==='Borç/Alacak') return isDebtEventTx(t);
   if(f==='Transfer') return t[4]==='Transfer';
   if(f==='Gelir') return t[4]==='Gelir' || Number(t[1])>0 && t[4]!=='Transfer';
   if(f==='Gider') return t[4]==='Gider' || Number(t[1])<0;
@@ -2835,7 +2858,7 @@ function transactions(){
   const activeFilter=(state.filters?.from||state.filters?.to||state.filters?.category&&state.filters.category!=='Tümü');
   const search=state.searchOpen?`<div class="tx-search-wrap"><div class="tx-search-box">${iconSvg('search')}<input id="txSearch" value="${esc(state.txSearch||'')}" placeholder="İşlem ara..." oninput="filterTx(this.value)"><button aria-label="Aramayı kapat" onclick="closeTransactionSearch()">×</button></div></div>`:'';
   const grouped=list.length?transactionDayCards(list):'<button type="button" class="empty empty-clickable" onclick="openModal()" aria-label="İşlem ekle">Filtreye uygun işlem bulunamadı.</button>';
-  const types=['Tümü','Gelir','Gider','Transfer'];
+  const types=['Tümü','Gelir','Gider','Borç/Alacak','Transfer'];
   const ranges=[['today','Bugün'],['week','Bu Hafta'],['month','Bu Ay'],['all','Geçmiş']];
   const typeTabs=types.map(x=>`<button class="tx-type-tab ${state.txTypeFilter===x?'active':''}" onclick="setTxTypeFilter('${x}')">${x}</button>`).join('');
   const rangeTabs=ranges.map(([k,label])=>`<button class="tx-range-tab ${state.txRange===k?'active':''}" onclick="setTxRange('${k}')">${label}</button>`).join('');
@@ -2868,7 +2891,7 @@ function openFilterModal(){const cats=[...new Set(state.transactions.map(t=>Stri
 function applyFilters(){state.filters={from:document.getElementById('filterFrom')?.value||'',to:document.getElementById('filterTo')?.value||'',category:document.getElementById('filterCategory')?.value||'Tümü'};closeModal();state.page='transactions';render();}
 function clearFilters(){state.filters={from:'',to:'',category:'Tümü'};closeModal();state.page='transactions';render()}
 function txIcon(name){const n=(name||'').toLocaleLowerCase('tr-TR');if(n.includes('yemek'))return '🍽️';if(n.includes('yakıt')||n.includes('yakit'))return '⛽';if(n.includes('alışveriş')||n.includes('alisveris')||n.includes('market'))return '🛒';if(n.includes('kahve'))return '☕';if(n.includes('kurye'))return '🛵';if(n.includes('fatura'))return '🧾';if(n.includes('kira'))return '🏠';return '₺'}
-function tx(t){const isTransfer=t[4]==='Transfer';const val=isTransfer?Math.abs(Number(t[10])||0):Number(t[1]);const name=t[0]||'';const sub=isTransfer?`${t[8]||'Banka'} → ${t[9]||'Nakit'}`:`${t[7]||'Banka'} · ${txTimeLabel(t)}`;return `<div class="txrow" onclick="openTxDetail(${state.transactions.indexOf(t)})" data-search="${esc((name+' '+(t[4]||'')+' '+sub).toLocaleLowerCase('tr-TR'))}"><span class="avatar ${t[2]==='green'?'g':t[2]==='purple'?'p':''}">${txIcon(name)}</span><div><div class="txname">${esc(name)}</div><div class="txtime">${esc(sub)}</div></div><div class="txval ${isTransfer?'':val>=0?'green':'red'}">${isTransfer?'⇄ ':val>=0?'+':'-'}${money(val)}</div></div>`}
+function tx(t){const isTransfer=t[4]==='Transfer',isDebt=isDebtEventTx(t);const val=isTransfer?Math.abs(Number(t[10])||0):Number(t[1]);const name=t[0]||'';const sub=isTransfer?`${t[8]||'Banka'} → ${t[9]||'Nakit'}`:isDebt?`${t[7]||'Banka'} · ${t[6]||txTimeLabel(t)}`:`${t[7]||'Banka'} · ${txTimeLabel(t)}`;return `<div class="txrow ${isDebt?'debt-event-row':''}" onclick="openTxDetail(${state.transactions.indexOf(t)})" data-search="${esc((name+' '+(t[4]||'')+' '+sub).toLocaleLowerCase('tr-TR'))}"><span class="avatar ${t[2]==='green'?'g':t[2]==='purple'?'p':isDebt?'debt-event-avatar':''}">${isDebt?(name==='Tahsilat Alındı'?'↙':name==='Borç Alındı'?'↗':'₺'):txIcon(name)}</span><div><div class="txname">${esc(name)}</div><div class="txtime">${esc(sub)}</div></div><div class="txval ${isTransfer?'':val>=0?'green':'red'}">${isTransfer?'⇄ ':val>=0?'+':'-'}${money(val)}</div></div>`}
 function periodBounds(){
   const now=new Date();
   const todayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59,999);
@@ -3867,12 +3890,21 @@ function openDebtModal(type,editIndex=null){
   const editing=Number.isInteger(editIndex), existing=editing?state.debts[editIndex]:null;
   const t=type||existing?.[0]||'Borç', created=existing?.[4]||localDateISO(), wallet=existing?.[5]==='Nakit'?'Nakit':'Banka', due=existing?.[7]||'';
   document.getElementById('modal').classList.remove('hidden');
-  document.getElementById('modal').innerHTML=`<div class="sheet debt-form-sheet"><button class="close" onclick="closeModal()">×</button><h2>${editing?'Borç / Alacak Düzenle':'Borç / Alacak Ekle'}</h2><div class="type">${['Borç','Alacak'].map(x=>`<button class="${t===x?'active':''}" onclick="openDebtModal('${x}',${editing?editIndex:'null'})">${x}</button>`).join('')}</div><div class="form"><label>Tutar</label><input id="debtAmount" inputmode="decimal" value="${editing?esc(existing?.[1]||''):''}" placeholder="₺0,00"><label>Kişi / Kurum</label><input id="debtName" value="${editing?esc(existing?.[2]||''):''}" placeholder="Örn. Ahmet"><label>İşlemin yapıldığı cüzdan</label><div class="wallet-choice"><button type="button" data-debt-wallet="Nakit" class="${wallet==='Nakit'?'active':''}" onclick="selectDebtWallet('Nakit')">💵 Nakit</button><button type="button" data-debt-wallet="Banka" class="${wallet==='Banka'?'active':''}" onclick="selectDebtWallet('Banka')">🏦 Banka</button></div><input type="hidden" id="debtWallet" value="${wallet}"><label>Kayıt tarihi</label><input id="debtDate" type="date" value="${created}"><label>Vade günü</label><input id="debtDueDate" type="date" value="${due}"><label>Not</label><input id="debtNote" value="${editing?esc(existing?.[3]||''):''}" placeholder="İsteğe bağlı"><button class="save debt-save" onclick="saveDebt('${t}',${editing?editIndex:'null'})">${editing?'Değişiklikleri Kaydet':'Kaydet'}</button></div></div>`
+  document.getElementById('modal').innerHTML=`<div class="sheet debt-form-sheet"><button class="close" onclick="closeModal()">×</button><h2>${editing?'Borç / Alacak Düzenle':'Borç / Alacak Ekle'}</h2><div class="type">${['Borç','Alacak'].map(x=>`<button class="${t===x?'active':''}" onclick="openDebtModal('${x}',${editing?editIndex:'null'})">${x}</button>`).join('')}</div><div class="form"><label>Tutar</label><input id="debtAmount" inputmode="decimal" value="${editing?esc(existing?.[1]||''):''}" placeholder="₺0,00"><label>Kişi / Kurum</label><input id="debtName" value="${editing?esc(existing?.[2]||''):''}" placeholder="Örn. Ahmet"><label>${t==='Alacak'?'Parayı verdiğim kaynak (çıkış)':'Paranın geldiği kaynak (giriş)'}</label><div class="wallet-choice"><button type="button" data-debt-wallet="Nakit" class="${wallet==='Nakit'?'active':''}" onclick="selectDebtWallet('Nakit')">💵 Nakit</button><button type="button" data-debt-wallet="Banka" class="${wallet==='Banka'?'active':''}" onclick="selectDebtWallet('Banka')">🏦 Banka</button></div><input type="hidden" id="debtWallet" value="${wallet}"><label>Kayıt tarihi</label><input id="debtDate" type="date" value="${created}"><label>Vade günü</label><input id="debtDueDate" type="date" value="${due}"><label>Not</label><input id="debtNote" value="${editing?esc(existing?.[3]||''):''}" placeholder="İsteğe bağlı"><button class="save debt-save" onclick="saveDebt('${t}',${editing?editIndex:'null'})">${editing?'Değişiklikleri Kaydet':'Kaydet'}</button></div></div>`
 }
 function selectDebtWallet(wallet){
   const input=document.getElementById('debtWallet'); if(input)input.value=wallet;
   document.querySelectorAll('[data-debt-wallet]').forEach(btn=>btn.classList.toggle('active',btn.dataset.debtWallet===wallet));
 }
+function upsertDebtEvent(debt,action,wallet,amount,date){
+  const id=debtId(debt); if(!id)return;
+  const signed=(action==='Borç Alındı'||action==='Tahsilat Alındı')?Math.abs(amount):-Math.abs(amount);
+  const color=signed>=0?'green':(action==='Borç Alındı'?'purple':'red');
+  const idx=state.transactions.findIndex(t=>isDebtEventTx(t)&&String(t?.[9]||'')===id&&String(t?.[8]||'')===action);
+  const rec=[action,signed,color,'', 'Borç/Alacak',`${debt[2]||'Kayıt'} · ${wallet}`,date||localDateISO(),wallet,action,id];
+  if(idx>=0)state.transactions[idx]=rec; else state.transactions.unshift(rec);
+}
+function removeDebtEvents(debtIdValue){state.transactions=state.transactions.filter(t=>!(isDebtEventTx(t)&&String(t?.[9]||'')===String(debtIdValue)));}
 function saveDebt(type,editIndex=null){
   const raw=document.getElementById('debtAmount').value||'0';
   const num=Number(String(raw).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.'))||0;
@@ -3885,32 +3917,59 @@ function saveDebt(type,editIndex=null){
   const existing=Number.isInteger(editIndex)?state.debts[editIndex]:null;
   const status=existing?.[6]||'Açık';
   const settledAt=existing?.[8]||'';
-  const record=[type,Math.abs(num),name,note,created,wallet,status,due,settledAt];
-  if(Number.isInteger(editIndex))state.debts[editIndex]=record;else state.debts.unshift(record);
-  persist();closeModal();render();
-  if(type==='Alacak'&&!isDebtSettled(record))showToast(`${money(num)} ${wallet} bakiyesinden düşüldü.`);
+  const id=existing?.[9]||('debt-'+Date.now()+'-'+Math.random().toString(36).slice(2,7));
+  const settlementWallet=existing?.[10]||'';
+  const record=[type,Math.abs(num),name,note,created,wallet,status,due,settledAt,id,settlementWallet];
+  if(Number.isInteger(editIndex)){
+    state.debts[editIndex]=record;
+    removeDebtEvents(id);
+  }else state.debts.unshift(record);
+  upsertDebtEvent(record,type==='Alacak'?'Borç Verildi':'Borç Alındı',wallet,num,created);
+  if(isDebtSettled(record)) upsertDebtEvent(record,type==='Alacak'?'Tahsilat Alındı':'Borç Ödendi',debtSettlementWallet(record),num,record[8]||created);
+  persist();closeModal();state.page='transactions';render();
+  showToast(type==='Alacak'?`${money(num)} ${wallet} bakiyesinden düşüldü.`:`${money(num)} ${wallet} bakiyesine eklendi.`);
 }
-function collectDebt(i){
-  const d=state.debts[i]; if(!d||d[0]!=='Alacak'||isDebtSettled(d))return;
-  confirmAction('Alacağı Tahsil Et',`${money(d[1])} tutarındaki alacak ${debtWallet(d)} bakiyesine geri eklenecek.`,()=>{
-    d[6]='Tahsil Edildi';d[8]=localDateISO();persist();closeModal();render();showToast(`${money(d[1])} ${debtWallet(d)} bakiyesine eklendi.`);
-  });
+function openDebtSettlementModal(i,mode){
+  const d=state.debts[i];if(!d)return;
+  const isCollect=mode==='collect',title=isCollect?'Tahsilat Al':'Borç Öde';
+  const defaultWallet=isCollect?'Nakit':debtWallet(d);
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').innerHTML=`<div class="sheet debt-settlement-sheet"><button class="close" onclick="closeModal()">×</button><div class="support-kicker"><span class="support-kicker-icon">${isCollect?'↙':'↗'}</span> ${isCollect?'TAHSİLAT':'BORÇ ÖDEME'}</div><h2>${title}</h2><div class="settings-sub">${isCollect?'Para hangi hesaba geldi?':'Ödeme hangi hesaptan yapıldı?'}</div><div class="detail-box"><b>${esc(d[2]||'Kayıt')}</b><span class="${isCollect?'green':'red'}">${money(d[1])}</span></div><label class="settlement-label">${isCollect?'Tahsilat kaynağı':'Ödeme kaynağı'}</label><div class="wallet-choice"><button type="button" data-settlement-wallet="Nakit" class="${defaultWallet==='Nakit'?'active':''}" onclick="selectDebtSettlementWallet('Nakit')">💵 Nakit</button><button type="button" data-settlement-wallet="Banka" class="${defaultWallet==='Banka'?'active':''}" onclick="selectDebtSettlementWallet('Banka')">🏦 Banka</button></div><input type="hidden" id="debtSettlementWallet" value="${defaultWallet}"><button class="save ${isCollect?'collect-debt':'pay-debt'}" onclick="confirmDebtSettlement(${i},'${mode}')">${isCollect?'Tahsilatı Al':'Ödemeyi Yap'}</button></div>`;
+}
+function selectDebtSettlementWallet(wallet){
+  const input=document.getElementById('debtSettlementWallet');if(input)input.value=wallet;
+  document.querySelectorAll('[data-settlement-wallet]').forEach(btn=>btn.classList.toggle('active',btn.dataset.settlementWallet===wallet));
+}
+function confirmDebtSettlement(i,mode){
+  const d=state.debts[i];if(!d)return;
+  const wallet=document.getElementById('debtSettlementWallet')?.value==='Nakit'?'Nakit':'Banka';
+  const isCollect=mode==='collect';
+  if(isCollect && (d[0]!=='Alacak'||isDebtSettled(d)))return;
+  if(!isCollect && (d[0]!=='Borç'||isDebtSettled(d)))return;
+  d[6]='Tahsil Edildi';d[8]=localDateISO();d[10]=wallet;
+  upsertDebtEvent(d,isCollect?'Tahsilat Alındı':'Borç Ödendi',wallet,Math.abs(Number(d[1])||0),d[8]);
+  persist();closeModal();state.page='transactions';render();showToast(isCollect?`${money(d[1])} ${wallet} bakiyesine eklendi.`:`${money(d[1])} ${wallet} bakiyesinden ödendi.`);
 }
 function reverseDebtCollection(i){
-  const d=state.debts[i]; if(!d||d[0]!=='Alacak'||!isDebtSettled(d))return;
-  confirmAction('Tahsilatı Geri Al','Tahsilat geri alınacak ve tutar tekrar alacak olarak bakiyeden düşülecek.',()=>{
-    d[6]='Açık';d[8]='';persist();closeModal();render();showToast('Tahsilat geri alındı.');
+  const d=state.debts[i]; if(!d||!isDebtSettled(d))return;
+  const wasCollect=d[0]==='Alacak';
+  confirmAction(wasCollect?'Tahsilatı Geri Al':'Ödemeyi Geri Al',wasCollect?'Tahsilat geri alınacak ve para tahsilat kaynağından çıkacak.':'Ödeme geri alınacak ve para ödeme kaynağına geri eklenecek.',()=>{
+    const id=debtId(d);d[6]='Açık';d[8]='';d[10]='';
+    state.transactions=state.transactions.filter(t=>!(isDebtEventTx(t)&&String(t?.[9]||'')===id&&(String(t?.[8]||'')==='Tahsilat Alındı'||String(t?.[8]||'')==='Borç Ödendi')));
+    persist();closeModal();render();showToast(wasCollect?'Tahsilat geri alındı.':'Borç ödemesi geri alındı.');
   });
 }
+function collectDebt(i){openDebtSettlementModal(i,'collect');}
+function payDebt(i){openDebtSettlementModal(i,'pay');}
 function formatDateTR(v){if(!v)return '';const d=new Date(v+'T12:00:00');return Number.isNaN(d.getTime())?v:d.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'})}
 function openDebtDetail(i){
   const d=state.debts[i];if(!d)return;
-  const type=d[0], amount=Number(d[1])||0, settled=isDebtSettled(d), due=debtDueDate(d), wallet=debtWallet(d);
+  const type=d[0], amount=Number(d[1])||0, settled=isDebtSettled(d), due=debtDueDate(d), wallet=debtWallet(d),settlement=debtSettlementWallet(d);
   const dueLabel=due?(smartDateISO(due)<localDateISO()?'Vadesi geçti':smartDateISO(due)===localDateISO()?'Bugün vade':`Vade: ${formatDateTR(due)}`):'Vade günü belirtilmedi';
   document.getElementById('modal').classList.remove('hidden');
-  document.getElementById('modal').innerHTML=`<div class="sheet debt-detail-sheet"><button class="close" onclick="closeModal()">×</button><h2>${type} Detayı</h2><div class="detail-box"><b>${esc(d[2]||'Kayıt')}</b><span class="${type==='Borç'?'red':'green'}">${money(amount)}</span><small>Cüzdan: ${esc(wallet)}</small><small>Kayıt tarihi: ${esc(formatDateTR(d[4]||localDateISO()))}</small><small>${esc(dueLabel)}</small><small>${esc(d[3]||'Not eklenmedi.')}</small>${type==='Alacak'?`<small class="${settled?'green':'amber'}">${settled?'✓ Tahsil edildi: '+formatDateTR(d[8]||localDateISO()):'⏳ Tahsil edilmedi — tutar bakiyeden düşülmüş durumda.'}</small>`:''}</div><div class="detail-actions">${type==='Alacak'&&!settled?`<button class="collect-debt" onclick="collectDebt(${i})">Tahsilatı Al</button>`:''}${type==='Alacak'&&settled?`<button class="collect-debt undo" onclick="reverseDebtCollection(${i})">Tahsilatı Geri Al</button>`:''}<button class="edit" onclick="closeModal();openDebtModal('${type}',${i})">Düzenle</button><button class="delete" onclick="deleteDebt(${i})">Sil</button></div></div>`
+  document.getElementById('modal').innerHTML=`<div class="sheet debt-detail-sheet"><button class="close" onclick="closeModal()">×</button><h2>${type} Detayı</h2><div class="detail-box"><b>${esc(d[2]||'Kayıt')}</b><span class="${type==='Borç'?'red':'green'}">${money(amount)}</span><small>${type==='Alacak'?'Para verilen kaynak':'Paranın geldiği kaynak'}: ${esc(wallet)}</small>${settled?`<small>${type==='Alacak'?'Tahsilat kaynağı':'Ödeme kaynağı'}: ${esc(settlement)}</small>`:''}<small>Kayıt tarihi: ${esc(formatDateTR(d[4]||localDateISO()))}</small><small>${esc(dueLabel)}</small><small>${esc(d[3]||'Not eklenmedi.')}</small>${type==='Alacak'?`<small class="${settled?'green':'amber'}">${settled?'✓ Tahsil edildi: '+formatDateTR(d[8]||localDateISO()):'⏳ Tahsil edilmedi — tutar kaynak bakiyesinden düşülmüş durumda.'}`:`<small class="${settled?'green':'amber'}">${settled?'✓ Ödendi: '+formatDateTR(d[8]||localDateISO()):'⏳ Ödenmedi — borç alınan tutar kaynak bakiyesine eklenmiş durumda.'}</small>`}</div><div class="detail-actions">${!settled?(type==='Alacak'?`<button class="collect-debt" onclick="collectDebt(${i})">Tahsilatı Al</button>`:`<button class="collect-debt" onclick="payDebt(${i})">Ödemeyi Yap</button>`):`<button class="collect-debt undo" onclick="reverseDebtCollection(${i})">${type==='Alacak'?'Tahsilatı Geri Al':'Ödemeyi Geri Al'}</button>`}<button class="edit" onclick="closeModal();openDebtModal('${type}',${i})">Düzenle</button><button class="delete" onclick="deleteDebt(${i})">Sil</button></div></div>`
 }
-function deleteDebt(i){if(!state.debts[i])return;confirmAction('Borç / Alacak Kaydını Sil','Bu kayıt kalıcı olarak silinecek. Bu işlem geri alınamaz.',()=>{state.debts.splice(i,1);persist();closeModal();render();showToast('Kayıt silindi.')})}
+function deleteDebt(i){if(!state.debts[i])return;confirmAction('Borç / Alacak Kaydını Sil','Bu kayıt kalıcı olarak silinecek. Bu işlem geri alınamaz.',()=>{const id=debtId(state.debts[i]);state.debts.splice(i,1);removeDebtEvents(id);persist();closeModal();render();showToast('Kayıt silindi.')})}
 
 function getProfilePhoto(){
   const raw=localStorage.getItem('fix_profile_photo')||'';
@@ -4737,6 +4796,12 @@ function exportExcelFile(){
 @media(max-width:380px){.wallet-mini-row{gap:4px!important}.wallet-mini-row .wallet-mini{height:54px!important;grid-template-columns:25px minmax(0,1fr) 9px!important;padding:6px 5px!important;gap:4px!important;border-radius:10px!important}.wallet-mini-row .wallet-mini-icon{width:25px!important;height:25px!important;font-size:12px!important}.wallet-mini-row .wallet-mini small{font-size:6.5px!important}.wallet-mini-row .wallet-mini b{font-size:9px!important}.wallet-mini-row .wallet-mini-arrow{font-size:15px!important}}
 .light .wallet-mini-row .wallet-mini{background:linear-gradient(145deg,#fff,#f7f9fd)!important;border-color:#dce2ec!important}.light .wallet-mini-row .wallet-mini+.wallet-mini{border-color:#dce2ec!important}
 </style>
+
+<style id="fix-debt-wallet-flow-133100">
+.debt-event-row{background:rgba(247,185,44,.025)}
+.debt-event-avatar{background:linear-gradient(145deg,#2d1a65,#11172d)!important;color:#f7c44f!important;border:1px solid rgba(247,196,79,.24)}
+.debt-settlement-sheet .support-kicker{color:#f7c44f;font-size:9px;font-weight:800;letter-spacing:.08em;margin-bottom:8px}.debt-settlement-sheet .settings-sub{margin-bottom:10px}.settlement-label{display:block;font-size:9px;color:#858aa0;margin:10px 0 7px}.wallet-choice{display:grid;grid-template-columns:1fr 1fr;gap:7px}.wallet-choice button{height:46px;border:1px solid #252d4a;background:#0a0e1b;color:#9b9fb2;border-radius:11px;font-size:11px;font-weight:800}.wallet-choice button.active{border-color:#f7c44f;background:rgba(247,196,79,.10);color:#fff;box-shadow:0 0 14px rgba(247,196,79,.08)}.debt-form-sheet .wallet-choice button.active{border-color:#8b5cf6;background:rgba(139,92,246,.10);color:#fff}.collect-debt{height:50px;border:0;border-radius:12px;background:linear-gradient(135deg,#159c70,#20d99b);color:#04140e;font-weight:800}.collect-debt.undo{background:linear-gradient(135deg,#6d3be0,#8b5cf6);color:#fff}.pay-debt{height:50px;border:0;border-radius:12px;background:linear-gradient(135deg,#ff8c32,#f7c44f);color:#171006;font-weight:800}
+</style>
 </body></html>`],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`fix-finans-islemler-${new Date().toISOString().replace(/[:.]/g,'-')}.xls`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
 }
 
@@ -5174,7 +5239,15 @@ function openFinancialScoreDetail(){
     </div>
   </div>`;
 }
-function openTxDetail(i){const t=state.transactions[i];if(!t)return;const isTransfer=t[4]==='Transfer';const val=isTransfer?Math.abs(Number(t[10])||0):Number(t[1]);const walletText=isTransfer?`${t[8]||'Banka'} → ${t[9]||'Nakit'}`:(t[7]||'Banka');document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>İşlem Detayı</h2><div class="detail-box"><b>${esc(t[0])}</b><span class="${isTransfer?'':val>=0?'green':'red'}">${isTransfer?'⇄ ':val>=0?'+':'-'}${money(val)}</span><small>Kategori: ${esc(t[0]||'')}</small><small>Cüzdan: ${esc(walletText)}</small><small>Tarih: ${esc(t[6]||'17 Ağustos 2026')}</small><small>${esc(t[5]||t[3]||'')}</small></div><div class="detail-actions"><button class="edit" onclick="editTx(${i})">Düzenle</button><button class="delete" onclick="deleteTx(${i})">Sil</button></div></div>`}
+function openTxDetail(i){
+  const t=state.transactions[i];if(!t)return;
+  if(isDebtEventTx(t)){
+    document.getElementById('modal').classList.remove('hidden');
+    document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>${esc(t[0]||'Borç / Alacak')}</h2><div class="detail-box"><b>${esc(t[5]||'Kayıt')}</b><span class="${Number(t[1])>=0?'green':'red'}">${Number(t[1])>=0?'+':'-'}${money(t[1])}</span><small>Kaynak: ${esc(t[7]||'Banka')}</small><small>Tarih: ${esc(formatDateTR(t[6]||localDateISO()))}</small><small>İşlem: ${esc(t[8]||'')}</small></div><div class="detail-actions"><button class="edit" onclick="closeModal()">Kapat</button></div></div>`;
+    return;
+  }
+  const isTransfer=t[4]==='Transfer';const val=isTransfer?Math.abs(Number(t[10])||0):Number(t[1]);const walletText=isTransfer?`${t[8]||'Banka'} → ${t[9]||'Nakit'}`:(t[7]||'Banka');document.getElementById('modal').classList.remove('hidden');document.getElementById('modal').innerHTML=`<div class="sheet"><button class="close" onclick="closeModal()">×</button><h2>İşlem Detayı</h2><div class="detail-box"><b>${esc(t[0])}</b><span class="${isTransfer?'':val>=0?'green':'red'}">${isTransfer?'⇄ ':val>=0?'+':'-'}${money(val)}</span><small>Kategori: ${esc(t[0]||'')}</small><small>Cüzdan: ${esc(walletText)}</small><small>Tarih: ${esc(t[6]||'17 Ağustos 2026')}</small><small>${esc(t[5]||t[3]||'')}</small></div><div class="detail-actions"><button class="edit" onclick="editTx(${i})">Düzenle</button><button class="delete" onclick="deleteTx(${i})">Sil</button></div></div>`
+}
 function editTx(i){const t=state.transactions[i];if(!t)return;state.editIndex=i;state.type=t[4]==='Kredi Kartı Ödemesi'?'Kredi Kartı Ödemesi':(t[4]||((Number(t[1])<0)?'Gider':'Gelir'));state.selectedCat=t[0]||'Diğer';document.getElementById('modal').classList.remove('hidden');const opts=categoryOptions(state.type==='Kredi Kartı Ödemesi'?'Gider':state.type);if(!opts.some(x=>x[1]===state.selectedCat))state.selectedCat=opts[0][1];const wallet=t[7]==='Nakit'?'Nakit':t[7]==='Kredi Kartı'?'Kredi Kartı':'Banka';const from=t[8]||'Banka',to=t[9]||'Nakit';document.getElementById('modal').innerHTML=`<div class="sheet add-sheet"><button class="close" onclick="closeModal()">×</button><h2>İşlemi Düzenle</h2><div class="type">${['Gelir','Gider','Transfer'].map(x=>`<button type="button" data-type="${x}" class="${(state.type===x||(state.type==='Kredi Kartı Ödemesi'&&x==='Gider'))?'active':''}" onclick="state.editIndex=${i};state.selectedCat=null;openModal('${x}')">${x}</button>`).join('')}</div><div class="form"><label>Tutar</label><input id="amount" inputmode="decimal" value="${Math.abs(Number(t[1])||Number(t[10])||0)}"><label>Kategori</label><button class="category-picker" onclick="openCategoryPicker()"><span id="selectedCatLabel">${esc(state.selectedCat)}</span><span>⌄</span></button>${state.type==='Transfer'?`<label>Transfer</label><div class="wallet-transfer-premium"><div class="wallet-transfer-side"><span>Nereden</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('from')"><span class="wallet-select-icon">${from==='Nakit'?'💵':'🏦'}</span><strong>${from}</strong><span class="wallet-select-chevron">⌄</span></button></div><div class="transfer-arrow">→</div><div class="wallet-transfer-side"><span>Nereye</span><button type="button" class="wallet-select-card" onclick="openWalletPicker('to')"><span class="wallet-select-icon">${to==='Nakit'?'💵':'🏦'}</span><strong>${to}</strong><span class="wallet-select-chevron">⌄</span></button></div></div>`:`<label>Nereden?</label><div class="wallet-choice"><button type="button" data-wallet="Nakit" aria-pressed="${wallet==='Nakit'?'true':'false'}" class="${wallet==='Nakit'?'active':''}" onclick="selectWallet('Nakit')">💵 Nakit</button><button type="button" data-wallet="Banka" aria-pressed="${wallet==='Banka'?'true':'false'}" class="${wallet==='Banka'?'active':''}" onclick="selectWallet('Banka')">🏦 Banka</button>${state.type==='Kredi Kartı Ödemesi'?'':`<button type="button" data-wallet="Kredi Kartı" aria-pressed="${wallet==='Kredi Kartı'?'true':'false'}" class="${wallet==='Kredi Kartı'?'active':''}" onclick="selectWallet('Kredi Kartı')">💳 Kredi Kartı</button>`}</div><input type="hidden" id="wallet" value="${state.type==='Kredi Kartı Ödemesi'?(wallet==='Nakit'?'Nakit':'Banka'):wallet}">`}<label>Tarih</label><input id="txDate" type="date" value="${esc(t[6]||localDateISO())}"><label>Not</label><input id="note" value="${esc(t[5]||'')}"><button class="save" onclick="saveTx()">Değişiklikleri Kaydet</button></div></div>`}
 function deleteTx(i){if(!state.transactions[i])return;confirmAction('İşlemi Sil','Bu işlem kalıcı olarak silinecek. Bu işlem geri alınamaz.',()=>{state.transactions.splice(i,1);persist();closeModal();render();showToast('İşlem silindi.')})}
 function saveTx(){const a=document.getElementById('amount')?.value||'0';const baseType=state.type==='Kredi Kartı Ödemesi'?'Gider':state.type;const n=state.selectedCat||categoryOptions(baseType)[0][1];const num=Number(String(a).replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.'))||0;if(!num)return;const note=document.getElementById('note')?.value.trim()||'';const date=document.getElementById('txDate')?.value||localDateISO();const editing=Number.isInteger(state.editIndex);const old=editing?state.transactions[state.editIndex]:null;const recurringId=state.txDraft?.recurringId||null;const createdAt=txCreatedAt(old)||new Date().toISOString();let record;if(state.type==='Transfer'){const from=document.getElementById('walletFrom')?.value||state.txDraft?.from||'Banka';const to=document.getElementById('walletTo')?.value||state.txDraft?.to||'Nakit';if(from===to){showToast('Nereden ve nereye farklı olmalı.');return}record=['Transfer',0,'blue','', 'Transfer',note,date,'Transfer',from,to,Math.abs(num),createdAt]}else if(state.type==='Kredi Kartı Ödemesi'){const wallet=document.getElementById('wallet')?.value||state.txDraft?.wallet||'Banka';const card=creditCardStats();if(card.debt<=0){showToast('Ödenecek kredi kartı borcu yok.');return}if(num>card.debt){showToast(`Ödeme kart borcunu aşamaz: ${money(card.debt)}`);return}record=['Kredi Kartı Ödemesi',-Math.abs(num),'red','', 'Kredi Kartı Ödemesi',note,date,wallet,createdAt]}else{const wallet=document.getElementById('wallet')?.value||state.txDraft?.wallet||'Banka';const val=state.type==='Gider'?-Math.abs(num):Math.abs(num);const color=state.type==='Gider'?'orange':'green';if(wallet==='Kredi Kartı'&&state.type==='Gider'){const card=creditCardStats();if(card.limit<=0){showToast('Önce kredi kartı limitini tanımla.');openCreditCardSettings();return}if(num>card.available){showToast(`Kullanılabilir limit: ${money(card.available)}`);return}}record=[n,val,color,'',state.type,note,date,wallet,createdAt]}if(editing){state.transactions[state.editIndex]=record;state.editIndex=null}else{state.transactions.unshift(record)}if(recurringId&&state.type==='Gelir')advanceRecurringIncomeSchedule(recurringId);if(recurringId&&state.type==='Gider')advanceRecurringExpenseSchedule(recurringId);if(state.txDraft?.upcomingId&&!recurringId)state.upcoming=(state.upcoming||[]).filter(x=>String(x.id)!==String(state.txDraft.upcomingId));persist();state.txDraft=null;closeModal();state.page='transactions';render();showToast(state.type==='Kredi Kartı Ödemesi'?'Kredi kartı ödemesi kaydedildi.':state.type==='Gider'&&record?.[7]==='Kredi Kartı'?'Kredi kartı harcaması kaydedildi.':'İşlem kaydedildi.')}
@@ -6080,6 +6153,12 @@ document.addEventListener('pointerdown',function(e){
   .wallet-mini-row .wallet-mini b{font-size:9.7px!important;letter-spacing:-.5px!important}
   .wallet-mini-row .wallet-mini-arrow{font-size:15px!important}
 }
+</style>
+
+<style id="fix-debt-wallet-flow-133100">
+.debt-event-row{background:rgba(247,185,44,.025)}
+.debt-event-avatar{background:linear-gradient(145deg,#2d1a65,#11172d)!important;color:#f7c44f!important;border:1px solid rgba(247,196,79,.24)}
+.debt-settlement-sheet .support-kicker{color:#f7c44f;font-size:9px;font-weight:800;letter-spacing:.08em;margin-bottom:8px}.debt-settlement-sheet .settings-sub{margin-bottom:10px}.settlement-label{display:block;font-size:9px;color:#858aa0;margin:10px 0 7px}.wallet-choice{display:grid;grid-template-columns:1fr 1fr;gap:7px}.wallet-choice button{height:46px;border:1px solid #252d4a;background:#0a0e1b;color:#9b9fb2;border-radius:11px;font-size:11px;font-weight:800}.wallet-choice button.active{border-color:#f7c44f;background:rgba(247,196,79,.10);color:#fff;box-shadow:0 0 14px rgba(247,196,79,.08)}.debt-form-sheet .wallet-choice button.active{border-color:#8b5cf6;background:rgba(139,92,246,.10);color:#fff}.collect-debt{height:50px;border:0;border-radius:12px;background:linear-gradient(135deg,#159c70,#20d99b);color:#04140e;font-weight:800}.collect-debt.undo{background:linear-gradient(135deg,#6d3be0,#8b5cf6);color:#fff}.pay-debt{height:50px;border:0;border-radius:12px;background:linear-gradient(135deg,#ff8c32,#f7c44f);color:#171006;font-weight:800}
 </style>
 </body>
 <style id="fix-13399-v19-smart-income-card-final">
