@@ -50,7 +50,7 @@
                 android:value="portrait" />
             <meta-data
                 android:name="android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE"
-                android:resource="@drawable/fix_finans_logo" />
+                android:resource="@drawable/fix_finans_mobile_logo" />
             <meta-data
                 android:name="android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR"
                 android:resource="@color/fix_finans_bg" />
