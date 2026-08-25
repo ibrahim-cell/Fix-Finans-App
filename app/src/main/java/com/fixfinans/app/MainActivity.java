@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
     private static final String APP_URL =
             "https://ibrahim-cell.github.io/Fix-Finans-App/";
     private static final String WEB_CLIENT_ID =
-            "837829344424-s11g5irl4p33k0rg6h6i63jqsotvse88.apps.googleusercontent.com";
+            "399902784452-rl0u63tirl45h5bdgb0hvcog7f343bk6.apps.googleusercontent.com";
     private static final int FILE_CHOOSER_REQUEST = 1001;
 
     private WebView webView;
