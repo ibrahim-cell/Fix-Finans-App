@@ -21,3 +21,7 @@ Android uygulaması Fix Finans'ın F + grafik + yükselen ok amblemini ana ikon 
 ## V23.34 — Unified Welcome/Splash Logo
 - Android uygulama ve yuvarlak uygulama ikonu `fix_finans_logo.png` kullanır.
 - Karşılama ekranı (`index.html`) ve Android splash aynı kanonik şeffaf Fix Finans logosunu kullanır.
+
+
+## Android WebView shell
+This version uses a native Android WebView to host the published Fix Finans web app at the GitHub Pages URL. It includes Android back navigation, file chooser support, downloads, cookies/DOM storage, JavaScript, and external intent handling while preserving the existing web application code.
