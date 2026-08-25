@@ -2450,6 +2450,17 @@ body:not(.light) .balance.card .ff-particle{
 .amber{color:#f7c44f!important}
 @media(max-width:360px){.debt-detail-sheet .detail-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.debt-detail-sheet .detail-actions button{font-size:9px!important;padding:9px 4px!important;min-height:48px!important}.debt-form-sheet .wallet-choice button{font-size:9px!important}}
 .light .collect-debt{background:#ecfbf6!important;color:#168f68!important;border-color:#a8dfcf!important}.light .collect-debt.undo{background:#fff8e8!important;color:#a56b00!important;border-color:#e8ca83!important}.light .debt-settled-note{background:#f0faf6;border-color:#cceee1;color:#647084}
+
+<style id="fix-v23-14-recurring-income-vertical">
+/* V23.14 — Düzenli Gelir kartını iki sütunlu dikey düzene alır.
+   Veri, kayıt ve işlem mantığına dokunmaz; yalnızca yerleşim/presentasyon değişikliğidir. */
+.smart-recurring-income-row{align-items:stretch!important}
+.smart-recurring-income-row>.smart-income-card{height:100%!important;min-width:0!important}
+.smart-recurring-income-row>.smart-recommendations-card{height:100%!important;min-width:0!important}
+@media(max-width:560px){
+  .smart-recurring-income-row{grid-template-columns:1fr!important}
+}
+</style>
 </style>
 </head><body>
 
@@ -3845,9 +3856,9 @@ function smartCenter(){
       <section class="card smart-card"><div class="smart-section-title"><b>Bütçe Durumu</b><button class="detail" onclick="state.page='reports';render()">İncele ›</button></div><div class="smart-progress-row"><span>Gelirin %80'i hedef bütçe</span><b>${budgetTarget?'%'+budgetUsed:'—'}</b></div><div class="smart-progress"><i style="width:${budgetUsed}%"></i></div><div class="smart-progress-meta"><span>${money(t.expense)} kullanıldı</span><span>${budgetTarget?money(Math.max(0,budgetTarget-t.expense)):'—'} kalan</span></div></section>
     </div>
     <div class="smart-two-col">${smartDebtAnalysis()}${smartUpcomingPayments()}</div>
-    <div class="smart-two-col">${smartShoppingBudget(current, previous)}${smartRecurringExpenses()}</div>
-    ${smartRecurringIncome()}
-    <div class="smart-two-col">${smartAbnormalMovements(current, previous)}${smartRecommendations(current, previous)}</div>
+    <div class="smart-two-col">${smartShoppingBudget(current, previous)}</div>
+    <div class="smart-two-col smart-recurring-income-row">${smartRecurringIncome()}${smartRecommendations(current, previous)}</div>
+    <div class="smart-two-col">${smartAbnormalMovements(current, previous)}</div>
     <div class="smart-two-col">${smartAssistant()}${smartInvestmentResearch()}</div>
     <div class="smart-two-col">${smartFinancialGoals()}${smartProactiveSystem(current, previous)}</div>
     <section class="smart-mini-grid">${`<div class="card smart-mini"><small>En yüksek gider</small><b>${topCat?esc(topCat[0]):'—'}</b><span>${topCat?money(topCat[1]):'Veri yok'}</span></div><div class="card smart-mini"><small>Borç / Alacak</small><b>${money(debtBorç-debtAlacak)}</b><span>Net yükümlülük</span></div><div class="card smart-mini"><small>Yaklaşan ödeme</small><b>${paymentCount}</b><span>Bugünden sonraki</span></div><div class="card smart-mini"><small>Tasarruf Oranı</small><b>%${Math.max(-100,Math.min(100,savingsRate))}</b><span>Gelirden kalan</span></div>`}</section>
