@@ -4,9 +4,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/fix_finans_mobile_logo"
+        android:icon="@drawable/fix_finans_logo"
         android:label="Fix Finans"
-        android:roundIcon="@drawable/fix_finans_mobile_logo"
+        android:roundIcon="@drawable/fix_finans_logo"
         android:supportsRtl="true"
         android:theme="@style/FixFinansTheme">
 
@@ -50,7 +50,7 @@
                 android:value="portrait" />
             <meta-data
                 android:name="android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE"
-                android:resource="@drawable/fix_finans_mobile_logo" />
+                android:resource="@drawable/fix_finans_splash" />
             <meta-data
                 android:name="android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR"
                 android:resource="@color/fix_finans_bg" />
