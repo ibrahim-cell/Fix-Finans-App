@@ -2632,22 +2632,28 @@ function groupTransactionsByDay(list){const groups={};list.forEach(t=>{const k=d
 function dayTotals(list){const x=financialSummary(list);return {income:x.income,expense:x.expense,net:x.net,transfers:x.transfers,financialCount:x.financialCount};}
 function homeRecentGrouped(list){const groups=groupTransactionsByDay(list.slice(0,5));return groups.map(([d,items])=>{const totals=dayTotals(items);return `<div class="home-day-group"><div class="home-day-head"><b>${dayLabel(d)}</b><span class="home-day-totals"><span class="day-income">Gelir: ${money(totals.income)}</span><span class="day-expense">Gider: ${money(totals.expense)}</span>${totals.transfers?`<span class="day-transfer">Transfer: ${totals.transfers}</span>`:''}</span></div>${items.map(row).join('')}</div>`}).join('');}
 
-function calculateFinancialScore(t){
+function financialScoreBreakdown(t){
   if(!t || !t.income) return null;
-  const savingsRate=t.net/t.income;
-  const expenseRate=t.expense/t.income;
+  const income=Number(t.income)||0;
+  const expense=Number(t.expense)||0;
+  const net=Number(t.net)||0;
+  const savingsRate=net/income;
+  const expenseRate=expense/income;
   const debt=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const receivable=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const netDebt=Math.max(0,debt-receivable);
-  const debtRate=netDebt/t.income;
-  /* 40 Tasarruf + 35 Gider Kontrolü + 25 Borç Baskısı.
-     Transfer ve işlem adedi skora hiçbir şekilde girmez. */
+  const debtRate=netDebt/income;
+  /* Tek ve ortak skor motoru: 40 Tasarruf + 35 Gider Kontrolü + 25 Net Borç Baskısı = 100.
+     Transferler skora girmez. Kredi kartı ayrı bonus değildir; kredi kartı harcamaları Gider içinde zaten değerlendirilir. */
   const savingsScore=Math.round(Math.max(0,Math.min(1,savingsRate/0.50))*40);
   const expenseScore=expenseRate<=0.50?35:expenseRate<=0.60?30:expenseRate<=0.70?25:expenseRate<=0.80?15:expenseRate<=0.90?7:0;
-  const debtScore=netDebt===0?20:debtRate<=0.25?16:debtRate<=0.50?12:debtRate<=0.75?8:debtRate<=1?4:0;
-  const card=creditCardStats(); const cardScore=card.limit<=0?15:card.utilization<=0.10?15:card.utilization<=0.30?13:card.utilization<=0.50?10:card.utilization<=0.75?6:card.utilization<=0.90?3:0;
-  const savingsAdjusted=Math.round(Math.max(0,Math.min(1,savingsRate/0.50))*35);
-  return Math.max(0,Math.min(100,savingsAdjusted+expenseScore+debtScore+cardScore));
+  const debtScore=netDebt===0?25:debtRate<=0.25?20:debtRate<=0.50?15:debtRate<=0.75?10:debtRate<=1?5:0;
+  const score=Math.max(0,Math.min(100,savingsScore+expenseScore+debtScore));
+  return {income,expense,net,savingsRate,expenseRate,netDebt,debtRate,savingsScore,expenseScore,debtScore,score};
+}
+function calculateFinancialScore(t){
+  const breakdown=financialScoreBreakdown(t);
+  return breakdown?breakdown.score:null;
 }
 const calculateHomeFinancialScore=calculateFinancialScore;
 function smartHomeSummary(t){
@@ -5226,13 +5232,11 @@ function openFinancialScoreDetail(){
   const debt=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const receivable=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const netDebt=Math.max(0,debt-receivable);
-  const savingsRate=income?net/income:0;
-  const expenseRate=income?expense/income:0;
-  const debtRate=income?netDebt/income:0;
-  const score=calculateFinancialScore(t);
-  const savingsScore=income?Math.round(Math.max(0,Math.min(1,savingsRate/.50))*40):0;
-  const expenseScore=income?(expenseRate<=.50?35:expenseRate<=.60?30:expenseRate<=.70?25:expenseRate<=.80?15:expenseRate<=.90?7:0):0;
-  const debtScore=netDebt===0?25:debtRate<=.25?20:debtRate<=.50?15:debtRate<=.75?10:debtRate<=1?5:0;
+  const breakdown=financialScoreBreakdown(t);
+  const score=breakdown?breakdown.score:null;
+  const savingsScore=breakdown?breakdown.savingsScore:0;
+  const expenseScore=breakdown?breakdown.expenseScore:0;
+  const debtScore=breakdown?breakdown.debtScore:0;
   const tone=score===null?'Veri bekleniyor':score>=80?'Çok iyi':score>=65?'İyi':score>=50?'Dengeli':'Dikkat';
   const toneClass=score===null?'amber':score>=65?'green':score>=50?'amber':'red';
   const periodLabel=({today:'Bugün',week:'Bu Hafta',month:'Bu Ay',prevMonth:'Geçen Ay','3m':'3 Ay',all:'Tümü'})[state.smartPeriod||'month']||'Bu Ay';
