@@ -713,6 +713,22 @@ body{overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scro
 .wallet-choice button.active{border-color:var(--theme-accent);background:color-mix(in srgb,var(--theme-accent) 14%,#080c18);color:#fff;box-shadow:0 0 0 1px color-mix(in srgb,var(--theme-accent) 18%,transparent)}
 .wallet-transfer{display:grid;grid-template-columns:1fr 26px 1fr;gap:6px;align-items:end}.wallet-transfer .transfer-arrow{text-align:center;color:var(--theme-accent);font-size:18px;padding-bottom:11px}
 .light .wallet-mini+.wallet-mini{border-color:#e1e6ef}.light .wallet-mini-icon{background:#f2f4f9}.light .wallet-choice button{background:#fff;color:#687084;border-color:#d7deea}.light .wallet-choice button.active{color:#151827;background:#f1ebff;border-color:#7b4df2}
+
+/* V23.4 wallet interaction styles moved into the head to prevent first-render flash. */
+/* V23.4 — Ana ekran cüzdanları: üçlü kompakt seçim + işlem formuna doğrudan geçiş. */
+.wallet-mini-row{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;border-top:1px solid #1a2037!important;margin-top:0!important;padding:7px 0 8px!important}
+.wallet-mini-row .wallet-mini{min-width:0!important;width:100%!important;border:1px solid #202743!important;border-radius:11px!important;background:rgba(8,12,24,.72)!important;padding:6px 7px!important;display:grid!important;grid-template-columns:27px minmax(0,1fr) 10px!important;align-items:center!important;gap:6px!important;text-align:left!important;color:inherit!important;cursor:pointer!important}
+.wallet-mini-row .wallet-mini+.wallet-mini{border-left:1px solid #202743!important}
+.wallet-mini-row .wallet-mini:hover{border-color:#39415f!important}
+.wallet-mini-row .wallet-mini:active{transform:scale(.985)!important}
+.wallet-mini-row .wallet-mini-icon{width:27px!important;height:27px!important;border-radius:8px!important;font-size:13px!important;display:grid!important;place-items:center!important}
+.wallet-mini-row .wallet-mini small{font-size:7px!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.wallet-mini-row .wallet-mini b{font-size:10.5px!important;line-height:1.1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;display:block!important;margin-top:3px!important}
+.wallet-mini-row .wallet-mini.cash b{color:var(--green)!important}.wallet-mini-row .wallet-mini.bank b{color:#b487ff!important}.wallet-mini-row .wallet-mini.card b{color:#f7c44f!important}
+.wallet-mini-row .wallet-mini-arrow{font-size:18px!important;line-height:1!important;color:#8e93a8!important;text-align:center!important}
+.wallet-mini-row .wallet-mini.cash .wallet-mini-arrow{color:#49dfb0!important}.wallet-mini-row .wallet-mini.bank .wallet-mini-arrow{color:#b995ff!important}.wallet-mini-row .wallet-mini.card .wallet-mini-arrow{color:#f7c44f!important}
+.light .wallet-mini-row{border-color:#e1e6ef!important}.light .wallet-mini-row .wallet-mini{background:#fff!important;border-color:#dfe4ee!important}.light .wallet-mini-row .wallet-mini+.wallet-mini{border-color:#dfe4ee!important}
+@media(max-width:380px){.wallet-mini-row{gap:4px!important}.wallet-mini-row .wallet-mini{grid-template-columns:24px minmax(0,1fr) 8px!important;padding:5px 5px!important;gap:4px!important;border-radius:9px!important}.wallet-mini-row .wallet-mini-icon{width:24px!important;height:24px!important;font-size:12px!important}.wallet-mini-row .wallet-mini small{font-size:6.5px!important}.wallet-mini-row .wallet-mini b{font-size:9.5px!important}.wallet-mini-row .wallet-mini-arrow{font-size:15px!important}}
 </style>
 <style id="fix-13322-theme-coherence">
 /* 13.3.22 — Tema bütünlüğü: tüm vurgu alanları seçili paletten beslenir. */
@@ -5453,9 +5469,9 @@ window.addEventListener('scroll',()=>{if(window.scrollY>2)resetPullGesture();},{
   try{
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     window.fixFirebaseReady=true;
-    // Firebase mevcut oturumu belirleyene kadar karşılama ekranını görünür tut.
-    // Giriş yapılmışsa onAuthStateChanged ekranı kapatır; oturum yoksa Google + Misafir alanı görünür kalır.
-    openWelcome();
+    // Firebase mevcut oturumu belirleyene kadar karşılama ekranını kapalı tut.
+    // Oturum doğrulandıktan sonra syncWelcomeGate gerekli durumda ekranı açar.
+    closeWelcome();
     const auth=firebase.auth();
     auth.onAuthStateChanged(function(user){
       window.fixFirebaseUser=user||null;
@@ -6042,22 +6058,7 @@ document.addEventListener('pointerdown',function(e){
 .light [class*="dark-panel"]{background:#fff!important;color:#151b36!important;border-color:#dfe4ee!important}
 </style>
 
-<style id="fix-23-4-wallet-mini-dashboard">
-/* V23.4 — Ana ekran cüzdanları: üçlü kompakt seçim + işlem formuna doğrudan geçiş. */
-.wallet-mini-row{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;border-top:1px solid #1a2037!important;margin-top:0!important;padding:7px 0 8px!important}
-.wallet-mini-row .wallet-mini{min-width:0!important;width:100%!important;border:1px solid #202743!important;border-radius:11px!important;background:rgba(8,12,24,.72)!important;padding:6px 7px!important;display:grid!important;grid-template-columns:27px minmax(0,1fr) 10px!important;align-items:center!important;gap:6px!important;text-align:left!important;color:inherit!important;cursor:pointer!important}
-.wallet-mini-row .wallet-mini+.wallet-mini{border-left:1px solid #202743!important}
-.wallet-mini-row .wallet-mini:hover{border-color:#39415f!important}
-.wallet-mini-row .wallet-mini:active{transform:scale(.985)!important}
-.wallet-mini-row .wallet-mini-icon{width:27px!important;height:27px!important;border-radius:8px!important;font-size:13px!important;display:grid!important;place-items:center!important}
-.wallet-mini-row .wallet-mini small{font-size:7px!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-.wallet-mini-row .wallet-mini b{font-size:10.5px!important;line-height:1.1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;display:block!important;margin-top:3px!important}
-.wallet-mini-row .wallet-mini.cash b{color:var(--green)!important}.wallet-mini-row .wallet-mini.bank b{color:#b487ff!important}.wallet-mini-row .wallet-mini.card b{color:#f7c44f!important}
-.wallet-mini-row .wallet-mini-arrow{font-size:18px!important;line-height:1!important;color:#8e93a8!important;text-align:center!important}
-.wallet-mini-row .wallet-mini.cash .wallet-mini-arrow{color:#49dfb0!important}.wallet-mini-row .wallet-mini.bank .wallet-mini-arrow{color:#b995ff!important}.wallet-mini-row .wallet-mini.card .wallet-mini-arrow{color:#f7c44f!important}
-.light .wallet-mini-row{border-color:#e1e6ef!important}.light .wallet-mini-row .wallet-mini{background:#fff!important;border-color:#dfe4ee!important}.light .wallet-mini-row .wallet-mini+.wallet-mini{border-color:#dfe4ee!important}
-@media(max-width:380px){.wallet-mini-row{gap:4px!important}.wallet-mini-row .wallet-mini{grid-template-columns:24px minmax(0,1fr) 8px!important;padding:5px 5px!important;gap:4px!important;border-radius:9px!important}.wallet-mini-row .wallet-mini-icon{width:24px!important;height:24px!important;font-size:12px!important}.wallet-mini-row .wallet-mini small{font-size:6.5px!important}.wallet-mini-row .wallet-mini b{font-size:9.5px!important}.wallet-mini-row .wallet-mini-arrow{font-size:15px!important}}
-</style>
+
 
 
 
