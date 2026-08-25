@@ -20,6 +20,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Show debug SHA-1
+        run: |
+          keytool -list -v \
+            -keystore fix-finans-debug.keystore \
+            -alias androiddebugkey \
+            -storepass android | grep -E 'SHA1:|SHA-1:'
+
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
