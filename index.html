@@ -2633,6 +2633,75 @@ body:not(.light) .balance.card .ff-particle{
  .fix-welcome-brand{bottom:26.2%!important}.fix-welcome-brand img{width:74px!important;height:74px!important;margin-bottom:5px!important}.fix-welcome-brand-name{font-size:22px!important}.fix-welcome-copy.fix-welcome-slogan{margin-top:6px!important}.fix-welcome-actions{bottom:5%!important}
 }
 </style>
+<style id="fix-v23-30-welcome-final-motion">
+/* V23.30 — Reference motion: slightly higher/larger branding + stronger radial finance motion.
+   Visual-only welcome layer. Existing login actions and app logic untouched. */
+.fix-intro-scene:after{
+  content:""!important;
+  position:absolute!important;
+  inset:-18%!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  background:
+    repeating-conic-gradient(from -8deg at 50% 58%,
+      transparent 0deg 3.2deg,
+      rgba(218,176,76,.12) 3.5deg 3.9deg,
+      transparent 4.3deg 8deg),
+    radial-gradient(circle at 50% 58%,rgba(255,202,92,.10),transparent 34%);
+  opacity:.55!important;
+  filter:blur(.55px)!important;
+  transform:scale(.88)!important;
+  animation:fixWelcomeRays 7.2s cubic-bezier(.25,.65,.25,1) infinite!important;
+}
+@keyframes fixWelcomeRays{
+  0%,100%{transform:scale(.88) rotate(0deg);opacity:.38}
+  45%{transform:scale(1.04) rotate(2deg);opacity:.62}
+  58%{transform:scale(1.13) rotate(3deg);opacity:.72}
+  100%{transform:scale(1.22) rotate(4deg);opacity:0}
+}
+/* Move the brand a measured amount upward and make the mark/title more confident. */
+.fix-welcome-brand{bottom:30.2%!important}
+.fix-welcome-brand img{width:94px!important;height:94px!important;margin-bottom:7px!important;filter:drop-shadow(0 8px 18px rgba(0,0,0,.34)) drop-shadow(0 0 12px rgba(106,93,255,.20))!important}
+.fix-welcome-brand-name{font-size:26px!important;line-height:1.04!important;letter-spacing:-.75px!important}
+.fix-welcome-copy.fix-welcome-slogan{margin-top:7px!important}
+.fix-welcome-slogan-main{font-size:12px!important;letter-spacing:1.08px!important}
+/* Buttons keep the same reference language, but their labels are a touch smaller so branding wins visually. */
+.fix-welcome-google{font-size:14px!important}
+.fix-welcome-guest{font-size:13px!important}
+/* Background objects breathe and approach the viewer at a natural, not frantic pace. */
+.fix-finance-object{animation:fixFinanceObjectRush 6.8s cubic-bezier(.2,.72,.24,1) infinite!important;will-change:transform,opacity,filter!important}
+.fo1{animation-delay:-.4s!important}.fo2{animation-delay:-1.2s!important}.fo3{animation-delay:-2.1s!important}.fo4{animation-delay:-3.0s!important}
+.fo5{animation-delay:-3.8s!important}.fo6{animation-delay:-4.6s!important}.fo7{animation-delay:-5.3s!important}.fo8{animation-delay:-1.8s!important}
+.fo9{animation-delay:-2.7s!important}.fo10{animation-delay:-4.2s!important}.fo11{animation-delay:-5.8s!important}.fo12{animation-delay:-.9s!important}
+.fo13{animation-delay:-3.4s!important}.fo14{animation-delay:-5.0s!important}.fo15{animation-delay:-1.5s!important}.fo16{animation-delay:-6.1s!important}
+.fo17{animation-delay:-2.5s!important}.fo18{animation-delay:-4.9s!important}.fo19{animation-delay:-1.0s!important}.fo20{animation-delay:-3.7s!important}
+.fo21{animation-delay:-5.6s!important}.fo22{animation-delay:-2.0s!important}.fo23{animation-delay:-6.4s!important}.fo24{animation-delay:-3.1s!important}
+@keyframes fixFinanceObjectRush{
+  0%{opacity:.10;transform:translate3d(0,0,0) scale(.72) rotate(var(--r));filter:blur(1.8px)}
+  28%{opacity:.25;transform:translate3d(calc(var(--dx,0px)*.35),calc(var(--dy,0px)*.35),0) scale(.9) rotate(calc(var(--r) + 2deg));filter:blur(.8px)}
+  58%{opacity:.38;transform:translate3d(var(--dx,0px),var(--dy,0px),0) scale(1.16) rotate(calc(var(--r) + 5deg));filter:blur(.25px)}
+  74%{opacity:.30;transform:translate3d(calc(var(--dx,0px)*1.35),calc(var(--dy,0px)*1.35),0) scale(1.52) rotate(calc(var(--r) + 8deg));filter:blur(1.2px)}
+  100%{opacity:0;transform:translate3d(calc(var(--dx,0px)*2),calc(var(--dy,0px)*2),0) scale(2.15) rotate(calc(var(--r) + 12deg));filter:blur(3px)}
+}
+.fo1,.fo7,.fo13,.fo19{--dx:34px;--dy:-28px}.fo2,.fo8,.fo14,.fo20{--dx:-38px;--dy:24px}
+.fo3,.fo9,.fo15,.fo21{--dx:16px;--dy:38px}.fo4,.fo10,.fo16,.fo22{--dx:-26px;--dy:-42px}
+.fo5,.fo11,.fo17,.fo23{--dx:42px;--dy:18px}.fo6,.fo12,.fo18,.fo24{--dx:-34px;--dy:-18px}
+.fix-money-particle{opacity:.36!important;filter:blur(.15px)!important}
+.fix-money-particle.p1{animation-duration:6.1s!important}.fix-money-particle.p2{animation-duration:6.6s!important}.fix-money-particle.p3{animation-duration:6.3s!important}.fix-money-particle.p4{animation-duration:6.8s!important}
+.fix-money-particle.p5{animation-duration:6.5s!important}.fix-money-particle.p6{animation-duration:6.2s!important}.fix-money-particle.p7{animation-duration:6.9s!important}.fix-money-particle.p8{animation-duration:6.4s!important}
+.fix-money-particle.p9{animation-duration:6.7s!important}.fix-money-particle.p10{animation-duration:6.3s!important}.fix-money-particle.p11{animation-duration:6.8s!important}.fix-money-particle.p12{animation-duration:6.5s!important}
+.fix-money-particle.p13{animation-duration:6.2s!important}.fix-money-particle.p14{animation-duration:6.9s!important}.fix-money-particle.p15{animation-duration:6.4s!important}.fix-money-particle.p16{animation-duration:6.7s!important}
+@media(max-height:720px){
+  .fix-welcome-brand{bottom:28.2%!important}
+  .fix-welcome-brand img{width:82px!important;height:82px!important;margin-bottom:5px!important}
+  .fix-welcome-brand-name{font-size:23px!important}
+  .fix-welcome-copy.fix-welcome-slogan{margin-top:6px!important}
+  .fix-welcome-google{font-size:13.5px!important}.fix-welcome-guest{font-size:12.5px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .fix-intro-scene:after,.fix-finance-object{animation:none!important}
+}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
@@ -7566,4 +7635,46 @@ body.font-size-system .app{font-size:inherit}
 .light .drive-confirm-sheet p{color:#687084}
 .light .drive-confirm-file{background:#fff;border-color:#dfe4ee;color:#202333}
 @media(max-width:520px){.drive-file-row{grid-template-columns:28px minmax(0,1fr)!important}.drive-file-actions{grid-column:2;justify-content:flex-start;margin-top:2px}.drive-file-actions .drive-restore-btn{height:28px!important}.drive-delete-btn{height:28px!important;width:28px!important}.drive-confirm-sheet{padding:20px!important}}
+</style>
+
+<style id="fix-v23-31-welcome-final-position-motion">
+/* V23.31 — final composition correction: lift the whole welcome action group, remove radial guide lines, speed up finance motion. */
+/* Remove the radial/conic streak overlay and the decorative line/bar guides. */
+.fix-intro-scene:after{display:none!important;content:none!important;background:none!important;animation:none!important}
+.fix-finance-line,.fix-finance-bar{display:none!important;opacity:0!important;animation:none!important}
+
+/* Lift branding and CTA block together so their spacing remains balanced. */
+.fix-welcome-brand{bottom:37.5%!important}
+.fix-welcome-brand img{width:94px!important;height:94px!important}
+.fix-welcome-brand-name{font-size:26px!important}
+.fix-welcome-slogan-main{font-size:12px!important}
+.fix-welcome-actions{bottom:14.5%!important}
+
+/* Faster, cleaner edge-to-screen motion — no extra radial guide graphics. */
+.fix-finance-object{animation-duration:5.6s!important}
+.fix-money-particle{opacity:.40!important;filter:blur(.12px)!important}
+.fix-money-particle.p1{animation-duration:5.0s!important}
+.fix-money-particle.p2{animation-duration:5.4s!important}
+.fix-money-particle.p3{animation-duration:5.1s!important}
+.fix-money-particle.p4{animation-duration:5.6s!important}
+.fix-money-particle.p5{animation-duration:5.8s!important}
+.fix-money-particle.p6{animation-duration:5.2s!important}
+.fix-money-particle.p7{animation-duration:5.5s!important}
+.fix-money-particle.p8{animation-duration:5.0s!important}
+.fix-money-particle.p9{animation-duration:5.7s!important}
+.fix-money-particle.p10{animation-duration:5.3s!important}
+.fix-money-particle.p11{animation-duration:5.9s!important}
+.fix-money-particle.p12{animation-duration:5.1s!important}
+.fix-money-particle.p13{animation-duration:5.6s!important}
+.fix-money-particle.p14{animation-duration:5.2s!important}
+.fix-money-particle.p15{animation-duration:5.8s!important}
+.fix-money-particle.p16{animation-duration:5.4s!important}
+
+@media(max-height:720px){
+  .fix-welcome-brand{bottom:33.5%!important}
+  .fix-welcome-brand img{width:78px!important;height:78px!important}
+  .fix-welcome-brand-name{top:auto!important;font-size:22px!important}
+  .fix-welcome-copy.fix-welcome-slogan{top:auto!important;margin-top:6px!important}
+  .fix-welcome-actions{bottom:9.5%!important}
+}
 </style>
