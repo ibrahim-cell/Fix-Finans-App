@@ -4,9 +4,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/fix_finans_logo"
+        android:icon="@drawable/fix_finans_mobile_logo"
         android:label="Fix Finans"
-        android:roundIcon="@drawable/fix_finans_logo"
+        android:roundIcon="@drawable/fix_finans_mobile_logo"
         android:supportsRtl="true"
         android:theme="@style/FixFinansTheme">
 
