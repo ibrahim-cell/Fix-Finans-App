@@ -18,6 +18,6 @@ Not: Test APK'sı debug keystore ile imzalanır. Play Store yayını öncesinde 
 Android uygulaması Fix Finans'ın F + grafik + yükselen ok amblemini ana ikon olarak kullanır. Splash ekranı aynı premium kimliği ve “Kontrol sende. Denge sende.” mesajını taşır.
 
 
-## V23.33 — Mobil Logo
+## V23.34 — Unified Welcome/Splash Logo
 - Android uygulama ve yuvarlak uygulama ikonu `fix_finans_logo.png` kullanır.
-- Karşılama ekranı (`index.html`) ve Android splash görseline dokunulmamıştır.
+- Karşılama ekranı (`index.html`) ve Android splash aynı kanonik şeffaf Fix Finans logosunu kullanır.
