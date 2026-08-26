@@ -2714,56 +2714,64 @@ body:not(.light) .balance.card .ff-particle{
 @media(max-height:720px){.fix-welcome-brand img.fix-welcome-logo{width:82px!important;height:82px!important}}
 </style>
 <style id="fix-minimal-welcome-splash">
-/* Fix Finans — minimal welcome splash: canonical logo + brand name only. */
-.fix-welcome{
-  position:fixed!important;inset:0!important;z-index:10000!important;
-  display:grid!important;place-items:center!important;overflow:hidden!important;
-  padding:24px!important;
-  background:radial-gradient(circle at 50% 46%,rgba(116,60,255,.12),transparent 30%),
-             linear-gradient(180deg,#05060d 0%,#070a15 58%,#080b16 100%)!important;
-  color:#f4f2ff!important;
+/* FIX FINANS — final welcome composition */
+#fixWelcome .fix-welcome-inner{
+  position:relative!important;width:100%!important;min-height:100dvh!important;
+  height:100dvh!important;padding:0!important;margin:0!important;border-radius:0!important;
+  background:transparent!important;display:flex!important;align-items:center!important;
+  justify-content:center!important;overflow:hidden!important;
 }
-.fix-welcome.hidden{display:none!important}
-.fix-welcome-inner{
-  position:relative!important;z-index:2!important;width:100%!important;
-  min-height:100%!important;display:flex!important;align-items:center!important;
-  justify-content:center!important;padding:0!important;border:0!important;
-  border-radius:0!important;background:transparent!important;backdrop-filter:none!important;
+#fixWelcome .fix-intro-scene{
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+  pointer-events:none!important;z-index:1!important;
 }
-.fix-welcome-brand{
-  position:relative!important;z-index:3!important;bottom:auto!important;
-  display:flex!important;flex-direction:column!important;align-items:center!important;
-  justify-content:center!important;gap:12px!important;margin:0!important;
-  animation:fixMinimalSplashIn .85s cubic-bezier(.2,.8,.2,1) both!important;
+#fixWelcome .fix-welcome-brand{
+  position:relative!important;left:auto!important;top:auto!important;right:auto!important;
+  bottom:auto!important;transform:none!important;width:auto!important;margin:0!important;
+  padding:0!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;gap:0!important;z-index:8!important;
 }
-.fix-welcome-brand img.fix-welcome-logo{
-  width:112px!important;height:112px!important;object-fit:contain!important;
-  border-radius:0!important;background:transparent!important;border:0!important;
-  box-shadow:none!important;
-  filter:drop-shadow(0 12px 24px rgba(75,44,180,.28))!important;
+#fixWelcome .fix-welcome-brand img.fix-welcome-logo{
+  position:relative!important;width:108px!important;height:108px!important;
+  object-fit:contain!important;display:block!important;margin:0 0 12px!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  filter:drop-shadow(0 9px 20px rgba(0,0,0,.30)) drop-shadow(0 0 14px rgba(106,93,255,.20))!important;
 }
-.fix-welcome-brand-name{
-  font-size:30px!important;line-height:1!important;font-weight:850!important;
-  letter-spacing:-.9px!important;color:#f4f2ff!important;
+#fixWelcome .fix-welcome-brand-name{
+  position:relative!important;inset:auto!important;width:auto!important;margin:0!important;
+  text-align:center!important;font-size:30px!important;line-height:1.04!important;
+  font-weight:850!important;letter-spacing:-.85px!important;color:#f0f2f5!important;
+  text-shadow:0 2px 18px rgba(0,0,0,.42)!important;
 }
-.fix-welcome-copy,.fix-welcome-actions,.fix-welcome-glow,.fix-welcome-note{display:none!important}
-.fix-intro-scene{display:block!important;position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;overflow:hidden!important;opacity:1!important}
-@keyframes fixMinimalSplashIn{
-  0%{opacity:0;transform:translateY(8px) scale(.94)}
-  65%{opacity:1;transform:translateY(0) scale(1.015)}
-  100%{opacity:1;transform:translateY(0) scale(1)}
+#fixWelcome .fix-welcome-copy.fix-welcome-slogan{
+  display:block!important;position:relative!important;inset:auto!important;width:auto!important;
+  margin:13px 0 0!important;text-align:center!important;z-index:auto!important;
 }
+#fixWelcome .fix-welcome-slogan-main{
+  display:block!important;font-size:13px!important;line-height:1.2!important;
+  font-weight:700!important;letter-spacing:1.05px!important;text-transform:none!important;
+  color:#d8c58f!important;text-shadow:0 1px 14px rgba(0,0,0,.55)!important;
+}
+#fixWelcome .fix-welcome-slogan:after{
+  content:""!important;display:block!important;width:92px!important;height:1px!important;
+  margin:11px auto 0!important;
+  background:linear-gradient(90deg,transparent,rgba(214,175,89,.55),transparent)!important;
+  box-shadow:0 0 8px rgba(214,175,89,.15)!important;
+}
+#fixWelcome .fix-welcome-actions,#fixWelcome .fix-welcome-note{display:none!important}
 @media(max-height:720px){
-  .fix-welcome-brand img.fix-welcome-logo{width:92px!important;height:92px!important}
-  .fix-welcome-brand-name{font-size:26px!important}
+  #fixWelcome .fix-welcome-brand img.fix-welcome-logo{width:88px!important;height:88px!important;margin-bottom:10px!important}
+  #fixWelcome .fix-welcome-brand-name{font-size:26px!important}
+  #fixWelcome .fix-welcome-copy.fix-welcome-slogan{margin-top:10px!important}
+  #fixWelcome .fix-welcome-slogan-main{font-size:12px!important}
 }
-@media(prefers-reduced-motion:reduce){.fix-welcome-brand{animation:none!important}}
+@media(prefers-reduced-motion:reduce){#fixWelcome .fix-intro-scene *{animation:none!important}}
 </style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden" aria-label="Fix Finans">
   <div class="fix-welcome-inner">
-<div class="fix-intro-scene" aria-hidden="true">
+    <div class="fix-intro-scene" aria-hidden="true">
       <span class="fix-finance-object round gold fo1">₺</span><span class="fix-finance-object fo2">▥</span><span class="fix-finance-object small gold fo3">%</span><span class="fix-finance-object tall fo4">▤</span><span class="fix-finance-object round gold fo5">€</span><span class="fix-finance-object fo6">⌁</span><span class="fix-finance-object round fo7">$</span><span class="fix-finance-object fo8">▣</span><span class="fix-finance-object round gold fo9">₿</span><span class="fix-finance-object tall fo10">▤</span><span class="fix-finance-object fo11">⌂</span><span class="fix-finance-object small gold fo12">₺</span><span class="fix-finance-object fo13">▦</span><span class="fix-finance-object round fo14">%</span><span class="fix-finance-object small gold fo15">€</span><span class="fix-finance-object fo16">↗</span><span class="fix-finance-object round gold fo17">₿</span><span class="fix-finance-object small fo18">▤</span><span class="fix-finance-object round gold fo19">$</span><span class="fix-finance-object fo20">▣</span><span class="fix-finance-object small gold fo21">₺</span><span class="fix-finance-object round fo22">€</span><span class="fix-finance-object tall fo23">▥</span><span class="fix-finance-object small fo24">%</span>
       <span class="fix-money-particle big gold p1">₿</span><span class="fix-money-particle mid crypto p2">Ξ</span><span class="fix-money-particle small p3">₺</span><span class="fix-money-particle mid gold p4">🥇</span>
       <span class="fix-money-particle big crypto p5">₿</span><span class="fix-money-particle small gold p6">🥈</span><span class="fix-money-particle mid p7">$</span><span class="fix-money-particle small p8">€</span>
@@ -2773,9 +2781,12 @@ body:not(.light) .balance.card .ff-particle{
       <span class="fix-finance-bar bar-1"></span><span class="fix-finance-bar bar-2"></span><span class="fix-finance-bar bar-3"></span><span class="fix-finance-bar bar-4"></span><span class="fix-finance-bar bar-5"></span><span class="fix-finance-bar bar-6"></span><span class="fix-finance-bar bar-7"></span>
       <span class="fix-ai-talisman">✦</span><span class="fix-intro-wallet" aria-hidden="true"><span class="fix-intro-wallet-icon">👛</span><i class="fix-wallet-coin c1">₿</i><i class="fix-wallet-coin c2">₺</i><i class="fix-wallet-coin c3">$</i><i class="fix-wallet-coin c4">🪙</i></span>
     </div>
-        <div class="fix-welcome-brand">
+    <div class="fix-welcome-brand">
       <img class="fix-welcome-logo" alt="Fix Finans">
       <div class="fix-welcome-brand-name">Fix Finans</div>
+      <div class="fix-welcome-copy fix-welcome-slogan">
+        <div class="fix-welcome-slogan-main">Kontrol sende. Denge sende.</div>
+      </div>
     </div>
   </div>
 </div>
