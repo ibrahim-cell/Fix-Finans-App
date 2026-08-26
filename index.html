@@ -5760,41 +5760,54 @@ window.addEventListener('scroll',()=>{if(window.scrollY>2)resetPullGesture();},{
   }
   window.signInWithGoogle=async function(){
     setGoogleButtonBusy(true);
-    if(!window.firebase||!firebase.auth){
-      setGoogleButtonBusy(false);
-      showToast('Firebase bağlantısı hazır değil.');
-      return;
-    }
-    try{
-      const auth=firebase.auth();
-      const provider=new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({prompt:'select_account'});
 
-      // GitHub Pages + Chrome mobil akışında redirect yerine popup kullan.
-      // OAuth dönüşü aynı sayfada tamamlanır; böylece karşılama ekranı
-      // tekrar açılmadan gerçek Firebase kullanıcısı alınır.
-      const result=await auth.signInWithPopup(provider);
-      if(result&&result.user){
-        await finishGoogleUser(result.user);
-        showToast('Google hesabı bağlandı.');
-      }
-    }catch(e){
-      console.error('Firebase Google popup sign-in:',e);
-      setGoogleButtonBusy(false);
-      if(e?.code==='auth/unauthorized-domain'){
-        showToast('GitHub Pages alan adı Firebase yetkili alanlarına eklenmeli.');
-      }else if(e?.code==='auth/popup-blocked'){
-        showToast('Google penceresi engellendi. Tarayıcıda açılır pencerelere izin ver.');
-      }else if(e?.code==='auth/popup-closed-by-user'){
-        showToast('Google girişi iptal edildi.');
-      }else if(e?.code==='auth/cancelled-popup-request'){
-        showToast('Google giriş isteği iptal edildi.');
-      }else{
-        showToast('Google bağlantısı kurulamadı: '+(e?.code||'bilinmeyen hata'));
-      }
+    if(!window.firebase || !firebase.auth){
+        setGoogleButtonBusy(false);
+        showToast('Firebase bağlantısı hazır değil.');
+        return;
     }
-  };
-  try{
+
+    try{
+        const auth=firebase.auth();
+        const provider=new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({prompt:'select_account'});
+
+        // Android WebView'da popup yerine redirect kullan.
+        const isAndroidWebView =
+    /Android/i.test(navigator.userAgent) &&
+    (/\bwv\b/i.test(navigator.userAgent) ||
+     /; wv\)/i.test(navigator.userAgent));
+        if(isAndroidWebView){
+            sessionStorage.setItem('fix_google_redirect_pending','1');
+            await auth.signInWithRedirect(provider);
+            return;
+        }
+
+        // Normal Chrome / masaüstü / normal mobil tarayıcı:
+        // mevcut çalışan popup akışı korunuyor.
+        const result=await auth.signInWithPopup(provider);
+
+        if(result&&result.user){
+            await finishGoogleUser(result.user);
+            showToast('Google hesabı bağlandı.');
+        }
+    }catch(e){
+        console.error('Firebase Google sign-in:',e);
+        setGoogleButtonBusy(false);
+
+        if(e?.code==='auth/unauthorized-domain'){
+            showToast('GitHub Pages alan adı Firebase yetkili alanlarına eklenmeli.');
+        }else if(e?.code==='auth/popup-blocked'){
+            showToast('Google penceresi engellendi. Tarayıcıda açılır pencerelere izin ver.');
+        }else if(e?.code==='auth/popup-closed-by-user'){
+            showToast('Google girişi iptal edildi.');
+        }else if(e?.code==='auth/cancelled-popup-request'){
+            showToast('Google giriş isteği iptal edildi.');
+        }else{
+            showToast('Google bağlantısı kurulamadı: '+(e?.code||'bilinmeyen hata'));
+        }
+    }
+};
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     window.fixFirebaseReady=true;
     // Firebase mevcut oturumu belirleyene kadar karşılama ekranını kapalı tut.
