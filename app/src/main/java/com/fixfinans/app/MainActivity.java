@@ -122,7 +122,27 @@ public class MainActivity extends Activity {
                 filePathCallback = callback;
 
                 try {
-                    Intent intent = params.createIntent();
+                    Intent intent;
+
+                    // WebView'in oluşturduğu intent'i kullan; olmazsa
+                    // Android'in sistem belge seçicisine güvenli bir fallback aç.
+                    try {
+                        intent = params.createIntent();
+                    } catch (Exception ignored) {
+                        intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        intent.setType("application/json");
+                    }
+
+                    // Fix Finans yedekleri JSON'dur.
+                    // Bazı Android/WebView sürümlerinde createIntent()
+                    // filtreyi fazla daraltabildiği için fallback tipi açıkça belirle.
+                    if (intent.getType() == null || intent.getType().isEmpty()) {
+                        intent.setType("application/json");
+                    }
+
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+
                     startActivityForResult(intent, FILE_CHOOSER_REQUEST);
                     return true;
                 } catch (Exception e) {
