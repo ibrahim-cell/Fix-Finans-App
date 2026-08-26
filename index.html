@@ -4731,7 +4731,7 @@ function executeSelectiveRestore(){
   confirmAction('Geri yüklemeyi onayla','Seçtiğin veriler mevcut kayıtların üzerine yazılacak. Devam edilsin mi?',()=>backupRestorePayload(payload,parts));
 }
 function restoreData(){
-  const input=document.createElement('input');input.type='file';input.accept='.json,application/json';
+  const input=document.createElement('input');input.type='file';input.accept='.json,application/json,application/octet-stream';
   input.onchange=()=>{const file=input.files?.[0];if(!file)return;const reader=new FileReader();
     reader.onload=()=>{try{const d=JSON.parse(reader.result);openSelectiveRestore(d)}catch(e){showToast('Geçerli bir Fix Finans yedeği seçmelisin.')}};reader.readAsText(file)
   };input.click()
