@@ -4593,7 +4593,7 @@ function executeConfirmAction(){
 
 
 function backupLocalSnapshot(){
-  const keys=['fixFinansTransactions_13254','fixFinansDebts_13240','fix_upcoming','fix_custom_categories','fix_profile_name','fix_profile_mail','fix_profile_photo','fix_theme','fix_palette','fix_font_size','fix_excel_enabled','fix_balance_hidden',GOAL_KEY,RECURRING_KEY];
+  const keys=['fixFinansTransactions_13254','fixFinansDebts_13240','fix_upcoming','fix_custom_categories','fix_profile_name','fix_profile_mail','fix_profile_photo','fix_theme','fix_palette','fix_font_size','fix_excel_enabled','fix_balance_hidden','fix_credit_card',GOAL_KEY,RECURRING_KEY];
   const local={};
   keys.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)local[k]=v});
   return local;
@@ -4610,6 +4610,7 @@ function makeBackupPayload(){
     recurring:Array.isArray(state.recurring)?state.recurring:[],
     financialGoals:Array.isArray(state.financialGoals)?state.financialGoals:[],
     customCategories:state.customCategories||{Gelir:[],Gider:[]},
+    creditCard:state.creditCard||{limit:0},
     filters:state.filters||{from:'',to:'',category:'Tümü'},
     localStorage:backupLocalSnapshot()
   };
@@ -4693,8 +4694,11 @@ function backupRestorePayload(payload,parts){
   if(Array.isArray(payload.recurring))state.recurring=payload.recurring;
   if(Array.isArray(payload.financialGoals))state.financialGoals=payload.financialGoals;
   if(p.categories)state.customCategories=payload.customCategories&&typeof payload.customCategories==='object'?payload.customCategories:{Gelir:[],Gider:[]};
+  if(p.settings && payload.creditCard && typeof payload.creditCard==='object'){
+    state.creditCard={limit:Math.max(0,Number(payload.creditCard.limit)||0)};
+  }
   if(payload.localStorage&&typeof payload.localStorage==='object'){
-    const settings=['fix_theme','fix_palette','fix_font_size','fix_excel_enabled','fix_balance_hidden',GOAL_KEY,RECURRING_KEY];
+    const settings=['fix_theme','fix_palette','fix_font_size','fix_excel_enabled','fix_balance_hidden','fix_credit_card',GOAL_KEY,RECURRING_KEY];
     const profile=['fix_profile_name','fix_profile_mail','fix_profile_photo'];
     const selected=[...(p.settings?settings:[]),...(p.profile?profile:[])];
     selected.forEach(k=>{if(payload.localStorage[k]!==undefined)localStorage.setItem(k,payload.localStorage[k])});
