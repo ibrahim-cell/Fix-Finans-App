@@ -2727,7 +2727,27 @@ body:not(.light) .balance.card .ff-particle{
 .premium-add-label{display:block!important;white-space:nowrap!important;font-size:17px!important;line-height:1!important;font-weight:800!important}
 @media(max-width:360px){.premium-add{width:230px!important;padding:0 18px!important}.premium-add-label{font-size:16px!important}}
 .light .ai-top-trigger{color:#6f3cff!important;background:linear-gradient(145deg,rgba(116,60,255,.08),rgba(255,255,255,.65))!important;border-color:#d9d4ec!important}
-</style></style><style id="fix-1341-welcome-off">#fixWelcome{display:none!important}</style></head><body>
+</style></style><style id="fix-1341-welcome-off">#fixWelcome{display:none!important}</style>
+<style id="fix-1341-absolute-final-ui">
+/* 13.4.1 ABSOLUTE FINAL: top actions = Currency, AI, Notifications. Bottom action = wide rectangular bar. */
+.top-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:10px!important;}
+.top-actions>.icon{flex:0 0 48px!important;width:48px!important;height:48px!important;border-radius:14px!important;}
+.top-actions>.currency-pill{width:48px!important;min-width:48px!important;height:48px!important;padding:0!important;border-radius:14px!important;background:transparent!important;border:0!important;color:var(--text)!important;display:grid!important;place-items:center!important;}
+.top-actions>.currency-pill svg{width:24px!important;height:24px!important;stroke:currentColor!important;}
+.top-actions>.top-ai-btn{width:48px!important;min-width:48px!important;height:48px!important;border-radius:14px!important;}
+.top-actions>.top-ai-btn svg{width:24px!important;height:24px!important;}
+.bottom.premium-bottom{height:104px!important;width:100%!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:10px 14px calc(10px + env(safe-area-inset-bottom))!important;gap:0!important;}
+.bottom.premium-bottom .premium-add,.bottom.premium-bottom .add.premium-add{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;z-index:2!important;width:100%!important;max-width:none!important;min-width:0!important;height:68px!important;min-height:68px!important;box-sizing:border-box!important;margin:0!important;padding:0 20px!important;border:1px solid color-mix(in srgb,var(--gold) 58%,var(--purple))!important;border-radius:20px!important;background:linear-gradient(135deg,color-mix(in srgb,var(--purple2) 85%,var(--card)),color-mix(in srgb,var(--surface) 92%,#070914))!important;color:var(--text)!important;display:flex!important;flex:1 1 auto!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:10px!important;font-size:18px!important;font-weight:800!important;letter-spacing:0!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;box-shadow:0 0 22px color-mix(in srgb,var(--gold) 12%,transparent),inset 0 1px rgba(255,255,255,.08)!important;transform:none!important;animation:none!important;}
+.bottom.premium-bottom .premium-add::before,.bottom.premium-bottom .premium-add::after,.bottom.premium-bottom .add::before,.bottom.premium-bottom .add::after{content:none!important;display:none!important;animation:none!important;box-shadow:none!important;border:0!important;}
+.bottom.premium-bottom .premium-add:active{transform:translateY(1px)!important;}
+.bottom.premium-bottom .premium-add-icon{width:26px!important;height:26px!important;display:grid!important;place-items:center!important;flex:0 0 26px!important;font-size:28px!important;line-height:1!important;}
+.bottom.premium-bottom .premium-add-icon svg{width:26px!important;height:26px!important;display:block!important;stroke:currentColor!important;}
+.bottom.premium-bottom .premium-add-label{display:block!important;font-size:18px!important;line-height:1!important;font-weight:800!important;white-space:nowrap!important;}
+.light .bottom.premium-bottom{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(246,247,252,.99))!important;border-top-color:#dfe4ee!important;}
+.light .bottom.premium-bottom .premium-add{background:linear-gradient(135deg,#fff,#f3f1fa)!important;color:#151827!important;border-color:#d9d4ec!important;}
+@media(max-width:360px){.bottom.premium-bottom{height:98px!important;padding-left:10px!important;padding-right:10px!important}.bottom.premium-bottom .premium-add{height:64px!important;min-height:64px!important;border-radius:18px!important}.bottom.premium-bottom .premium-add-label{font-size:17px!important}.top-actions{gap:6px!important}.top-actions>.icon,.top-actions>.currency-pill,.top-actions>.top-ai-btn{width:44px!important;min-width:44px!important;height:44px!important;border-radius:13px!important}}
+</style>
+</head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden">
   <div class="fix-welcome-glow glow-a"></div>
@@ -2956,7 +2976,7 @@ function openTransactionChooser(){
 function header(){
   const el=document.getElementById('topHeader'); if(!el)return;
   if(state.page==='home'){
-    el.innerHTML=`<div class="home-left"><button class="icon menu-trigger" aria-label="Fix Finans menüsü" title="Kontrol Merkezi" onclick="openControlMenu()">${iconSvg('profileMenu')}</button><div class="brand"><img id="logo" alt="Fix Finans"><span>Fix Finans</span></div></div><div class="top-actions"><button class="icon ai-finance-btn top-ai-btn" aria-label="Akıllı Finans Merkezi" title="Akıllı Finans Merkezi" type="button" onclick="openSmartCenter();event.stopPropagation();">${iconSvg('sparkle')}</button><button class="icon currency-pill" aria-label="Döviz ve Piyasa" title="Döviz ve Piyasa" type="button" onclick="openCurrencyRates();event.stopPropagation();">${iconSvg('currency')}</button><button class="icon" aria-label="Bildirim" onclick="showNotifications()">${iconSvg('bell')}<span class="badge">${notificationData().length}</span></button></div>`;
+    el.innerHTML=`<div class="home-left"><button class="icon menu-trigger" aria-label="Fix Finans menüsü" title="Kontrol Merkezi" onclick="openControlMenu()">${iconSvg('profileMenu')}</button><div class="brand"><img id="logo" alt="Fix Finans"><span>Fix Finans</span></div></div><div class="top-actions"><button class="icon currency-pill" aria-label="Döviz ve Piyasa" title="Döviz ve Piyasa" type="button" onclick="openCurrencyRates();event.stopPropagation();">${iconSvg('currency')}</button><button class="icon ai-finance-btn top-ai-btn" aria-label="Akıllı Finans Merkezi" title="Akıllı Finans Merkezi" type="button" onclick="openSmartCenter();event.stopPropagation();">${iconSvg('sparkle')}</button><button class="icon" aria-label="Bildirim" onclick="showNotifications()">${iconSvg('bell')}<span class="badge">${notificationData().length}</span></button></div>`;
     return;
   }
   const titles={transactions:'İşlemler',reports:'Raporlar',debts:'Borç / Alacak',profile:'Profil',smartCenter:'Akıllı Finans Merkezi',upcoming:'Yaklaşan'};
