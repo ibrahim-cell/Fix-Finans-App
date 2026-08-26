@@ -2956,7 +2956,7 @@ function openTransactionChooser(){
 function header(){
   const el=document.getElementById('topHeader'); if(!el)return;
   if(state.page==='home'){
-    el.innerHTML=`<div class="home-left"><button class="icon menu-trigger" aria-label="Fix Finans menüsü" title="Kontrol Merkezi" onclick="openControlMenu()">${iconSvg('profileMenu')}</button><div class="brand"><img id="logo" alt="Fix Finans"><span>Fix Finans</span></div></div><div class="top-actions"><button class="icon currency-pill" aria-label="Döviz ve Piyasa" title="Döviz ve Piyasa" type="button" onclick="openCurrencyRates();event.stopPropagation();">${iconSvg('currency')}</button><button class="icon ai-finance-btn top-ai-btn" aria-label="Akıllı Finans Merkezi" title="Akıllı Finans Merkezi" type="button" onclick="openSmartCenter();event.stopPropagation();">${iconSvg('sparkle')}</button><button class="icon" aria-label="Bildirim" onclick="showNotifications()">${iconSvg('bell')}<span class="badge">${notificationData().length}</span></button></div>`;
+    el.innerHTML=`<div class="home-left"><button class="icon menu-trigger" aria-label="Fix Finans menüsü" title="Kontrol Merkezi" onclick="openControlMenu()">${iconSvg('profileMenu')}</button><div class="brand"><img id="logo" alt="Fix Finans"><span>Fix Finans</span></div></div><div class="top-actions"><button class="icon ai-finance-btn top-ai-btn" aria-label="Akıllı Finans Merkezi" title="Akıllı Finans Merkezi" type="button" onclick="openSmartCenter();event.stopPropagation();">${iconSvg('sparkle')}</button><button class="icon currency-pill" aria-label="Döviz ve Piyasa" title="Döviz ve Piyasa" type="button" onclick="openCurrencyRates();event.stopPropagation();">${iconSvg('currency')}</button><button class="icon" aria-label="Bildirim" onclick="showNotifications()">${iconSvg('bell')}<span class="badge">${notificationData().length}</span></button></div>`;
     return;
   }
   const titles={transactions:'İşlemler',reports:'Raporlar',debts:'Borç / Alacak',profile:'Profil',smartCenter:'Akıllı Finans Merkezi',upcoming:'Yaklaşan'};
@@ -5209,7 +5209,7 @@ function exportExcelFile(){
 </style>
 
 <style id="fix-1341-final-currency-addbar">
-/* 13.4.1 final visual correction: restore currency icon and make İşlem Ekle a full-width premium bar. */
+/* 13.4.1 final visual correction: AI + Döviz sırası ve geniş dikdörtgen İşlem Ekle barı. */
 .top .currency-pill{
   width:40px!important;height:40px!important;min-width:40px!important;padding:0!important;
   border:0!important;border-radius:12px!important;background:transparent!important;
@@ -5228,23 +5228,23 @@ function exportExcelFile(){
   margin:0!important;padding:0 22px!important;border-radius:18px!important;
   display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
   gap:10px!important;white-space:nowrap!important;overflow:hidden!important;
-  border:1px solid color-mix(in srgb,var(--gold) 72%,var(--purple))!important;
-  background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 92%,var(--purple)),var(--gold))!important;
-  color:#17110a!important;font-size:18px!important;font-weight:850!important;letter-spacing:-.2px!important;
-  box-shadow:0 10px 28px color-mix(in srgb,var(--gold) 24%,transparent),0 0 22px color-mix(in srgb,var(--gold) 13%,transparent),inset 0 1px rgba(255,255,255,.42)!important;
+  border:1px solid color-mix(in srgb,var(--gold) 58%,var(--purple))!important;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--card) 94%,#050712),color-mix(in srgb,var(--surface) 92%,#050712))!important;
+  color:var(--text)!important;font-size:18px!important;font-weight:850!important;letter-spacing:-.2px!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.28),0 0 20px color-mix(in srgb,var(--gold) 10%,transparent),inset 0 1px rgba(255,255,255,.05)!important;
 }
 .premium-add-icon{
-  width:25px!important;height:25px!important;flex:0 0 25px!important;display:grid!important;place-items:center!important;
-  font-size:0!important;
+  width:30px!important;height:30px!important;flex:0 0 30px!important;display:grid!important;place-items:center!important;
+  font-size:0!important;border-radius:10px!important;color:var(--gold)!important;
 }
-.premium-add-icon svg{width:25px!important;height:25px!important;stroke:currentColor!important;}
-.premium-add-label{display:block!important;white-space:nowrap!important;font-size:18px!important;line-height:1!important;font-weight:850!important;}
+.premium-add-icon svg{width:27px!important;height:27px!important;stroke:currentColor!important;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--gold) 28%,transparent));}
+.premium-add-label{display:block!important;white-space:nowrap!important;font-size:19px!important;line-height:1!important;font-weight:850!important;color:var(--text)!important;}
 .premium-add:active{transform:translateY(1px) scale(.995)!important;}
-.light .premium-add{color:#17110a!important;}
+.light .premium-add{color:#263247!important;background:linear-gradient(180deg,#fff,#f6f7fb)!important;border-color:#d9c48a!important;}
+.light .premium-add-label{color:#263247!important;}
 @media(max-width:360px){
   .premium-add{height:58px!important;min-height:58px!important;padding:0 18px!important;}
-  .premium-add-label{font-size:16px!important;}
-  .premium-add-icon,.premium-add-icon svg{width:23px!important;height:23px!important;}
+  .premium-add-label{font-size:17px!important;}
 }
 </style>
 </body></html>`],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`fix-finans-islemler-${new Date().toISOString().replace(/[:.]/g,'-')}.xls`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
