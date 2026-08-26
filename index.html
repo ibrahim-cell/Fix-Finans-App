@@ -5807,7 +5807,6 @@ window.addEventListener('scroll',()=>{if(window.scrollY>2)resetPullGesture();},{
             showToast('Google bağlantısı kurulamadı: '+(e?.code||'bilinmeyen hata'));
         }
     }
-};
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     window.fixFirebaseReady=true;
     // Firebase mevcut oturumu belirleyene kadar karşılama ekranını kapalı tut.
