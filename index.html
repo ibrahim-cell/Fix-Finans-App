@@ -5247,6 +5247,51 @@ function exportExcelFile(){
   .premium-add-label{font-size:17px!important;}
 }
 </style>
+
+<style id="fix-1341-final-final-bar">
+/* Final correction: premium İşlem Ekle is a wide rectangular bar, not the legacy circular .add control. */
+.bottom.premium-bottom{
+  height:92px!important; padding:8px 12px calc(9px + env(safe-area-inset-bottom))!important;
+  display:flex!important; align-items:center!important; justify-content:center!important;
+}
+.bottom.premium-bottom .premium-add{
+  position:relative!important; inset:auto!important;
+  width:100%!important; max-width:none!important; height:62px!important; min-height:62px!important;
+  margin:0!important; padding:0 22px!important;
+  border-radius:18px!important;
+  display:flex!important; flex-direction:row!important; align-items:center!important; justify-content:center!important;
+  gap:10px!important; white-space:nowrap!important; overflow:hidden!important;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--card) 94%,#050712),color-mix(in srgb,var(--surface) 92%,#050712))!important;
+  border:1px solid color-mix(in srgb,var(--gold) 58%,var(--purple))!important;
+  color:var(--text)!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.28),0 0 20px color-mix(in srgb,var(--gold) 10%,transparent),inset 0 1px rgba(255,255,255,.05)!important;
+}
+.bottom.premium-bottom .premium-add::before,.bottom.premium-bottom .premium-add::after{content:none!important;display:none!important;}
+.bottom.premium-bottom .premium-add-icon{
+  position:static!important; width:30px!important; height:30px!important; min-width:30px!important; min-height:30px!important;
+  flex:0 0 30px!important; display:grid!important; place-items:center!important;
+  border:0!important; border-radius:10px!important; background:transparent!important;
+  color:var(--gold)!important; box-shadow:none!important;
+}
+.bottom.premium-bottom .premium-add-icon svg{width:27px!important;height:27px!important;stroke:currentColor!important;}
+.bottom.premium-bottom .premium-add-label{display:block!important;position:static!important;width:auto!important;height:auto!important;
+  white-space:nowrap!important;font-size:19px!important;line-height:1!important;font-weight:850!important;color:var(--text)!important;}
+/* Header order is intentionally AI → Döviz → Bildirim. */
+.top .top-actions{display:flex!important;align-items:center!important;gap:7px!important;}
+.top .top-ai-btn{order:1!important;}
+.top .currency-pill{order:2!important;}
+.top .top-actions .icon[aria-label="Bildirim"]{order:3!important;}
+.light .bottom.premium-bottom .premium-add{
+  color:#263247!important; background:linear-gradient(180deg,#fff,#f6f7fb)!important; border-color:#d9c48a!important;
+  box-shadow:0 8px 24px rgba(30,45,75,.08)!important;
+}
+.light .bottom.premium-bottom .premium-add-label{color:#263247!important;}
+@media(max-width:360px){
+ .bottom.premium-bottom{height:86px!important;padding:7px 10px calc(8px + env(safe-area-inset-bottom))!important;}
+ .bottom.premium-bottom .premium-add{height:58px!important;min-height:58px!important;padding:0 16px!important;border-radius:16px!important;}
+ .bottom.premium-bottom .premium-add-label{font-size:17px!important;}
+}
+</style>
 </body></html>`],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`fix-finans-islemler-${new Date().toISOString().replace(/[:.]/g,'-')}.xls`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
 }
 
