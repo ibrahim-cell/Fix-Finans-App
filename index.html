@@ -2767,6 +2767,39 @@ body:not(.light) .balance.card .ff-particle{
 }
 @media(prefers-reduced-motion:reduce){#fixWelcome .fix-intro-scene *{animation:none!important}}
 </style>
+
+<style id="fix-profile-account-ui">
+.profilepic-edit{
+  position:relative!important;
+  border:0!important;
+  padding:0!important;
+  cursor:pointer!important;
+  color:inherit!important;
+  appearance:none!important;
+}
+.profilepic-edit img{
+  width:100%!important;height:100%!important;border-radius:50%!important;object-fit:cover!important;display:block!important;
+}
+.profilepic-edit-badge{
+  position:absolute!important;right:-2px!important;bottom:-2px!important;
+  width:22px!important;height:22px!important;border-radius:50%!important;
+  display:grid!important;place-items:center!important;
+  background:linear-gradient(135deg,var(--purple2),var(--purple))!important;
+  color:#fff!important;border:2px solid var(--card,#090e1c)!important;
+  font-size:14px!important;font-weight:800!important;line-height:1!important;
+  box-shadow:0 4px 12px rgba(112,54,255,.35)!important;
+}
+.profile-account-action{
+  margin-top:8px!important;border:1px solid #2b3150!important;
+  background:#0b1020!important;color:#cbb9ff!important;border-radius:10px!important;
+  min-height:34px!important;padding:0 10px!important;
+  font:inherit!important;font-size:10px!important;font-weight:750!important;
+  cursor:pointer!important;
+}
+.profile-account-action span{margin-left:7px!important;font-size:15px!important}
+.light .profile-account-action{background:#fff!important;color:#6334c9!important;border-color:#ddd3f7!important}
+.light .profilepic-edit-badge{border-color:#fff!important}
+</style>
 </head><body>
 
 <div id="fixWelcome" class="fix-welcome hidden" aria-label="Fix Finans">
@@ -4339,33 +4372,34 @@ function profile(){
   const guest=!user && (sessionStorage.getItem('fix_guest_session')==='1' || localStorage.getItem('fix_welcome_completed')==='1');
   const paletteNames={purple:'Mor',blue:'Mavi',green:'Yeşil',amber:'Altın',cyan:'Turkuaz',rose:'Pembe',red:'Kırmızı',slate:'Gümüş'};
   const currentPalette=localStorage.getItem('fix_palette')||'purple';
-  const items=[...(guest?[]:[['♙','Hesap Bilgileri','accountInfo()']]),[iconSvg('settingsRefresh'),'Ayarlar','profileSettings()'],['◴','Yedekleme Merkezi','openBackupRestore()'],['⇩','Veri Dışa Aktar (Excel)','exportExcel()'],['◐',`Tema & Renk · ${paletteNames[currentPalette]||'Mor'}`,'openThemes()'],['ⓘ','Yardım & Destek','showHelp()']];
-  if(guest){
-    return `<section class="card profile profile-card">
-      <div class="profilepic">👤</div>
-      <div class="profile-info">
-        <div class="pname">Misafir Modu</div>
-        <div class="pmail">Kişisel hesap bilgileri gösterilmez.</div>
-        <div class="firebase-auth-state"><button class="google-connect" onclick="signInWithGoogle()"><span class="google-g">G</span><span>Google ile Bağlan</span></button></div>
-      </div>
-    </section>
-    <section class="card settings profile-menu">${items.map(([icon,name,action])=>`<button class="setting setting-button" onclick="${action}"><span class="setting-main"><i>${icon}</i><span>${name}</span></span><span>${name.startsWith('Tema & Renk')?'<b class="current-palette">'+(paletteNames[currentPalette]||'Mor')+'</b> ›':'›'}</span></button>`).join('')}<button class="setting logout setting-button" onclick="logoutProfile()"><span class="setting-main"><i>⎋</i><span class="danger">Misafir Oturumunu Kapat</span></span><span class="danger">›</span></button></section>`;
-  }
-  const pname=user?.displayName || localStorage.getItem('fix_profile_name') || 'Profil';
-  const pmail=user?.email || localStorage.getItem('fix_profile_mail') || '';
+  const savedName=localStorage.getItem('fix_profile_name')||'';
+  const savedMail=localStorage.getItem('fix_profile_mail')||'';
+  const pname=user?.displayName || savedName || 'Profil';
+  const pmail=user?.email || savedMail || 'Hesap bilgilerini ekle';
   const photo=getProfilePhoto();
-  const authHtml=user
-    ? `<span class="firebase-connected">✓ Google bağlı</span>`
-    : `<button class="google-connect" onclick="signInWithGoogle()"><span class="google-g">G</span><span>Google ile Bağlan</span></button>`;
+
+  const items=[
+    ['♙','Hesap Bilgileri','accountInfo()'],
+    [iconSvg('settingsRefresh'),'Ayarlar','profileSettings()'],
+    ['◴','Yedekleme Merkezi','openBackupRestore()'],
+    ['⇩','Veri Dışa Aktar (Excel)','exportExcel()'],
+    ['◐',`Tema & Renk · ${paletteNames[currentPalette]||'Mor'}`,'openThemes()'],
+    ['ⓘ','Yardım & Destek','showHelp()']
+  ];
+
   return `<section class="card profile profile-card">
-    <div class="profilepic">${photo?`<img src="${photo}" alt="" loading="eager" onerror="this.onerror=null;this.remove();localStorage.removeItem('fix_profile_photo')">`:'👤'}</div>
+    <button class="profilepic profilepic-edit" onclick="accountInfo()" aria-label="Profil fotoğrafı ve hesap bilgileri">
+      ${photo?`<img src="${photo}" alt="" loading="eager" onerror="this.onerror=null;this.remove();localStorage.removeItem('fix_profile_photo')">`:'👤'}
+      <span class="profilepic-edit-badge">＋</span>
+    </button>
     <div class="profile-info">
       <div class="pname">${esc(pname)}</div>
       <div class="pmail">${esc(pmail)}</div>
-      <div class="firebase-auth-state">${authHtml}</div>
+      <button class="profile-account-action" onclick="accountInfo()">Hesap Bilgileri & Fotoğrafı Düzenle <span>›</span></button>
     </div>
   </section>
-  <section class="card settings profile-menu">${items.map(([icon,name,action])=>`<button class="setting setting-button" onclick="${action}"><span class="setting-main"><i>${icon}</i><span>${name}</span></span><span>${name.startsWith('Tema & Renk')?'<b class="current-palette">'+(paletteNames[currentPalette]||'Mor')+'</b> ›':'›'}</span></button>`).join('')}<button class="setting logout setting-button" onclick="logoutProfile()"><span class="setting-main"><i>${user?'⛓':'⎋'}</i><span class="danger">${user?'Google Bağlantısını Kes':'Çıkış Yap'}</span></span><span class="danger">›</span></button></section>`;
+  <section class="card settings profile-menu">${items.map(([icon,name,action])=>`<button class="setting setting-button" onclick="${action}"><span class="setting-main"><i>${icon}</i><span>${name}</span></span><span>${name.startsWith('Tema & Renk')?'<b class="current-palette">'+(paletteNames[currentPalette]||'Mor')+'</b> ›':'›'}</span></button>`).join('')}
+  <button class="setting logout setting-button" onclick="logoutProfile()"><span class="setting-main"><i>${user?'⛓':'⎋'}</i><span class="danger">${user?'Google Bağlantısını Kes':'Çıkış Yap'}</span></span><span class="danger">›</span></button></section>`;
 }
 
 function goHome(){state.page='home';render()}
@@ -4400,9 +4434,8 @@ function showPeriodPicker(page){
 }
 
 function accountInfo(){
-  const guest=!window.fixFirebaseUser && (sessionStorage.getItem('fix_guest_session')==='1' || localStorage.getItem('fix_welcome_completed')==='1');
-  if(guest){showToast('Misafir kullanıcı için hesap bilgisi yok.');return}
   const savedName=localStorage.getItem('fix_profile_name')||'';
+
   const savedMail=localStorage.getItem('fix_profile_mail')||'';
   const photo=getProfilePhoto();
   document.getElementById('modal').classList.remove('hidden');
