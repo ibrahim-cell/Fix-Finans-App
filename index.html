@@ -4269,15 +4269,55 @@ function openRecurringIncomeEntry(id){
 }
 
 function openRecurringExpenseEntry(id){
+  /* 13.4.2 FIX — “Gidere Ekle” hem gerçek recurring kaydından
+     hem de eski/manuel yaklaşan ödeme kaydından açılabilmeli.
+     Önce recurring kaydını, bulunamazsa doğrudan upcoming kaydını kullan. */
   let item=(state.recurring||[]).find(x=>String(x.id)===String(id));
   if(!item)item=(state.recurring||[]).find(x=>String(x.upcomingId)===String(id));
-  if(!item)return;
-  const d=item.nextDate||localDateISO();
-  state.editIndex=null; state.type='Gider'; state.selectedCat=item.category||'Market';
-  const cats=categoryOptions('Gider').map(x=>x[1]); if(!cats.includes(state.selectedCat))state.selectedCat='Market';
-  state.txDraft={amount:Number(item.amount)||'',note:item.note||`${item.title||'Düzenli gider'} · ${item.frequency||'Aylık'}`,date:d,wallet:'Banka',recurringId:String(item.id)};
+
+  let upcomingItem=null;
+  if(!item){
+    upcomingItem=(state.upcoming||[]).find(x=>String(x.id)===String(id));
+    if(!upcomingItem){
+      upcomingItem=(state.upcoming||[]).find(x=>String(x.recurringId)===String(id));
+    }
+  }
+
+  if(!item && !upcomingItem){
+    showToast('Gider kaydı bulunamadı.');
+    return;
+  }
+
+  const d=item?.nextDate||upcomingItem?.date||localDateISO();
+  const category=item?.category||'Market';
+  const cats=categoryOptions('Gider').map(x=>x[1]);
+  state.editIndex=null;
+  state.type='Gider';
+  state.selectedCat=cats.includes(category)?category:'Market';
+
+  const amount=Number(item?.amount??upcomingItem?.amount)||0;
+  const title=item?.title||upcomingItem?.title||'Düzenli gider';
+  const frequency=item?.frequency||'Aylık';
+  const note=item?.note||upcomingItem?.note||`${title} · ${frequency}`;
+
+  state.txDraft={
+    amount:amount>0?amount:'',
+    note,
+    date:d,
+    wallet:'Banka',
+    recurringId:item?.id!=null?String(item.id):null,
+    upcomingId:item?.id!=null?null:String(upcomingItem.id)
+  };
+
   openModal('Gider');
-  requestAnimationFrame(()=>{const h=document.querySelector('#modal .sheet h2');if(h)h.textContent='Gidere Ekle';const b=document.querySelector('#modal .sheet .save');if(b)b.textContent='Gideri Kaydet';});
+  requestAnimationFrame(()=>{
+    const h=document.querySelector('#modal .sheet h2');
+    if(h)h.textContent='Gidere Ekle';
+    const b=document.querySelector('#modal .sheet .save');
+    if(b)b.textContent='Gideri Kaydet';
+    const amountEl=document.getElementById('amount');
+    if(amountEl && amount>0)amountEl.focus();
+  });
 }
 
 function advanceRecurringExpenseSchedule(id){
