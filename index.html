@@ -3327,6 +3327,7 @@ function nav(){document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('
     home:`<svg ${common}><path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>`,
     chart:`<svg ${common}><path d="M4 19V5M4 19h16"/><path d="m7 15 3-4 3 2 5-7"/></svg>`,
     sparkle:`<svg ${common}><path d="M12 2l1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5L12 2Z"/><path d="m19 16 .7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7L19 16Z"/></svg>`,
+    aiBrain:`<svg ${common}><path d="M8.5 6.2A3.2 3.2 0 0 1 12 4a3.2 3.2 0 0 1 3.5 2.2A3.1 3.1 0 0 1 18 9a3.2 3.2 0 0 1-1.2 2.5A3.3 3.3 0 0 1 17 13a3.2 3.2 0 0 1-3.1 3.2A3.2 3.2 0 0 1 12 18a3.2 3.2 0 0 1-2-1.8A3.2 3.2 0 0 1 7 13a3.3 3.3 0 0 1 .2-1.5A3.2 3.2 0 0 1 6 9a3.1 3.1 0 0 1 2.5-2.8Z"/><path d="M9 8.5h2M13 8.5h2M9 12h6M10 15.5h1M13 15.5h1"/></svg>`,
     gear:`<svg ${common}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-2.6V20a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.6h.4A1.7 1.7 0 0 0 8 10a1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h2.6V5a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1A1.7 1.7 0 0 0 19 10a1.7 1.7 0 0 0 1.6 1h.4v2.6h-.4a1.7 1.7 0 0 0-1.2 1.4Z"/></svg>`,
     settingsRefresh:`<svg ${common}><path d="M7 7a7 7 0 1 1-1.4 9.1"/><path d="M7 3v4h4"/><circle cx="12" cy="12" r="2.5"/><path d="M12 5.5v1M12 17.5v1M5.5 12h1M17.5 12h1"/></svg>`,
     plus:`<svg ${common}><path d="M12 5v14M5 12h14"/></svg>`,
@@ -3520,7 +3521,7 @@ function home(){
   <section class="card balance home-balance-card"><div class="label balance-label">Net Bakiye <button class="eye-btn" aria-label="Bakiyeyi göster/gizle" onclick="toggleBalanceVisibility()">${iconSvg(hidden?'eyeOff':'eye')}</button></div><div class="balance-line"><div class="balance-main"><span class="amount net-balance-counter" data-balance-value="${available}">${hidden?'••••••':money(available)}</span><button type="button" class="balance-trend ${trend.tone}" onclick="state.page='reports';render()" aria-label="Finansal trend ayrıntılarını aç"><span>${trend.icon}</span>${esc(trend.text)}</button></div><div class="wallet ff-balance-animation" aria-label="Finans animasyonu" aria-hidden="true"><div class="ff-finance-art"><div class="ff-particle p1"></div><div class="ff-particle p2"></div><div class="ff-particle p3"></div><div class="ff-particle p4"></div><div class="ff-ring ring-a"></div><div class="ff-ring ring-b"></div><div class="ff-ring ring-c"></div><div class="ff-sphere"><span class="ff-lira">₺</span><span class="ff-glint"></span></div><span class="ff-coin coin-a">₺</span><span class="ff-coin coin-b">₺</span><span class="ff-coin coin-c">₺</span><span class="ff-coin coin-d">₺</span></div></div></div><div class="wallet-mini-row home-wallet-row"><button type="button" class="wallet-mini cash" onclick="openWalletTransaction('Nakit')" aria-label="Nakit ile işlem ekle"><span class="wallet-mini-icon">💵</span><span><small>Nakit</small><b>${hidden?'••••••':money(w.cash)}</b></span><span class="wallet-mini-arrow">›</span></button><button type="button" class="wallet-mini bank" onclick="openWalletTransaction('Banka')" aria-label="Banka ile işlem ekle"><span class="wallet-mini-icon">🏦</span><span><small>Banka</small><b>${hidden?'••••••':money(w.bank)}</b></span><span class="wallet-mini-arrow">›</span></button><button type="button" class="wallet-mini card" onclick="openCreditCardSettings()" aria-label="Kredi Kartı ayarlarını aç"><span class="wallet-mini-icon">💳</span><span><small>Kredi Kartı</small><b>${hidden?'••••••':money(creditCardStats().debt)}</b></span><span class="wallet-mini-arrow">›</span></button></div></section>
   <section class="home-quick-actions" aria-label="Hızlı işlemler"><button type="button" onclick="openModal('Gelir')"><span class="quick-action-icon income">${iconSvg('incomeTrend')}</span><b>Gelir</b></button><button type="button" onclick="openModal('Gider')"><span class="quick-action-icon expense">${iconSvg('expenseTrend')}</span><b>Gider</b></button><button type="button" onclick="openModal('Transfer')"><span class="quick-action-icon transfer">${iconSvg('transfer')}</span><b>Transfer</b></button><button type="button" onclick="state.page='debts';render()"><span class="quick-action-icon debt">${iconSvg('debt')}</span><b>Borç</b></button></section>
   <section class="card smart-home-card home-smart-card">
-    <div class="smart-home-head"><div class="smart-home-brand"><span class="smart-home-orb">${iconSvg('sparkle')}</span><div class="smart-home-brand-copy"><div class="smart-home-title">Akıllı Finans</div><div class="smart-home-status"><i></i>${smart.hasData?(smart.score>=70?'Finansal durumun iyi görünüyor':'Finansal durumunu yakından takip et'):'Finansal verilerin hazırlanıyor'}</div></div></div><button type="button" class="smart-home-open smart-home-open-compact" onclick="state.page='smartCenter';render()" aria-label="Akıllı Finans Merkezi'ni aç">Merkezi Aç <span>›</span></button></div>
+    <div class="smart-home-head"><div class="smart-home-brand"><span class="smart-home-orb">${iconSvg('aiBrain')}</span><div class="smart-home-brand-copy"><div class="smart-home-title">Akıllı Finans</div><div class="smart-home-status"><i></i>${smart.hasData?(smart.score>=70?'Finansal durumun iyi görünüyor':'Finansal durumunu yakından takip et'):'Finansal verilerin hazırlanıyor'}</div></div></div><button type="button" class="smart-home-open smart-home-open-compact" onclick="state.page='smartCenter';render()" aria-label="Akıllı Finans Merkezi'ni aç">Merkezi Aç <span>›</span></button></div>
     <div class="smart-home-insight"><span class="smart-insight-dot"></span><span>${esc(insight)}</span></div>
     <div class="smart-home-metrics"><div class="smart-score ${smart.score!==null?'':'is-empty'}" style="--home-score:${smart.score!==null?smart.score*3.6:0}deg"><div class="smart-score-ring"><div class="smart-score-inner"><strong>${smart.score!==null?smart.score:'—'}</strong><small>/100</small></div></div><b class="${smart.toneClass}">${smart.tone}</b></div><div class="smart-stat income"><span>Gelir</span><i class="smart-trend-icon">${iconSvg('incomeTrend')}</i><b>${money(month.income)}</b><small>${month.income?'Bu ay toplam':'—'}</small></div><div class="smart-stat expense"><span>Gider</span><i class="smart-trend-icon">${iconSvg('expenseTrend')}</i><b>${money(month.expense)}</b><small>${month.income?'Gelirin %'+smart.expenseRatio:'—'}</small></div><div class="smart-stat free"><span>Serbest Bakiye</span><i class="smart-wallet-icon">${iconSvg('wallet')}</i><b>${money(month.net)}</b><small>${month.income?'Net marj %'+Math.max(-100,smart.netRatio).toFixed(1):'—'}</small></div></div>
   </section>
@@ -8094,6 +8095,7 @@ body.font-size-system .app{font-size:inherit}
 .upcoming-card .upcoming-row .upcoming-quick-action-wrap{grid-column:1 / -1!important;grid-row:2!important;display:flex!important;justify-content:flex-end!important;width:100%!important;min-width:0!important}
 .upcoming-card .upcoming-row .upcoming-quick-action{position:static!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;max-width:100%!important;box-sizing:border-box!important;padding:6px 10px!important;font-size:10px!important;line-height:1.1!important;border-radius:9px!important}
 @media(max-width:560px){.upcoming-card .upcoming-row .upcoming-quick-action{font-size:10px!important;padding:6px 9px!important}}
+</style>
 
 <style>
 
@@ -8704,5 +8706,49 @@ body[data-palette="slate"] .bottom.premium-bottom .premium-add{--cta-a:#94a3b8;-
   button.premium-add#add{height:52px!important;min-height:52px!important;padding:0 16px!important;}
   .bottom.premium-bottom .premium-add-label,
   button.premium-add#add .premium-add-label{font-size:15px!important;letter-spacing:.35px!important;}
+}
+
+
+/* 13.4.3 — Premium UI polish: restrained glow, stronger financial hierarchy, breathable score layout, distinct AI identity, debt semantics. */
+body:not(.light) .balance.card .ff-sphere{
+  box-shadow:0 0 7px rgba(159,89,255,.58),0 0 17px rgba(117,47,255,.38),inset -10px -10px 20px rgba(11,2,31,.5),inset 7px 6px 15px rgba(255,220,255,.22)!important;
+}
+body:not(.light) .balance.card .ff-lira{text-shadow:0 0 3px #fff0b0,0 0 7px rgba(255,189,55,.52)!important}
+body:not(.light) .balance.card .ff-ring{box-shadow:0 0 4px rgba(156,83,255,.32),inset 0 0 4px rgba(255,203,255,.07)!important}
+body:not(.light) .balance.card .ff-ring:after{box-shadow:0 0 4px #ffc13d,0 0 7px rgba(255,166,30,.38)!important}
+body:not(.light) .balance.card .ff-coin{box-shadow:0 0 3px rgba(255,189,47,.48),0 0 7px rgba(255,160,20,.20),inset 0 1px 2px rgba(255,255,255,.55)!important}
+body:not(.light) .balance.card .ff-particle{box-shadow:0 0 4px #a66cff!important;opacity:.55!important}
+.home-smart-card .smart-stat span{font-weight:800!important;letter-spacing:-.1px!important}
+.home-smart-card .smart-stat b{font-weight:850!important;letter-spacing:-.35px!important;text-shadow:0 1px 0 rgba(0,0,0,.18)!important}
+.home-smart-card .smart-stat small{font-weight:650!important}
+.home-smart-card .smart-score strong{font-weight:850!important}
+.home-smart-card .smart-home-metrics{grid-template-columns:96px repeat(3,minmax(0,1fr))!important;gap:7px!important;margin-top:10px!important;border:0!important;background:transparent!important;overflow:visible!important}
+.home-smart-card .smart-score,.home-smart-card .smart-stat{min-height:122px!important;height:122px!important;border:1px solid rgba(255,255,255,.055)!important;border-radius:13px!important;background:rgba(10,14,29,.72)!important}
+.home-smart-card .smart-score{padding:6px 4px!important}
+.home-smart-card .smart-score svg{width:86px!important;height:86px!important}
+.home-smart-card .smart-score strong{font-size:25px!important}
+.home-smart-card .smart-score b{margin-top:8px!important;font-size:8.5px!important}
+.home-smart-card .smart-stat{padding:8px 4px!important}
+.home-smart-card .smart-stat span{font-size:9px!important;line-height:1.15!important}
+.home-smart-card .smart-stat i{width:31px!important;height:31px!important;margin:8px 0 7px!important;font-size:17px!important}
+.home-smart-card .smart-stat b{font-size:clamp(10px,3.0vw,13px)!important;line-height:1.08!important;white-space:normal!important;overflow-wrap:anywhere!important}
+.home-smart-card .smart-stat small{font-size:7.5px!important;margin-top:6px!important}
+.home-smart-card .smart-home-orb{color:#28d6c2!important;background:radial-gradient(circle at 35% 30%,rgba(40,214,194,.18),rgba(40,214,194,.055) 58%,rgba(16,21,50,.94) 100%)!important;border-color:rgba(40,214,194,.38)!important;box-shadow:0 0 10px rgba(40,214,194,.16),inset 0 0 12px rgba(40,214,194,.08)!important}
+.home-smart-card .smart-home-orb svg{stroke:currentColor!important;filter:none!important}
+.top-ai-btn,.ai-finance-btn{color:var(--purple)!important}
+.top-ai-btn svg,.ai-finance-btn svg{filter:drop-shadow(0 0 3px color-mix(in srgb,var(--purple) 45%,transparent))!important}
+.home-wallet-row .wallet-mini.card{border-color:rgba(255,70,91,.25)!important;background:linear-gradient(145deg,rgba(255,70,91,.055),rgba(255,70,91,.018))!important}
+.home-wallet-row .wallet-mini.card b,.home-wallet-row .wallet-mini.card .wallet-mini-arrow{color:var(--red)!important}
+@media(max-width:390px){
+ .home-smart-card .smart-home-metrics{grid-template-columns:88px repeat(3,minmax(0,1fr))!important;gap:6px!important}
+ .home-smart-card .smart-score,.home-smart-card .smart-stat{min-height:116px!important;height:116px!important}
+ .home-smart-card .smart-score svg{width:82px!important;height:82px!important}
+ .home-smart-card .smart-stat b{font-size:10px!important}
+}
+@media(max-width:340px){
+ .home-smart-card .smart-home-metrics{grid-template-columns:82px repeat(3,minmax(0,1fr))!important;gap:5px!important}
+ .home-smart-card .smart-score,.home-smart-card .smart-stat{min-height:110px!important;height:110px!important}
+ .home-smart-card .smart-stat span{font-size:8px!important}
+ .home-smart-card .smart-stat i{width:28px!important;height:28px!important;margin:6px 0!important}
 }
 </style>
