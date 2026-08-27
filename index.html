@@ -6385,11 +6385,19 @@ function resetPullGesture(){
   if(pullResetTimer){clearTimeout(pullResetTimer);pullResetTimer=null;}
   if(pullIndicator)pullIndicator.classList.remove('show');
 }
+let __fixRefreshing=false;
 function refreshApp(){
+  if(__fixRefreshing)return;
+  __fixRefreshing=true;
   resetPullGesture();
   showToast('Ekran yenileniyor…');
-  render();
-  fetchMarketRates().catch(()=>{});
+  // Pull-to-refresh must perform a real page refresh, not only re-render the current DOM.
+  // Keep a tiny delay so the user can see the refresh feedback before navigation starts.
+  try{fetchMarketRates().catch(()=>{});}catch(e){}
+  setTimeout(()=>{
+    try{window.location.reload();}
+    catch(e){window.location.href=window.location.href;}
+  },180);
 }
 const pullIndicator=document.createElement('div');pullIndicator.className='pull-indicator';pullIndicator.textContent='↓ Yenilemek için bırak';document.body.appendChild(pullIndicator);
 document.addEventListener('touchstart',e=>{
