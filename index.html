@@ -3300,6 +3300,99 @@ html[data-booting="true"] .welcome-screen,
 html[data-booting="true"] [data-legacy-screen="true"]{visibility:hidden!important;pointer-events:none!important}
 #fixWelcome[aria-hidden="true"]{display:none!important}
 </style>
+
+<style id="fix-13-4-9-balance-wallet-breakdown">
+/* 13.4.9 — Serbest Bakiye cüzdan dağılımı: dar mobil kartta 3 eşit, okunaklı mini kart. */
+.ff-balance-wallet-row{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;
+  width:100%!important;
+  margin-top:7px!important;
+  margin-bottom:7px!important;
+  align-items:stretch!important;
+}
+.ff-balance-wallet-mini{
+  min-width:0!important;
+  height:50px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  padding:5px 4px!important;
+  border:1px solid rgba(255,255,255,.07)!important;
+  border-radius:11px!important;
+  background:linear-gradient(145deg,rgba(15,19,35,.94),rgba(8,11,21,.98))!important;
+  overflow:hidden!important;
+}
+.ff-balance-wallet-mini.cash{border-color:rgba(32,217,155,.20)!important}
+.ff-balance-wallet-mini.bank{border-color:rgba(116,60,255,.20)!important}
+.ff-balance-wallet-mini.card{border-color:rgba(247,185,44,.22)!important;background:linear-gradient(145deg,rgba(247,185,44,.055),rgba(8,11,21,.98))!important}
+.ff-balance-wallet-mini-icon{
+  width:22px!important;height:22px!important;min-width:22px!important;border-radius:7px!important;
+  display:grid!important;place-items:center!important;font-size:11px!important;
+  background:#11172a!important;border:1px solid rgba(255,255,255,.045)!important;
+}
+.ff-balance-wallet-mini>span:last-child{
+  min-width:0!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;line-height:1!important;
+}
+.ff-balance-wallet-mini small{
+  display:block!important;color:#858c9f!important;font-size:8px!important;font-weight:750!important;line-height:1.05!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important;
+}
+.ff-balance-wallet-mini b{
+  display:block!important;margin-top:3px!important;color:#f2f4fb!important;font-size:9.5px!important;font-weight:850!important;line-height:1!important;letter-spacing:-.35px!important;white-space:nowrap!important;
+}
+.ff-balance-wallet-mini>span:last-child{min-width:0!important;display:flex!important;flex-direction:column!important;justify-content:center!important;line-height:1!important}
+.ff-balance-wallet-mini small{font-size:6.8px!important;line-height:1!important;color:#8f95a7!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.ff-balance-wallet-mini b{font-size:9.3px!important;line-height:1.05!important;margin-top:3px!important;letter-spacing:-.35px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#eef1f8!important}
+.ff-balance-wallet-mini.cash b{color:#54e6bd!important}.ff-balance-wallet-mini.bank b{color:#b995ff!important}.ff-balance-wallet-mini.card b{color:#f7c44f!important}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini{min-height:55px!important;padding:7px 8px!important;border-radius:13px!important}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini>span:first-child{font-size:16px!important}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini b{font-size:10.5px!important}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini strong{font-size:15px!important;margin-top:2px!important}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini small{font-size:7.5px!important;margin-top:2px!important}
+@media(max-width:390px){
+  .ff-balance-wallet-row{gap:4px!important;margin-top:5px!important;margin-bottom:5px!important}
+  .ff-balance-wallet-mini{height:39px!important;grid-template-columns:21px minmax(0,1fr)!important;gap:4px!important;padding:4px 5px!important;border-radius:10px!important}
+  .ff-balance-wallet-mini-icon{width:21px!important;height:21px!important;font-size:10px!important;border-radius:6px!important}
+  .ff-balance-wallet-mini small{font-size:6px!important}
+  .ff-balance-wallet-mini b{font-size:8.2px!important;letter-spacing:-.45px!important;margin-top:2px!important}
+  .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini{min-height:50px!important;padding:6px 7px!important}
+  .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini>span:first-child{font-size:14px!important}
+  .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini b{font-size:9.5px!important}
+  .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini strong{font-size:13px!important}
+  .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini small{font-size:6.7px!important}
+}
+@media(max-width:360px){
+  .ff-balance-wallet-mini{height:37px!important;grid-template-columns:19px minmax(0,1fr)!important;padding:4px!important}
+  .ff-balance-wallet-mini-icon{width:19px!important;height:19px!important;font-size:9px!important}
+  .ff-balance-wallet-mini small{font-size:5.7px!important}
+  .ff-balance-wallet-mini b{font-size:7.7px!important}
+}
+.light .ff-balance-wallet-mini{background:linear-gradient(145deg,#fff,#f7f9fd)!important;border-color:#dfe4ee!important}
+.light .ff-balance-wallet-mini.cash{border-color:rgba(32,168,121,.24)!important}
+.light .ff-balance-wallet-mini.bank{border-color:rgba(116,60,255,.20)!important}
+.light .ff-balance-wallet-mini.card{border-color:rgba(213,143,29,.24)!important;background:linear-gradient(145deg,#fffaf0,#f8f9fd)!important}
+.light .ff-balance-wallet-mini-icon{background:#f3f5fa!important;border-color:#e1e5ee!important}
+.light .ff-balance-wallet-mini small{color:#68738a!important}
+</style>
+
+<style id="fix-13-4-9-balance-wallet-mobile-final">
+/* Final mobile balance-wallet fit: equal vertical mini cards, readable labels, no clipping. */
+.ff-balance-wallet-row{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;width:100%!important;margin:6px 0 7px!important;align-items:stretch!important}
+.ff-balance-wallet-mini{height:50px!important;min-width:0!important;padding:4px 3px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;border-radius:11px!important;overflow:hidden!important}
+.ff-balance-wallet-mini-icon{width:19px!important;height:19px!important;min-width:19px!important;font-size:9px!important;border-radius:6px!important;flex:0 0 19px!important}
+.ff-balance-wallet-mini>span:last-child{min-width:0!important;width:100%!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;line-height:1!important;text-align:center!important}
+.ff-balance-wallet-mini small{font-size:7px!important;line-height:.95!important;white-space:normal!important;overflow:hidden!important;text-overflow:clip!important;max-width:100%!important;display:block!important;color:#8f95a7!important;font-weight:750!important}
+.ff-balance-wallet-mini b{font-size:8.5px!important;line-height:1!important;letter-spacing:-.35px!important;margin-top:2px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}
+@media(max-width:380px){
+ .ff-balance-wallet-row{gap:4px!important;margin:5px 0 6px!important}
+ .ff-balance-wallet-mini{height:48px!important;padding:3px 2px!important;border-radius:10px!important;gap:2px!important}
+ .ff-balance-wallet-mini-icon{width:18px!important;height:18px!important;min-width:18px!important;flex-basis:18px!important;font-size:9px!important}
+ .ff-balance-wallet-mini small{font-size:6.7px!important}
+ .ff-balance-wallet-mini b{font-size:8.2px!important}
+}
+</style>
 </head><body class="fix-booting">
 <style id="fix-critical-boot-guard">html,body.fix-booting{background:#070a15!important}body.fix-booting #app,body.fix-booting #root,body.fix-booting .app,body.fix-booting main{visibility:hidden!important}#fixWelcome{display:none!important}body.fix-booting #fixWelcome{display:none!important}</style>
 
@@ -3712,6 +3805,11 @@ function home(){
         <div class="ff-balance-head"><div><div class="ff-balance-label"><span class="ff-mini-card-icon">💳</span> Serbest<br class="ff-mobile-break"> Bakiye</div></div><div class="ff-balance-wallet">${iconSvg('wallet')}</div></div>
         <button type="button" class="ff-balance-amount" onclick="toggleBalanceVisibility()" aria-label="Bakiyeyi göster/gizle">${hidden?'••••••':money(available)}</button>
         <div class="ff-net-margin">Net marj <b>%${netRatio.toFixed(1)} ↗</b></div>
+        <div class="ff-balance-wallet-row" aria-label="Cüzdan dağılımı">
+          <div class="ff-balance-wallet-mini cash"><span class="ff-balance-wallet-mini-icon">💵</span><span><small>Nakit</small><b>${hidden?'••••':money(walletTotals().cash)}</b></span></div>
+          <div class="ff-balance-wallet-mini bank"><span class="ff-balance-wallet-mini-icon">🏦</span><span><small>Banka</small><b>${hidden?'••••':money(walletTotals().bank)}</b></span></div>
+          <div class="ff-balance-wallet-mini card"><span class="ff-balance-wallet-mini-icon">💳</span><span><small>Kredi Kartı</small><b>${hidden?'••••':creditCardStats().debt>0?'-'+money(creditCardStats().debt):'₺0,00'}</b></span></div>
+        </div>
         <button type="button" class="ff-receivable-mini" onclick="state.page='debts';render()"><span>👥</span><span><b>Bekleyen Alacak</b><strong>${receivable>0?money(receivable):'₺0,00'}</strong><small>${receivableCount||0} kişi · Tahsilatı Gör ›</small></span></button>
       </article>
     </section>
