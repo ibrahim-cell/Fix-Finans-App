@@ -2,11 +2,15 @@ package com.fixfinans.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.ContentValues;
 import android.graphics.Color;
 import android.net.Uri;
+import android.provider.MediaStore;
+import android.widget.Toast;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.CancellationSignal;
+import android.os.Environment;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
@@ -93,6 +97,7 @@ public class MainActivity extends Activity {
         }
 
         webView.addJavascriptInterface(new GoogleAuthBridge(), "AndroidGoogleSignIn");
+        webView.addJavascriptInterface(new BackupBridge(), "AndroidBackup");
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -312,6 +317,63 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void signIn() {
             runOnUiThread(MainActivity.this::nativeGoogleSignIn);
+        }
+    }
+
+    /**
+     * Android WebView does not reliably download Blob/object URLs created by
+     * JavaScript. Save JSON backups through MediaStore so they appear in the
+     * user's Downloads folder on modern Android versions.
+     */
+    private final class BackupBridge {
+        @JavascriptInterface
+        public void saveJson(String fileName, String json) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                        "JSON yedeği bu Android sürümünde doğrudan İndirilenler'e kaydedilemiyor.",
+                        Toast.LENGTH_LONG).show());
+                return;
+            }
+
+            new Thread(() -> {
+                Uri uri = null;
+                try {
+                    String safeName = (fileName == null || fileName.trim().isEmpty())
+                            ? "fix-finans-yedek.json"
+                            : fileName.replaceAll("[\\/:*?\"<>|]", "_");
+
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Downloads.DISPLAY_NAME, safeName);
+                    values.put(MediaStore.Downloads.MIME_TYPE, "application/json");
+                    values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/Fix Finans");
+                    values.put(MediaStore.Downloads.IS_PENDING, 1);
+
+                    uri = getContentResolver().insert(
+                            MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                    if (uri == null) throw new IllegalStateException("Dosya oluşturulamadı.");
+
+                    try (java.io.OutputStream out = getContentResolver().openOutputStream(uri)) {
+                        if (out == null) throw new IllegalStateException("Dosya yazılamadı.");
+                        out.write((json == null ? "" : json).getBytes(StandardCharsets.UTF_8));
+                        out.flush();
+                    }
+
+                    ContentValues done = new ContentValues();
+                    done.put(MediaStore.Downloads.IS_PENDING, 0);
+                    getContentResolver().update(uri, done, null, null);
+
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                            "JSON yedeği İndirilenler / Fix Finans klasörüne kaydedildi.",
+                            Toast.LENGTH_LONG).show());
+                } catch (Exception e) {
+                    if (uri != null) {
+                        try { getContentResolver().delete(uri, null, null); } catch (Exception ignored) {}
+                    }
+                    final String message = e.getMessage() == null ? "Dosya kaydedilemedi." : e.getMessage();
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                            "JSON yedeği kaydedilemedi: " + message, Toast.LENGTH_LONG).show());
+                }
+            }).start();
         }
     }
 
