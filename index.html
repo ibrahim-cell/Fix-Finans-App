@@ -3393,6 +3393,77 @@ html[data-booting="true"] [data-legacy-screen="true"]{visibility:hidden!importan
  .ff-balance-wallet-mini b{font-size:8.2px!important}
 }
 </style>
+
+<style id="fix-13-4-9-balance-amount-visible-final">
+/* 13.4.9 FINAL — Serbest Bakiye tutarı flex sıkışmasından korunur.
+   Cüzdan mini kartları eklendiğinde amount butonu flex-shrink ile 0 yüksekliğe
+   sıkışıyordu; veri/hesaplama değiştirilmez. */
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-amount{
+  display:block!important;
+  flex:0 0 26px!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:26px!important;
+  height:26px!important;
+  margin-top:8px!important;
+  margin-bottom:0!important;
+  padding:0!important;
+  color:#f4f2ff!important;
+  line-height:26px!important;
+  font-size:23px!important;
+  font-weight:900!important;
+  letter-spacing:-1px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  opacity:1!important;
+  visibility:visible!important;
+  position:relative!important;
+  z-index:5!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-net-margin{
+  flex:0 0 15px!important;
+  min-height:15px!important;
+  margin-top:4px!important;
+  margin-bottom:0!important;
+}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-wallet-row{
+  flex:0 0 44px!important;
+  height:44px!important;
+  min-height:44px!important;
+  margin-top:5px!important;
+  margin-bottom:5px!important;
+}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-wallet-mini{
+  height:44px!important;
+  min-height:44px!important;
+}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini{
+  flex:0 0 62px!important;
+  height:62px!important;
+  min-height:62px!important;
+  margin-top:auto!important;
+  padding:7px 8px!important;
+}
+@media(max-width:390px){
+ .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-amount{font-size:21px!important;line-height:25px!important;height:25px!important;min-height:25px!important;flex-basis:25px!important}
+ .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-wallet-row{flex-basis:42px!important;height:42px!important;min-height:42px!important;margin-top:4px!important;margin-bottom:4px!important}
+ .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-wallet-mini{height:42px!important;min-height:42px!important}
+ .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini{flex-basis:60px!important;height:60px!important;min-height:60px!important}
+}
+@media(max-width:360px){
+ .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-amount{font-size:20px!important}
+}
+</style>
+<style id="fix-13-4-10-balance-first-paint">
+/* 13.4.10 — Serbest Bakiye ilk boyamada final ölçülerini kullanır.
+   Geç yüklenen CSS nedeniyle oluşan ilk-paint/reflow görüntüsü engellenir. */
+.ff-stage1-home > .ff-hero-grid .ff-balance-card,
+.ff-stage1-home > .ff-hero-grid .ff-balance-card *{animation:none!important;}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card{contain:layout paint!important;}
+</style>
 </head><body class="fix-booting">
 <style id="fix-critical-boot-guard">html,body.fix-booting{background:#070a15!important}body.fix-booting #app,body.fix-booting #root,body.fix-booting .app,body.fix-booting main{visibility:hidden!important}#fixWelcome{display:none!important}body.fix-booting #fixWelcome{display:none!important}</style>
 
@@ -3740,7 +3811,9 @@ function smartHomeInsight(month, smart){
   return `Giderlerin gelirin %${smart.expenseRatio}’i. Net marjın %${Math.max(-100,smart.netRatio).toFixed(1)} ile ${smart.tone.toLocaleLowerCase('tr-TR')}.`;
 }
 function home(){
-  const available=availableBalance();
+  const wallet=walletTotals();
+  const card=creditCardStats();
+  const available=wallet.cash+wallet.bank-card.debt;
   const month=financialSummary(currentMonthTransactions());
   const smart=smartHomeSummary(month);
   const hidden=localStorage.getItem('fix_balance_hidden')==='1';
@@ -3806,9 +3879,9 @@ function home(){
         <button type="button" class="ff-balance-amount" onclick="toggleBalanceVisibility()" aria-label="Bakiyeyi göster/gizle">${hidden?'••••••':money(available)}</button>
         <div class="ff-net-margin">Net marj <b>%${netRatio.toFixed(1)} ↗</b></div>
         <div class="ff-balance-wallet-row" aria-label="Cüzdan dağılımı">
-          <div class="ff-balance-wallet-mini cash"><span class="ff-balance-wallet-mini-icon">💵</span><span><small>Nakit</small><b>${hidden?'••••':money(walletTotals().cash)}</b></span></div>
-          <div class="ff-balance-wallet-mini bank"><span class="ff-balance-wallet-mini-icon">🏦</span><span><small>Banka</small><b>${hidden?'••••':money(walletTotals().bank)}</b></span></div>
-          <div class="ff-balance-wallet-mini card"><span class="ff-balance-wallet-mini-icon">💳</span><span><small>Kredi Kartı</small><b>${hidden?'••••':creditCardStats().debt>0?'-'+money(creditCardStats().debt):'₺0,00'}</b></span></div>
+          <div class="ff-balance-wallet-mini cash"><span class="ff-balance-wallet-mini-icon">💵</span><span><small>Nakit</small><b>${hidden?'••••':money(wallet.cash)}</b></span></div>
+          <div class="ff-balance-wallet-mini bank"><span class="ff-balance-wallet-mini-icon">🏦</span><span><small>Banka</small><b>${hidden?'••••':money(wallet.bank)}</b></span></div>
+          <div class="ff-balance-wallet-mini card"><span class="ff-balance-wallet-mini-icon">💳</span><span><small>Kredi Kartı</small><b>${hidden?'••••':card.debt>0?'-'+money(card.debt):'₺0,00'}</b></span></div>
         </div>
         <button type="button" class="ff-receivable-mini" onclick="state.page='debts';render()"><span>👥</span><span><b>Bekleyen Alacak</b><strong>${receivable>0?money(receivable):'₺0,00'}</strong><small>${receivableCount||0} kişi · Tahsilatı Gör ›</small></span></button>
       </article>
@@ -9678,66 +9751,3 @@ button.premium-add#add{
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
 </script>\n
-<style id="fix-13-4-9-balance-amount-visible-final">
-/* 13.4.9 FINAL — Serbest Bakiye tutarı flex sıkışmasından korunur.
-   Cüzdan mini kartları eklendiğinde amount butonu flex-shrink ile 0 yüksekliğe
-   sıkışıyordu; veri/hesaplama değiştirilmez. */
-.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-amount{
-  display:block!important;
-  flex:0 0 26px!important;
-  width:100%!important;
-  min-width:0!important;
-  min-height:26px!important;
-  height:26px!important;
-  margin-top:8px!important;
-  margin-bottom:0!important;
-  padding:0!important;
-  color:#f4f2ff!important;
-  line-height:26px!important;
-  font-size:23px!important;
-  font-weight:900!important;
-  letter-spacing:-1px!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  opacity:1!important;
-  visibility:visible!important;
-  position:relative!important;
-  z-index:5!important;
-  appearance:none!important;
-  -webkit-appearance:none!important;
-}
-.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-net-margin{
-  flex:0 0 15px!important;
-  min-height:15px!important;
-  margin-top:4px!important;
-  margin-bottom:0!important;
-}
-.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-wallet-row{
-  flex:0 0 44px!important;
-  height:44px!important;
-  min-height:44px!important;
-  margin-top:5px!important;
-  margin-bottom:5px!important;
-}
-.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-wallet-mini{
-  height:44px!important;
-  min-height:44px!important;
-}
-.ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini{
-  flex:0 0 62px!important;
-  height:62px!important;
-  min-height:62px!important;
-  margin-top:auto!important;
-  padding:7px 8px!important;
-}
-@media(max-width:390px){
- .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-amount{font-size:21px!important;line-height:25px!important;height:25px!important;min-height:25px!important;flex-basis:25px!important}
- .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-wallet-row{flex-basis:42px!important;height:42px!important;min-height:42px!important;margin-top:4px!important;margin-bottom:4px!important}
- .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-wallet-mini{height:42px!important;min-height:42px!important}
- .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-receivable-mini{flex-basis:60px!important;height:60px!important;min-height:60px!important}
-}
-@media(max-width:360px){
- .ff-stage1-home > .ff-hero-grid .ff-balance-card .ff-balance-amount{font-size:20px!important}
-}
-</style>
