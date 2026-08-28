@@ -5470,8 +5470,21 @@ function backupFileName(payload){
   return 'fix-finans-yedek-'+new Date(payload.createdAt).toISOString().slice(0,19).replace(/[:T]/g,'-')+'.json';
 }
 function downloadBackupPayload(payload){
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=backupFileName(payload);a.click();
+  const json=JSON.stringify(payload,null,2);
+  const filename=backupFileName(payload);
+  /* Android WebView'da Blob/object URL indirmesi güvenilir değildir; APK
+     tarafındaki MediaStore köprüsünü kullan. Tarayıcı/PWA'da eski fallback korunur. */
+  if(window.AndroidBackup&&typeof window.AndroidBackup.saveJson==='function'){
+    try{
+      window.AndroidBackup.saveJson(filename,json);
+      closeModal();
+      renderBackupCenter();
+      return;
+    }catch(e){console.warn('Native JSON save failed:',e)}
+  }
+  const blob=new Blob([json],{type:'application/json;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.style.display='none';
+  document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   closeModal();
   renderBackupCenter();
@@ -6359,11 +6372,14 @@ function exportJsonBackup(){
     customCategories:state.customCategories||{Gelir:[],Gider:[]},
     filters:state.filters||{from:"",to:"",category:"Tümü"}
   };
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download=`fix-finans-tam-yedek-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;
-  a.click();
+  const json=JSON.stringify(payload,null,2);
+  const filename=`fix-finans-tam-yedek-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;
+  if(window.AndroidBackup&&typeof window.AndroidBackup.saveJson==='function'){
+    try{window.AndroidBackup.saveJson(filename,json);return}catch(e){console.warn('Native JSON save failed:',e)}
+  }
+  const blob=new Blob([json],{type:"application/json;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;a.style.display='none';
+  document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),500);
 }
 function exportExcel(){
