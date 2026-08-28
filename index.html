@@ -3462,7 +3462,37 @@ html[data-booting="true"] [data-legacy-screen="true"]{visibility:hidden!importan
    Geç yüklenen CSS nedeniyle oluşan ilk-paint/reflow görüntüsü engellenir. */
 .ff-stage1-home > .ff-hero-grid .ff-balance-card,
 .ff-stage1-home > .ff-hero-grid .ff-balance-card *{animation:none!important;}
-.ff-stage1-home > .ff-hero-grid .ff-balance-card{contain:layout paint!important;}
+.ff-stage1-home > .ff-hero-grid .ff-balance-card{contain:layout!important;}
+</style>
+<style id="fix-1349-smart-finance-bottom-align">
+/* 13.4.9 — Akıllı Finans hızlı işlem barı: diğer aksiyonlarla kesin hizalama.
+   Yalnızca sunum/konum düzeltmesi; işlev, hesaplama ve mevcut tasarım korunur. */
+.bottom.premium-bottom #smartFinanceAction,
+.bottom.premium-bottom .premium-smart{
+  position:relative!important;
+  top:0!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
+  margin:0!important;
+  align-self:stretch!important;
+  height:100%!important;
+  min-height:0!important;
+  box-sizing:border-box!important;
+  transform:none;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+.bottom.premium-bottom #smartFinanceAction .premium-add-icon,
+.bottom.premium-bottom #smartFinanceAction .premium-smart-icon{
+  margin:0!important;
+}
+.bottom.premium-bottom #smartFinanceAction .premium-add-label,
+.bottom.premium-bottom #smartFinanceAction .premium-add-label{
+  width:100%!important;
+  text-align:center!important;
+}
 </style>
 </head><body class="fix-booting">
 <style id="fix-critical-boot-guard">html,body.fix-booting{background:#070a15!important}body.fix-booting #app,body.fix-booting #root,body.fix-booting .app,body.fix-booting main{visibility:hidden!important}#fixWelcome{display:none!important}body.fix-booting #fixWelcome{display:none!important}</style>
@@ -9663,41 +9693,7 @@ button.premium-add#add{
 }
 </style>
 
-<script id="fix-refresh-render-guard">(function(){function release(){requestAnimationFrame(function(){requestAnimationFrame(function(){document.body.classList.remove('fix-booting');});});}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',release,{once:true});}else{release();}})();</script></body>
-
-<style id="fix-1349-smart-finance-bottom-align">
-/* 13.4.9 — Akıllı Finans hızlı işlem barı: diğer aksiyonlarla kesin hizalama.
-   Yalnızca sunum/konum düzeltmesi; işlev, hesaplama ve mevcut tasarım korunur. */
-.bottom.premium-bottom #smartFinanceAction,
-.bottom.premium-bottom .premium-smart{
-  position:relative!important;
-  top:0!important;
-  bottom:auto!important;
-  left:auto!important;
-  right:auto!important;
-  margin:0!important;
-  align-self:stretch!important;
-  height:100%!important;
-  min-height:0!important;
-  box-sizing:border-box!important;
-  transform:none;
-  align-items:center!important;
-  justify-content:center!important;
-  text-align:center!important;
-}
-.bottom.premium-bottom #smartFinanceAction .premium-add-icon,
-.bottom.premium-bottom #smartFinanceAction .premium-smart-icon{
-  margin:0!important;
-}
-.bottom.premium-bottom #smartFinanceAction .premium-add-label,
-.bottom.premium-bottom #smartFinanceAction .premium-add-label{
-  width:100%!important;
-  text-align:center!important;
-}
-</style>
-
-</html>
-\n<script id="ff-runtime-audit-v1349">
+<script id="fix-refresh-render-guard">(function(){function release(){requestAnimationFrame(function(){document.body.classList.remove('fix-booting');});}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',release,{once:true});}else{release();}})();</script><script id="ff-runtime-audit-v1349">
 /* 13.4.9 cumulative runtime dependency audit: observation only, no UI changes */
 (function(){
   const KEY='ff_runtime_selector_usage_v1349';
@@ -9750,4 +9746,10 @@ button.premium-add#add{
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
-</script>\n
+</script>
+</body>
+
+
+
+</html>
+\n\n
