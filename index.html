@@ -6434,6 +6434,14 @@ function home(){
       <span class="ff-advice-icon">💡</span>
       <div><b>${esc(adviceTitle)}</b><p>${esc(adviceText)}</p></div>
     </section>
+
+    <section class="card recent home-recent-card" aria-label="Son işlemler">
+      <div class="list-head">
+        <b>Son İşlemler</b>
+        <button type="button" class="detail" onclick="state.page='transactions';state.txRange='all';render()">Tümü ›</button>
+      </div>
+      ${state.transactions.length ? homeRecentGrouped(state.transactions) : '<div class="empty"><b>Henüz işlem yok</b><span>İlk gelir veya gider kaydını eklediğinde burada görünecek.</span></div>'}
+    </section>
   </div>`;
 }
 function categoryIcon(name,type){const n=String(name||'').toLocaleLowerCase('tr-TR').trim();if(n.includes('yemek')||n.includes('restaurant')||n.includes('restoran'))return '🍽️';if(n.includes('yakıt')||n.includes('yakit')||n.includes('benzin')||n.includes('akaryakıt')||n.includes('akaryakit'))return '⛽';if(n.includes('market')||n.includes('alışveriş')||n.includes('alisveris'))return '🛒';if(n.includes('kahve'))return '☕';if(n.includes('maaş')||n.includes('maas')||n.includes('hakediş')||n.includes('hakediş')||n.includes('prim'))return '💼';if(n.includes('kurye'))return '🛵';if(n.includes('transfer'))return '⇄';if(n.includes('telefon')||n.includes('turkcell')||n.includes('vodafone'))return '📱';if(n.includes('bilgisayar')||n.includes('microsoft')||n.includes('google'))return '💻';if(n.includes('eğlence')||n.includes('eglence'))return '🎮';if(n.includes('kira')||n.includes('ev'))return '🏠';if(n.includes('bakım')||n.includes('bakim')||n.includes('servis')||n.includes('motor bakım')||n.includes('motor bakim'))return '🔧';if(n.includes('banka')||n.includes('kredi')||n.includes('kart')||n.includes('yapı kredi')||n.includes('yapi kredi'))return '🏦';if(n.includes('yıkama')||n.includes('yikama')||n.includes('oto yıkama')||n.includes('oto yikama'))return '🧽';if(n.includes('trafik')||n.includes('ceza'))return '🚨';if(n.includes('sigorta'))return '🛡️';if(n.includes('fatura'))return '🧾';if(n.includes('internet'))return '🌐';if(n.includes('kargo'))return '📦';if(n.includes('sağlık')||n.includes('saglik')||n.includes('eczane'))return '💊';if(n.includes('eğitim')||n.includes('egitim')||n.includes('kurs'))return '📚';if(n.includes('seyahat')||n.includes('tatil'))return '✈️';if(type==='Gider')return '−';if(type==='Gelir')return '+';return '₺'}
