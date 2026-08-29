@@ -1,0 +1,59 @@
+name: Fix home Smart Finance palette
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-smart-finance-theme-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch home Smart Finance button
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          original = s
+
+          old = "if (!text.includes(label)) return;"
+          new = "if (!text.toLocaleLowerCase('tr-TR').includes(label.toLocaleLowerCase('tr-TR'))) return;"
+          if old in s and new not in s:
+              s = s.replace(old, new, 1)
+
+          css = '''\n<style id="fix-home-smart-finance-palette-final">\n/* Home bottom Smart Finance button: use the active palette, not a fixed legacy color. */\nbody[data-palette="purple"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#743cff; --smart-b:#4c1ed4; }\nbody[data-palette="blue"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#3b82f6; --smart-b:#2563eb; }\nbody[data-palette="green"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#16c784; --smart-b:#0b9f67; }\nbody[data-palette="amber"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#f5a524; --smart-b:#c97905; }\nbody[data-palette="cyan"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#19c6d8; --smart-b:#118ba0; }\nbody[data-palette="rose"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#ec4899; --smart-b:#be185d; }\nbody[data-palette="red"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#ef4444; --smart-b:#b91c1c; }\nbody[data-palette="slate"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#94a3b8; --smart-b:#64748b; }\nbody[data-palette] .bottom.premium-bottom #smartFinanceAction {\n  background:linear-gradient(145deg,var(--smart-a),var(--smart-b)) !important;\n  border-color:color-mix(in srgb,var(--smart-a) 72%,transparent) !important;\n  color:#fff !important;\n  box-shadow:0 8px 24px color-mix(in srgb,var(--smart-a) 30%,transparent) !important;\n}\nbody[data-palette] .bottom.premium-bottom #smartFinanceAction .premium-smart-icon {\n  background:color-mix(in srgb,var(--smart-a) 18%,transparent) !important;\n  border-color:color-mix(in srgb,var(--smart-a) 45%,transparent) !important;\n  color:#fff !important;\n}\nbody[data-palette] .bottom.premium-bottom #smartFinanceAction .premium-add-label { color:#fff !important; }\n</style>\n'''
+          if 'id="fix-home-smart-finance-palette-final"' not in s:
+              s = s.replace('</body>', css + '</body>', 1)
+
+          if s == original:
+              raise SystemExit('No target patch was applied; refusing to commit.')
+          p.write_text(s, encoding='utf-8')
+
+      - name: Verify
+        run: |
+          grep -n -m 1 "toLocaleLowerCase('tr-TR')" index.html
+          grep -n -m 1 'fix-home-smart-finance-palette-final' index.html
+          git diff --check
+
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'fix: make home Smart Finance follow selected palette'
+          git push
+
+      - name: Remove temporary workflow
+        if: success()
+        run: |
+          git rm .github/workflows/fix-smart-finance-theme-v2.yml
+          git commit -m 'chore: remove temporary palette fix workflow'
+          git push
