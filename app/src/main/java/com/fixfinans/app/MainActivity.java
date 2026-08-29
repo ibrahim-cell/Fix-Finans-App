@@ -3,6 +3,7 @@ package com.fixfinans.app;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.ContentValues;
 import android.graphics.Color;
 import android.net.Uri;
@@ -57,6 +58,8 @@ public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final int DRIVE_AUTH_REQUEST = 1002;
     private static final String DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+    private static final String DRIVE_PREFS = "fix_finans_drive";
+    private static final String DRIVE_CONNECTED_KEY = "connected";
 
     private WebView webView;
     private ValueCallback<Uri[]> filePathCallback;
@@ -64,6 +67,7 @@ public class MainActivity extends Activity {
     private AuthorizationClient authorizationClient;
     private final Executor credentialExecutor = Executors.newSingleThreadExecutor();
     private boolean googleSignInInProgress = false;
+    private boolean driveAutoRestoreAttempted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +123,10 @@ public class MainActivity extends Activity {
                 super.onPageFinished(view, url);
                 if (isTrustedAppUrl(url)) {
                     installNativeGoogleBridge();
+                    if (!driveAutoRestoreAttempted && isDriveMarkedConnected()) {
+                        driveAutoRestoreAttempted = true;
+                        view.postDelayed(MainActivity.this::nativeGoogleDriveAuthorize, 250);
+                    }
                 } else {
                     view.removeJavascriptInterface("AndroidGoogleSignIn");
                     view.removeJavascriptInterface("AndroidGoogleDrive");
@@ -335,6 +343,14 @@ public class MainActivity extends Activity {
         runOnUiThread(() -> webView.evaluateJavascript(script, null));
     }
 
+    private boolean isDriveMarkedConnected() {
+        return getSharedPreferences(DRIVE_PREFS, MODE_PRIVATE).getBoolean(DRIVE_CONNECTED_KEY, false);
+    }
+
+    private void setDriveMarkedConnected(boolean connected) {
+        getSharedPreferences(DRIVE_PREFS, MODE_PRIVATE).edit().putBoolean(DRIVE_CONNECTED_KEY, connected).apply();
+    }
+
     private void nativeGoogleDriveAuthorize() {
         if (authorizationClient == null) {
             authorizationClient = Identity.getAuthorizationClient(this);
@@ -382,6 +398,7 @@ public class MainActivity extends Activity {
             return;
         }
 
+        setDriveMarkedConnected(true);
         sendNativeDriveSuccess(accessToken);
     }
 
