@@ -3493,7 +3493,32 @@ html[data-booting="true"] [data-legacy-screen="true"]{visibility:hidden!importan
   text-align:center!important;
 }
 </style>
-</head>
+<style id="ff-smart-finance-palette-fix">
+/* Targeted fix: Akıllı Finans always follows the active theme palette. */
+.ff-theme-smart-finance,
+.ai-finance-btn,
+.smart-finance-btn {
+  color: var(--purple) !important;
+  border-color: color-mix(in srgb, var(--purple) 62%, transparent) !important;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--purple) 88%, white 12%), var(--purple2)) !important;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--purple) 34%, transparent) !important;
+}
+.ff-theme-smart-finance svg,
+.ai-finance-btn svg,
+.smart-finance-btn svg {
+  color: var(--purple) !important;
+  stroke: currentColor !important;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--purple) 45%, transparent)) !important;
+}
+.ff-theme-smart-finance small,
+.ff-theme-smart-finance span,
+.ai-finance-btn small,
+.ai-finance-btn span,
+.smart-finance-btn small,
+.smart-finance-btn span {
+  color: inherit !important;
+}
+</style></head>
 <style id="fix-13285-reference-card-language">
 /* 13.2.85 — Referans görsel: koyu premium kart + kontrollü mor atmosfer.
    Mevcut cüzdan görseli ve yerleşimi korunur; sadece kartın ışık/renk dili referansa yaklaştırılır. */
@@ -9833,7 +9858,29 @@ document.addEventListener('pointerdown',function(e){
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
 </script>
-</body>
+<script id="ff-smart-finance-palette-js">
+(() => {
+  const label = 'Akıllı Finans';
+  const selector = 'button, .nav, [role="button"], a';
+  const apply = () => {
+    document.querySelectorAll(selector).forEach(el => {
+      const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text.includes(label)) return;
+      el.classList.add('ff-theme-smart-finance');
+      const root = getComputedStyle(document.documentElement);
+      const purple = root.getPropertyValue('--purple').trim() || '#743cff';
+      const purple2 = root.getPropertyValue('--purple2').trim() || '#4c1ed4';
+      el.style.setProperty('color', purple, 'important');
+      el.style.setProperty('background', `linear-gradient(145deg, ${purple}, ${purple2})`, 'important');
+      el.style.setProperty('border-color', purple, 'important');
+      el.style.setProperty('box-shadow', `0 8px 24px ${purple}55`, 'important');
+    });
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
+  else apply();
+  new MutationObserver(apply).observe(document.documentElement, {subtree:true, childList:true, attributes:true, attributeFilter:['class','style','data-palette']});
+})();
+</script></body>
 
 
 
