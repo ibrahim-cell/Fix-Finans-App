@@ -3518,7 +3518,17 @@ html[data-booting="true"] [data-legacy-screen="true"]{visibility:hidden!importan
 .smart-finance-btn span {
   color: inherit !important;
 }
-</style></head>
+</style>
+<style id="smart-finance-theme-fix">
+.smart-finance-theme-button {
+  background: linear-gradient(135deg, var(--purple), var(--purple2)) !important;
+  border: 1px solid color-mix(in srgb, var(--purple) 70%, #ffffff 8%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--purple) 28%, transparent) !important;
+}
+.smart-finance-theme-button * { color: inherit !important; }
+</style>
+</head>
 <style id="fix-13285-reference-card-language">
 /* 13.2.85 — Referans görsel: koyu premium kart + kontrollü mor atmosfer.
    Mevcut cüzdan görseli ve yerleşimi korunur; sadece kartın ışık/renk dili referansa yaklaştırılır. */
@@ -6056,7 +6066,7 @@ button.premium-add#add{
     </div>
   </div>
 </div>
-<div class="app"><header class="top" id="topHeader"></header><main class="page" id="page"></main><nav class="bottom premium-bottom" aria-label="Akıllı Finans ve hızlı işlem menüsü">
+<div class="app smart-finance-theme-button"<header class="top" id="topHeader"></header><main class="page" id="page"></main><nav class="bottom premium-bottom" aria-label="Akıllı Finans ve hızlı işlem menüsü">
   <button class="add premium-add premium-smart" id="smartFinanceAction" aria-label="Akıllı Finans Merkezi" title="Akıllı Finans Merkezi" type="button" onclick="openSmartCenter()">
     <span class="premium-add-icon premium-smart-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8l1.9 5.3L19.2 10l-5.3 1.9L12 17.2l-1.9-5.3L4.8 10l5.3-1.9L12 2.8Z"/><path d="M19 15.2l.7 2.1 2.1.7-2.1.7-.7 2.1-.7-2.1-2.1-.7 2.1-.7.7-2.1Z"/></svg></span>
     <span class="premium-add-label">AKILLI<br>FİNANS</span>
@@ -7624,7 +7634,7 @@ function smartCenter(){
     <div class="smart-summary-card"><span class="smart-summary-icon green">${iconSvg('wallet')}</span><small>Net Durum</small><b class="${t.net>=0?'green':'red'}">${money(t.net)}</b><em class="${netDelta!==null&&netDelta<0?'red':'green'}">${smartDeltaText(netDelta)}</em></div>
   </section>`;
   return `<div class="smart-finance-shell">
-    <div class="smart-center-head"><div><div class="smart-kicker">AKILLI FİNANS</div><h1>Finansını birlikte okuyalım.</h1><p>Finansal durumunu tek bakışta gör; önemli değişiklikleri ve fırsatları birlikte keşfet.</p></div><div class="smart-orb">${iconSvg('sparkle')}</div></div>
+    <div class="smart-center-head"><div><div class="smart-kicker smart-finance-theme-button"AKILLI FİNANS</div><h1>Finansını birlikte okuyalım.</h1><p>Finansal durumunu tek bakışta gör; önemli değişiklikleri ve fırsatları birlikte keşfet.</p></div><div class="smart-orb">${iconSvg('sparkle')}</div></div>
     ${smartFinancialHealthScore(t,current,previous)}
     <section class="card smart-card smart-period-card"><div class="smart-section-title"><b>Dönem Seçici</b><span>${count} işlem${transferCount?` · ${transferCount} transfer`:''} · ${esc(monthName)}</span></div><div class="smart-periods">${[['today','Bugün'],['week','Bu Hafta'],['month','Bu Ay'],['prevMonth','Geçen Ay'],['3m','3 Ay'],['all','Tümü']].map(([v,l])=>`<button class="${state.smartPeriod===v?'active':''}" onclick="setSmartPeriod('${v}')">${l}</button>`).join('')}</div></section>
     ${topSummary}
