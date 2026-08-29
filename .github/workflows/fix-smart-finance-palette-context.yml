@@ -1,0 +1,37 @@
+name: Fix Smart Finance palette context
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/fix-smart-finance-palette-context.yml
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix palette variable source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          old="const root = getComputedStyle(document.documentElement);"
+          new="const root = getComputedStyle(document.body);"
+          if old not in s:
+              raise SystemExit('Expected palette context line not found')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+          git diff --check
+          grep -n -A13 'ff-smart-finance-palette-js' index.html | tail -n 14
+      - name: Commit and remove temporary workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'fix: sync Smart Finance button with active palette'
+          git rm .github/workflows/fix-smart-finance-palette-context.yml
+          git commit -m 'chore: remove temporary palette fix workflow'
+          git push
