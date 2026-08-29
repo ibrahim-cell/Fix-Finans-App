@@ -397,6 +397,33 @@ public class MainActivity extends Activity {
         runOnUiThread(() -> webView.evaluateJavascript(script, null));
     }
 
+    private String resultCodeToLabel(int resultCode) {
+        if (resultCode == RESULT_OK) return "OK";
+        if (resultCode == RESULT_CANCELED) return "CANCELED";
+        return String.valueOf(resultCode);
+    }
+
+    private String buildDriveAuthorizationError(int resultCode, Intent data, Exception exception) {
+        StringBuilder message = new StringBuilder();
+        message.append("Google Drive yetkilendirmesi tamamlanamadı.");
+        message.append(" Sonuç: RESULT_").append(resultCodeToLabel(resultCode));
+
+        if (exception != null && exception.getMessage() != null && !exception.getMessage().trim().isEmpty()) {
+            message.append(" · ").append(exception.getMessage());
+        }
+
+        if (data != null && data.getExtras() != null) {
+            Object error = data.getExtras().get("error");
+            Object errorCode = data.getExtras().get("errorCode");
+            Object statusCode = data.getExtras().get("statusCode");
+            if (error != null) message.append(" · error=").append(error);
+            if (errorCode != null) message.append(" · errorCode=").append(errorCode);
+            if (statusCode != null) message.append(" · statusCode=").append(statusCode);
+        }
+
+        return message.toString();
+    }
+
     private void sendNativeDriveError(String message) {
         if (webView == null) {
             return;
@@ -497,8 +524,9 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == DRIVE_AUTH_REQUEST) {
-            if (resultCode != RESULT_OK || data == null) {
-                sendNativeDriveError("Google Drive yetkilendirmesi iptal edildi.");
+            if (data == null) {
+                sendNativeDriveError("Google Drive yetkilendirme ekranı sonuç vermeden kapandı (RESULT_"
+                        + resultCodeToLabel(resultCode) + "). Tekrar deneyin.");
                 return;
             }
 
@@ -507,9 +535,7 @@ public class MainActivity extends Activity {
                         .getAuthorizationResultFromIntent(data);
                 handleDriveAuthorizationResult(result);
             } catch (Exception e) {
-                sendNativeDriveError(e.getMessage() != null
-                        ? e.getMessage()
-                        : "Google Drive yetkilendirmesi tamamlanamadı.");
+                sendNativeDriveError(buildDriveAuthorizationError(resultCode, data, e));
             }
             return;
         }
