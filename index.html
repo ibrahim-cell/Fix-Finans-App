@@ -9875,7 +9875,7 @@ document.addEventListener('pointerdown',function(e){
   const apply = () => {
     document.querySelectorAll(selector).forEach(el => {
       const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
-      if (!text.includes(label)) return;
+      if (!text.toLocaleLowerCase('tr-TR').includes(label.toLocaleLowerCase('tr-TR'))) return;
       el.classList.add('ff-theme-smart-finance');
       const root = getComputedStyle(document.body);
       const purple = root.getPropertyValue('--purple').trim() || '#743cff';
@@ -9890,7 +9890,31 @@ document.addEventListener('pointerdown',function(e){
   else apply();
   new MutationObserver(apply).observe(document.documentElement, {subtree:true, childList:true, attributes:true, attributeFilter:['class','style','data-palette']});
 })();
-</script></body>
+</script>
+<style id="fix-home-smart-finance-palette-final">
+/* Home bottom Smart Finance button: use the active palette, not a fixed legacy color. */
+body[data-palette="purple"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#743cff; --smart-b:#4c1ed4; }
+body[data-palette="blue"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#3b82f6; --smart-b:#2563eb; }
+body[data-palette="green"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#16c784; --smart-b:#0b9f67; }
+body[data-palette="amber"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#f5a524; --smart-b:#c97905; }
+body[data-palette="cyan"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#19c6d8; --smart-b:#118ba0; }
+body[data-palette="rose"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#ec4899; --smart-b:#be185d; }
+body[data-palette="red"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#ef4444; --smart-b:#b91c1c; }
+body[data-palette="slate"] .bottom.premium-bottom #smartFinanceAction { --smart-a:#94a3b8; --smart-b:#64748b; }
+body[data-palette] .bottom.premium-bottom #smartFinanceAction {
+  background:linear-gradient(145deg,var(--smart-a),var(--smart-b)) !important;
+  border-color:color-mix(in srgb,var(--smart-a) 72%,transparent) !important;
+  color:#fff !important;
+  box-shadow:0 8px 24px color-mix(in srgb,var(--smart-a) 30%,transparent) !important;
+}
+body[data-palette] .bottom.premium-bottom #smartFinanceAction .premium-smart-icon {
+  background:color-mix(in srgb,var(--smart-a) 18%,transparent) !important;
+  border-color:color-mix(in srgb,var(--smart-a) 45%,transparent) !important;
+  color:#fff !important;
+}
+body[data-palette] .bottom.premium-bottom #smartFinanceAction .premium-add-label { color:#fff !important; }
+</style>
+</body>
 
 
 
