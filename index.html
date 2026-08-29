@@ -9877,7 +9877,7 @@ document.addEventListener('pointerdown',function(e){
       const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
       if (!text.includes(label)) return;
       el.classList.add('ff-theme-smart-finance');
-      const root = getComputedStyle(document.documentElement);
+      const root = getComputedStyle(document.body);
       const purple = root.getPropertyValue('--purple').trim() || '#743cff';
       const purple2 = root.getPropertyValue('--purple2').trim() || '#4c1ed4';
       el.style.setProperty('color', purple, 'important');
