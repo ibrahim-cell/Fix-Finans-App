@@ -2,6 +2,7 @@ package com.fixfinans.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.ContentValues;
 import android.graphics.Color;
 import android.net.Uri;
@@ -28,7 +29,14 @@ import androidx.credentials.GetCredentialRequest;
 import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
+import com.google.android.gms.auth.api.identity.AuthorizationClient;
+import com.google.android.gms.auth.api.identity.AuthorizationRequest;
+import com.google.android.gms.auth.api.identity.AuthorizationResult;
+import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
+import com.google.android.gms.common.api.ApiException;
+import android.app.PendingIntent;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 
 import org.json.JSONObject;
@@ -36,6 +44,7 @@ import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -46,10 +55,13 @@ public class MainActivity extends Activity {
     private static final String WEB_CLIENT_ID =
             "399902784452-rl0u63tirl45h5bdgb0hvcog7f343bk6.apps.googleusercontent.com";
     private static final int FILE_CHOOSER_REQUEST = 1001;
+    private static final int DRIVE_AUTH_REQUEST = 1002;
+    private static final String DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
 
     private WebView webView;
     private ValueCallback<Uri[]> filePathCallback;
     private CredentialManager credentialManager;
+    private AuthorizationClient authorizationClient;
     private final Executor credentialExecutor = Executors.newSingleThreadExecutor();
     private boolean googleSignInInProgress = false;
 
@@ -66,6 +78,7 @@ public class MainActivity extends Activity {
 
         webView = new WebView(this);
         credentialManager = CredentialManager.create(this);
+        authorizationClient = Identity.getAuthorizationClient(this);
 
         webView.setBackgroundColor(Color.rgb(5, 6, 13));
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -97,6 +110,7 @@ public class MainActivity extends Activity {
         }
 
         webView.addJavascriptInterface(new GoogleAuthBridge(), "AndroidGoogleSignIn");
+        webView.addJavascriptInterface(new GoogleDriveBridge(), "AndroidGoogleDrive");
         webView.addJavascriptInterface(new BackupBridge(), "AndroidBackup");
 
         webView.setWebViewClient(new WebViewClient() {
@@ -107,6 +121,7 @@ public class MainActivity extends Activity {
                     installNativeGoogleBridge();
                 } else {
                     view.removeJavascriptInterface("AndroidGoogleSignIn");
+                    view.removeJavascriptInterface("AndroidGoogleDrive");
                 }
             }
         });
@@ -199,6 +214,22 @@ public class MainActivity extends Activity {
                 "window.AndroidGoogleSignIn.signIn();" +
                 "};" +
                 "}" +
+                "window.__fixNativeDriveAuthSuccess=function(accessToken){" +
+                "try{" +
+                "if(!window.fixGoogleDrive){window.fixGoogleDrive={};}" +
+                "window.fixGoogleDrive.token=accessToken;" +
+                "window.fixGoogleDrive.expiresAt=Date.now()+3300000;" +
+                "window.fixGoogleDrive.ready=true;" +
+                "var p=window.fixGoogleDrive.pendingResolve;" +
+                "window.fixGoogleDrive.pendingResolve=null;window.fixGoogleDrive.pendingReject=null;window.fixGoogleDrive.pending=null;" +
+                "if(p)p(accessToken);" +
+                "}catch(e){if(window.fixGoogleDrive&&window.fixGoogleDrive.pendingReject){var r=window.fixGoogleDrive.pendingReject;window.fixGoogleDrive.pendingResolve=null;window.fixGoogleDrive.pendingReject=null;window.fixGoogleDrive.pending=null;r(e);}}" +
+                "};" +
+                "window.__fixNativeDriveAuthError=function(message){" +
+                "var r=window.fixGoogleDrive&&window.fixGoogleDrive.pendingReject;" +
+                "if(window.fixGoogleDrive){window.fixGoogleDrive.pendingResolve=null;window.fixGoogleDrive.pendingReject=null;window.fixGoogleDrive.pending=null;}" +
+                "if(r)r(new Error(message||'Google Drive yetkilendirmesi tamamlanamadı.'));" +
+                "};" +
                 "}catch(e){}})();";
 
         webView.evaluateJavascript(script, null);
@@ -304,6 +335,83 @@ public class MainActivity extends Activity {
         runOnUiThread(() -> webView.evaluateJavascript(script, null));
     }
 
+    private void nativeGoogleDriveAuthorize() {
+        if (authorizationClient == null) {
+            authorizationClient = Identity.getAuthorizationClient(this);
+        }
+
+        AuthorizationRequest request = AuthorizationRequest.builder()
+                .setRequestedScopes(Arrays.asList(new Scope(DRIVE_SCOPE)))
+                .build();
+
+        authorizationClient.authorize(request)
+                .addOnSuccessListener(this, this::handleDriveAuthorizationResult)
+                .addOnFailureListener(this, e -> sendNativeDriveError(
+                        e != null && e.getMessage() != null
+                                ? e.getMessage()
+                                : "Google Drive yetkilendirmesi başlatılamadı."));
+    }
+
+    private void handleDriveAuthorizationResult(AuthorizationResult result) {
+        if (result == null) {
+            sendNativeDriveError("Google Drive yetkilendirme sonucu alınamadı.");
+            return;
+        }
+
+        if (result.hasResolution() && result.getPendingIntent() != null) {
+            try {
+                startIntentSenderForResult(
+                        result.getPendingIntent().getIntentSender(),
+                        DRIVE_AUTH_REQUEST,
+                        null,
+                        0,
+                        0,
+                        0);
+                return;
+            } catch (IntentSender.SendIntentException e) {
+                sendNativeDriveError(e.getMessage() != null
+                        ? e.getMessage()
+                        : "Google Drive izin ekranı açılamadı.");
+                return;
+            }
+        }
+
+        String accessToken = result.getAccessToken();
+        if (accessToken == null || accessToken.isEmpty()) {
+            sendNativeDriveError("Google Drive erişim anahtarı alınamadı.");
+            return;
+        }
+
+        sendNativeDriveSuccess(accessToken);
+    }
+
+    private void sendNativeDriveSuccess(String accessToken) {
+        if (webView == null) {
+            return;
+        }
+
+        String quotedToken = JSONObject.quote(accessToken);
+        final String script = "(function(){if(window.__fixNativeDriveAuthSuccess){window.__fixNativeDriveAuthSuccess(" +
+                quotedToken + ");}})();";
+
+        runOnUiThread(() -> webView.evaluateJavascript(script, null));
+    }
+
+    private void sendNativeDriveError(String message) {
+        if (webView == null) {
+            return;
+        }
+
+        String quotedMessage = JSONObject.quote(message == null
+                ? "Google Drive yetkilendirmesi tamamlanamadı."
+                : message);
+
+        final String script = "(function(){if(window.__fixNativeDriveAuthError){window.__fixNativeDriveAuthError(" +
+                quotedMessage + ");}else if(typeof showToast==='function'){showToast(" + quotedMessage + ");}})();";
+
+        runOnUiThread(() -> webView.evaluateJavascript(script, null));
+    }
+
     private String generateSecureNonce() {
         byte[] bytes = new byte[32];
         new SecureRandom().nextBytes(bytes);
@@ -325,6 +433,13 @@ public class MainActivity extends Activity {
      * JavaScript. Save JSON backups through MediaStore so they appear in the
      * user's Downloads folder on modern Android versions.
      */
+    private final class GoogleDriveBridge {
+        @JavascriptInterface
+        public void authorize() {
+            runOnUiThread(MainActivity.this::nativeGoogleDriveAuthorize);
+        }
+    }
+
     private final class BackupBridge {
         @JavascriptInterface
         public void saveJson(String fileName, String json) {
@@ -380,6 +495,24 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == DRIVE_AUTH_REQUEST) {
+            if (resultCode != RESULT_OK || data == null) {
+                sendNativeDriveError("Google Drive yetkilendirmesi iptal edildi.");
+                return;
+            }
+
+            try {
+                AuthorizationResult result = authorizationClient
+                        .getAuthorizationResultFromIntent(data);
+                handleDriveAuthorizationResult(result);
+            } catch (Exception e) {
+                sendNativeDriveError(e.getMessage() != null
+                        ? e.getMessage()
+                        : "Google Drive yetkilendirmesi tamamlanamadı.");
+            }
+            return;
+        }
 
         if (requestCode == FILE_CHOOSER_REQUEST) {
             if (filePathCallback == null) {
