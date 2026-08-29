@@ -2,7 +2,8 @@ name: Fix Drive persistence
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -12,107 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Patch Android Drive restore
+      - name: Patch MainActivity
+        shell: bash
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('app/src/main/java/com/fixfinans/app/MainActivity.java')
-          s = p.read_text(encoding='utf-8')
-
-          if 'DRIVE_PREFS' in s:
-              print('Patch already present; nothing to do.')
-              raise SystemExit(0)
-
-          s = s.replace(
-              'import android.content.IntentSender;\n',
-              'import android.content.IntentSender;\nimport android.content.SharedPreferences;\n',
-              1
-          )
-          s = s.replace(
-              '    private static final String DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";\n',
-              '    private static final String DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";\n    private static final String DRIVE_PREFS = "fix_finans_drive";\n    private static final String DRIVE_CONNECTED_KEY = "connected";\n',
-              1
-          )
-          s = s.replace(
-              '    private boolean googleSignInInProgress = false;\n',
-              '    private boolean googleSignInInProgress = false;\n    private boolean driveAutoRestoreAttempted = false;\n',
-              1
-          )
-
-          old = '''                if (isTrustedAppUrl(url)) {
-                    installNativeGoogleBridge();
-                } else {'''
-          new = '''                if (isTrustedAppUrl(url)) {
-                    installNativeGoogleBridge();
-                    if (!driveAutoRestoreAttempted && isDriveMarkedConnected()) {
-                        driveAutoRestoreAttempted = true;
-                        view.postDelayed(MainActivity.this::nativeGoogleDriveAuthorize, 250);
-                    }
-                } else {'''
-          if old not in s: raise SystemExit('onPageFinished target not found')
-          s = s.replace(old, new, 1)
-
-          old = '''    private void nativeGoogleDriveAuthorize() {
-        if (authorizationClient == null) {'''
-          new = '''    private boolean isDriveMarkedConnected() {
-        return getSharedPreferences(DRIVE_PREFS, MODE_PRIVATE)
-                .getBoolean(DRIVE_CONNECTED_KEY, false);
-    }
-
-    private void setDriveMarkedConnected(boolean connected) {
-        getSharedPreferences(DRIVE_PREFS, MODE_PRIVATE)
-                .edit()
-                .putBoolean(DRIVE_CONNECTED_KEY, connected)
-                .apply();
-    }
-
-    private void nativeGoogleDriveAuthorize() {
-        if (authorizationClient == null) {'''
-          if old not in s: raise SystemExit('authorize target not found')
-          s = s.replace(old, new, 1)
-
-          old = '''        String accessToken = result.getAccessToken();
-        if (accessToken == null || accessToken.isEmpty()) {
-            sendNativeDriveError("Google Drive erişim anahtarı alınamadı.");
-            return;
-        }
-
-        sendNativeDriveSuccess(accessToken);'''
-          new = '''        String accessToken = result.getAccessToken();
-        if (accessToken == null || accessToken.isEmpty()) {
-            sendNativeDriveError("Google Drive erişim anahtarı alınamadı.");
-            return;
-        }
-
-        setDriveMarkedConnected(true);
-        sendNativeDriveSuccess(accessToken);'''
-          if old not in s: raise SystemExit('access token target not found')
-          s = s.replace(old, new, 1)
-
-          old = '''            if (data == null) {
-                sendNativeDriveError("Google Drive yetkilendirme ekranı sonuç vermeden kapandı (RESULT_"
-                        + resultCodeToLabel(resultCode) + "). Tekrar deneyin.");'''
-          new = '''            if (data == null) {
-                setDriveMarkedConnected(false);
-                sendNativeDriveError("Google Drive yetkilendirme ekranı sonuç vermeden kapandı (RESULT_"
-                        + resultCodeToLabel(resultCode) + "). Tekrar deneyin.");'''
-          if old not in s: raise SystemExit('activity result target not found')
-          s = s.replace(old, new, 1)
-
-          p.write_text(s, encoding='utf-8')
-          PY
-
+          python3 -c 'from pathlib import Path; p=Path("app/src/main/java/com/fixfinans/app/MainActivity.java"); s=p.read_text(); assert "DRIVE_PREFS" not in s; s=s.replace("import android.content.IntentSender;\n", "import android.content.IntentSender;\nimport android.content.SharedPreferences;\n", 1); s=s.replace("    private static final String DRIVE_SCOPE = \"https://www.googleapis.com/auth/drive.file\";\n", "    private static final String DRIVE_SCOPE = \"https://www.googleapis.com/auth/drive.file\";\n    private static final String DRIVE_PREFS = \"fix_finans_drive\";\n    private static final String DRIVE_CONNECTED_KEY = \"connected\";\n", 1); s=s.replace("    private boolean googleSignInInProgress = false;\n", "    private boolean googleSignInInProgress = false;\n    private boolean driveAutoRestoreAttempted = false;\n", 1); old="""                if (isTrustedAppUrl(url)) {\n                    installNativeGoogleBridge();\n                } else {"""; new="""                if (isTrustedAppUrl(url)) {\n                    installNativeGoogleBridge();\n                    if (!driveAutoRestoreAttempted && isDriveMarkedConnected()) {\n                        driveAutoRestoreAttempted = true;\n                        view.postDelayed(MainActivity.this::nativeGoogleDriveAuthorize, 250);\n                    }\n                } else {"""; assert old in s; s=s.replace(old,new,1); old="""    private void nativeGoogleDriveAuthorize() {\n        if (authorizationClient == null) {"""; new="""    private boolean isDriveMarkedConnected() {\n        return getSharedPreferences(DRIVE_PREFS, MODE_PRIVATE).getBoolean(DRIVE_CONNECTED_KEY, false);\n    }\n\n    private void setDriveMarkedConnected(boolean connected) {\n        getSharedPreferences(DRIVE_PREFS, MODE_PRIVATE).edit().putBoolean(DRIVE_CONNECTED_KEY, connected).apply();\n    }\n\n    private void nativeGoogleDriveAuthorize() {\n        if (authorizationClient == null) {"""; assert old in s; s=s.replace(old,new,1); old="""        sendNativeDriveSuccess(accessToken);"""; new="""        setDriveMarkedConnected(true);\n        sendNativeDriveSuccess(accessToken);"""; assert old in s; s=s.replace(old,new,1); p.write_text(s)' 
       - name: Commit patch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add app/src/main/java/com/fixfinans/app/MainActivity.java
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
           git commit -m "Fix persistent Google Drive connection"
           git push
