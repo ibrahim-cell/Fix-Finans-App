@@ -9419,20 +9419,18 @@ function refreshApp(){
   __fixRefreshing=true;
   resetPullGesture();
   showToast('Ekran yenileniyor…');
-  // Pull-to-refresh refreshes in place (re-renders now, then re-fetches
-  // market rates and re-renders again) instead of doing a full document
-  // reload. A full window.location.reload() briefly unloads the whole page, so the
-  // browser paints unstyled/empty elements (e.g. the bare "Fix Finans" <img>
-  // alt text and a placeholder "₺0,00") for a frame before the CSS/JS and
-  // real data are back — that was the flash the user saw. Re-rendering the
-  // existing DOM avoids that unstyled flash entirely.
-  render();
+  // Gerçek sayfa yenilemesi: önce mevcut ekranı güncelle, ardından kısa bir
+  // gecikmeyle document'i yeniden yükle. Böylece kullanıcıya "yenileniyor"
+  // bildirimi görünür ve pull-to-refresh gerçekten sayfayı yeniler.
   try{
-    fetchMarketRates()
-      .then(()=>{ render(); })
-      .catch(()=>{})
-      .finally(()=>{ __fixRefreshing=false; });
-  }catch(e){ __fixRefreshing=false; }
+    render();
+    setTimeout(()=>{
+      window.location.reload();
+    },350);
+  }catch(e){
+    __fixRefreshing=false;
+    try{window.location.reload();}catch(_){}
+  }
 }
 const pullIndicator=document.createElement('div');pullIndicator.className='pull-indicator';pullIndicator.textContent='↓ Yenilemek için bırak';document.body.appendChild(pullIndicator);
 document.addEventListener('touchstart',e=>{
