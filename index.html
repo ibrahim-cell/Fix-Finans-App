@@ -6098,7 +6098,7 @@ let storedGoals=[];try{const rawGoals=localStorage.getItem(GOAL_KEY);storedGoals
 let storedRecurring=[];try{const rawRecurring=localStorage.getItem(RECURRING_KEY);storedRecurring=rawRecurring?JSON.parse(rawRecurring):[];if(!Array.isArray(storedRecurring))storedRecurring=[]}catch(e){storedRecurring=[]}
 const storedCreditCard=(()=>{try{const x=JSON.parse(localStorage.getItem('fix_credit_card')||'null');return x&&typeof x==='object'?{limit:Math.max(0,Number(x.limit)||0)}:{limit:0}}catch(e){return {limit:0}}})();
 function localDateISO(){const d=new Date();const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
-const state={page:'home',type:'Gelir',debtTab:'Borç',transactions:Array.isArray(stored)?stored:[],debts:Array.isArray(storedDebts)?storedDebts:[],upcoming:Array.isArray(storedUpcoming)?storedUpcoming:[],recurring:Array.isArray(storedRecurring)?storedRecurring:[],financialGoals:Array.isArray(storedGoals)?storedGoals:[],creditCard:storedCreditCard,filters:{from:'',to:'',category:'Tümü'},selectedMonth:'2026-08',reportPeriod:'month',smartPeriod:'month',investmentResearchAsset:'Genel',searchOpen:false,txSearch:'',txTypeFilter:'Tümü',txRange:'month',txExpandedDays:{},customCategories:(()=>{try{const x=JSON.parse(localStorage.getItem('fix_custom_categories')||'{}');const norm=v=>(Array.isArray(v)?v:[]).map(item=>typeof item==='string'?{name:item,icon:null}:{name:String(item?.name||''),icon:item?.icon||null}).filter(item=>item.name);return {Gelir:norm(x.Gelir),Gider:norm(x.Gider)}}catch(e){return {Gelir:[],Gider:[]}}})(),categoryDraftIcon:null};
+const state={page:'home',type:'Gelir',debtTab:'Borç',transactions:Array.isArray(stored)?stored:[],debts:Array.isArray(storedDebts)?storedDebts:[],upcoming:Array.isArray(storedUpcoming)?storedUpcoming:[],recurring:Array.isArray(storedRecurring)?storedRecurring:[],financialGoals:Array.isArray(storedGoals)?storedGoals:[],creditCard:storedCreditCard,filters:{from:'',to:'',category:'Tümü'},selectedMonth:`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`,reportPeriod:'month',smartPeriod:'month',investmentResearchAsset:'Genel',searchOpen:false,txSearch:'',txTypeFilter:'Tümü',txRange:'month',txExpandedDays:(()=>{try{const x=JSON.parse(localStorage.getItem('fix_custom_categories')||'{}');const norm=v=>(Array.isArray(v)?v:[]).map(item=>typeof item==='string'?{name:item,icon:null}:{name:String(item?.name||''),icon:item?.icon||null}).filter(item=>item.name);return {Gelir:norm(x.Gelir),Gider:norm(x.Gider)}}catch(e){return {Gelir:[],Gider:[]}}})(),categoryDraftIcon:null};
 const money=n=>'₺'+Number(Math.abs(n)).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
 /* 13.3.93 — Tek finans çekirdeği: transferler gelir/giderden tamamen ayrıdır. */
 function isTransferTx(t){return String(t?.[4]||'')==='Transfer';}
@@ -6116,6 +6116,29 @@ function financialSummary(list=state.transactions){
   return {income,expense,net:income-expense,transfers,financialCount,totalCount:income||expense?financialCount+transfers:transfers};
 }
 const totals=()=>financialSummary(state.transactions);
+/* 13.3.101 — Analiz ekranları: dönem başlangıcında boş ekranı önle.
+   Ayın ilk gününde önceki ayda kayıt varsa Raporlar ve Akıllı Finans
+   otomatik olarak son aktif döneme (Tümü) açılır. Kullanıcı yine istediği
+   dönemi tek dokunuşla seçebilir; hesaplama motoru ve kayıtlar değişmez. */
+function hasPeriodFinancialData(period){
+  const now=new Date(); now.setHours(0,0,0,0);
+  let start=new Date(now), end=new Date(now);
+  if(period==='week'){ const day=(now.getDay()+6)%7; start=new Date(now); start.setDate(now.getDate()-day); }
+  else if(period==='month') start=new Date(now.getFullYear(),now.getMonth(),1);
+  else if(period==='3m') start=new Date(now.getFullYear(),now.getMonth()-2,1);
+  else if(period==='all') start=new Date(2020,0,1);
+  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const a=iso(start), b=iso(end);
+  return state.transactions.some(t=>{
+    const type=String(t?.[4]||''); if(type==='Transfer'||type==='Borç/Alacak') return false;
+    const d=String(t?.[6]||'').slice(0,10); const v=Number(t?.[1])||0;
+    return d>=a&&d<=b&&(v!==0||type==='Kredi Kartı Ödemesi');
+  });
+}
+if(!hasPeriodFinancialData('month') && hasPeriodFinancialData('all')){
+  state.reportPeriod='all';
+  state.smartPeriod='all';
+}
 /* 13.3.100 — Borç/Alacak gerçek cüzdan hareketleri + tahsilat/ödeme kaynağı */
 function isDebtSettled(d){return String(d?.[6]||'')==='Tahsil Edildi';}
 function debtWallet(d){return d?.[5]==='Nakit'?'Nakit':'Banka';}
@@ -6293,21 +6316,26 @@ function dayTotals(list){const x=financialSummary(list);return {income:x.income,
 function homeRecentGrouped(list){const groups=groupTransactionsByDay(list.slice(0,5));return groups.map(([d,items])=>{const totals=dayTotals(items);return `<div class="home-day-group"><div class="home-day-head"><b>${dayLabel(d)}</b><span class="home-day-totals"><span class="day-income">Gelir: ${money(totals.income)}</span><span class="day-expense">Gider: ${money(totals.expense)}</span>${totals.transfers?`<span class="day-transfer">Transfer: ${totals.transfers}</span>`:''}</span></div>${items.map(row).join('')}</div>`}).join('');}
 
 function financialScoreBreakdown(t){
-  if(!t || !t.income) return null;
+  if(!t) return null;
   const income=Number(t.income)||0;
   const expense=Number(t.expense)||0;
   const net=Number(t.net)||0;
-  const savingsRate=net/income;
-  const expenseRate=expense/income;
   const debt=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const receivable=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const netDebt=Math.max(0,debt-receivable);
-  const debtRate=netDebt/income;
+  /* Gelir yoksa artık skor motoru tamamen kilitlenmez. Tasarruf/gider
+     bileşenleri veri yokluğunda 0 kabul edilir; net borç baskısı yine
+     gerçek Borç/Alacak verisinden hesaplanır. Böylece borç/alacak bulunan
+     kullanıcıda skor 'Veri bekleniyor' olarak takılı kalmaz. */
+  const savingsRate=income?net/income:0;
+  const expenseRate=income?expense/income:0;
+  const debtRate=income?netDebt/income:Infinity;
   /* Tek ve ortak skor motoru: 40 Tasarruf + 35 Gider Kontrolü + 25 Net Borç Baskısı = 100.
      Transferler skora girmez. Kredi kartı ayrı bonus değildir; kredi kartı harcamaları Gider içinde zaten değerlendirilir. */
-  const savingsScore=Math.round(Math.max(0,Math.min(1,savingsRate/0.50))*40);
-  const expenseScore=expenseRate<=0.50?35:expenseRate<=0.60?30:expenseRate<=0.70?25:expenseRate<=0.80?15:expenseRate<=0.90?7:0;
-  const debtScore=netDebt===0?25:debtRate<=0.25?20:debtRate<=0.50?15:debtRate<=0.75?10:debtRate<=1?5:0;
+  const savingsScore=income?Math.round(Math.max(0,Math.min(1,savingsRate/0.50))*40):0;
+  const expenseScore=income?(expenseRate<=0.50?35:expenseRate<=0.60?30:expenseRate<=0.70?25:expenseRate<=0.80?15:expenseRate<=0.90?7:0):0;
+  const hasDebtData=debt>0||receivable>0;
+  const debtScore=income?(netDebt===0?25:debtRate<=0.25?20:debtRate<=0.50?15:debtRate<=0.75?10:debtRate<=1?5:0):(hasDebtData?(netDebt===0?25:15):0);
   const score=Math.max(0,Math.min(100,savingsScore+expenseScore+debtScore));
   return {income,expense,net,savingsRate,expenseRate,netDebt,debtRate,savingsScore,expenseScore,debtScore,score};
 }
@@ -6680,6 +6708,10 @@ function periodBounds(){
   return {start,end:todayEnd};
 }
 function reportTransactions(){const b=periodBounds();return state.transactions.filter(t=>{const d=new Date(txDateValue(t)+'T12:00:00');return d>=b.start&&d<=b.end});}
+function isReportChartTx(t){
+  const type=String(t?.[4]||'');
+  return type!=='Transfer' && type!=='Borç/Alacak' && type!=='Kredi Kartı Ödemesi';
+}
 function reportTrend(list){
   const buckets={};
   const weekKeys=[];
@@ -6693,7 +6725,7 @@ function reportTrend(list){
 
   if(state.reportPeriod==='week'){
     // Bu Hafta: yalnızca Pazartesi → bugün aralığını üret; her gün tam olarak bir sütundur.
-    list.forEach(t=>{if(!isTransferTx(t))add(txDateValue(t),t)});
+    list.forEach(t=>{if(isReportChartTx(t))add(txDateValue(t),t)});
     for(let d=new Date(b.start);d<=b.end;d.setDate(d.getDate()+1)){
       const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
       weekKeys.push(k);
@@ -6702,14 +6734,14 @@ function reportTrend(list){
   } else if(state.reportPeriod==='month'){
     // Bu Ay: 1'inden bugüne kadar günlük görünüm. Genel Bakış ile aynı dönemi
     // birebir temsil eder; transferler gelir/gider grafiğine girmez.
-    list.forEach(t=>{if(!isTransferTx(t))add(txDateValue(t),t)});
+    list.forEach(t=>{if(isReportChartTx(t))add(txDateValue(t),t)});
     for(let d=new Date(b.start);d<=b.end;d.setDate(d.getDate()+1)){
       const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
       if(!buckets[k])buckets[k]={income:0,expense:0};
     }
   } else {
     // 3 Ay / Tümü: aylık görünüm. Tümü'nde mobil okunabilirlik için son 6 ay.
-    list.forEach(t=>{if(!isTransferTx(t)){const d=txDateValue(t);add(d.slice(0,7),t)}});
+    list.forEach(t=>{if(isReportChartTx(t)){const d=txDateValue(t);add(d.slice(0,7),t)}});
     let months=[];
     const cursor=new Date(b.start.getFullYear(),b.start.getMonth(),1);
     const endMonth=new Date(b.end.getFullYear(),b.end.getMonth(),1);
@@ -6787,7 +6819,7 @@ function reports(){
 function openExpenseDetails(){
   const list=reportTransactions();
   const cats={};
-  list.filter(x=>Number(x[1])<0).forEach(x=>{const k=x[0]||'Diğer';cats[k]=(cats[k]||0)+Math.abs(Number(x[1]));});
+  list.filter(x=>isReportChartTx(x)&&Number(x[1])<0).forEach(x=>{const k=x[0]||'Diğer';cats[k]=(cats[k]||0)+Math.abs(Number(x[1]));});
   const total=Object.values(cats).reduce((a,v)=>a+v,0);
   const iconFor=(name)=>{
     const custom=[...(state.customCategories?.Gider||[])];
@@ -6854,7 +6886,7 @@ function smartTrendData(period=state.smartPeriod){
   const b=smartPeriodBounds(period), list=smartTransactionsForPeriod(period), buckets={};
   const add=(key,label)=>{if(!buckets[key])buckets[key]={label,income:0,expense:0};return buckets[key]};
   list.forEach(t=>{
-    if(isTransferTx(t))return;
+    if(!isReportChartTx(t))return;
     const d=smartDateISO(t[6]); if(!d)return;
     const dt=new Date(d+'T00:00:00'); let key,label;
     if(period==='today'||period==='week'){
@@ -6890,7 +6922,7 @@ function smartExpenseDistribution(current, previous){
   const buildCats=(list)=>{
     const out={};
     (list||[]).forEach(t=>{
-      if(isTransferTx(t))return;
+      if(!isReportChartTx(t))return;
       const v=Number(t[1])||0;
       if(v<0){const k=String(t[0]||'Diğer');out[k]=(out[k]||0)+Math.abs(v)}
     });
@@ -7463,7 +7495,7 @@ function smartRecommendations(current, previous){
   const add=(type,title,text,reason,action)=>suggestions.push({type,title,text,reason,action});
   const expenseRatio=t.income?Math.round(t.expense/t.income*100):0;
   const savingsRate=t.income?Math.round(t.net/t.income*100):0;
-  const cats={}; current.forEach(x=>{const v=Number(x[1])||0;if(v<0&&x[4]!=='Transfer'){const k=String(x[0]||'Diğer').trim()||'Diğer';cats[k]=(cats[k]||0)+Math.abs(v)}});
+  const cats={}; current.forEach(x=>{if(!isReportChartTx(x))return;const v=Number(x[1])||0;if(v<0){const k=String(x[0]||'Diğer').trim()||'Diğer';cats[k]=(cats[k]||0)+Math.abs(v)}});
   const topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0]||null;
   const budgetTarget=t.income?Math.round(t.income*.8):0;
   const budgetRemaining=budgetTarget?budgetTarget-t.expense:null;
@@ -7569,7 +7601,8 @@ function smartAssistant(){
 function smartFinancialHealthScore(t,current,previous){
   /* 13.3.88 — #17 Finans Sağlık Skoru final presentation layer.
      Mevcut calculateFinancialScore() korunur; bu bölüm yalnızca sonucu açıklar. */
-  const score=calculateFinancialScore(t);
+  const hasAnyData=Number(t.income)>0||Number(t.expense)>0||state.debts.some(d=>!isDebtSettled(d)&&Math.abs(Number(d?.[1])||0)>0);
+  const score=hasAnyData?calculateFinancialScore(t):null;
   const tone=score===null?'Veri bekleniyor':score>=80?'Çok iyi':score>=65?'İyi':score>=50?'Dengeli':'Dikkat';
   const cls=score===null?'amber':score>=65?'green':score>=50?'amber':'red';
   const savings=t.income?Math.round(t.net/t.income*100):0;
@@ -7577,9 +7610,9 @@ function smartFinancialHealthScore(t,current,previous){
   const debt=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const receivable=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const netDebt=Math.max(0,debt-receivable);
-  const explanation=score===null?'Gelir verisi oluştuğunda skor; tasarruf, gider kontrolü ve net borç baskısını birlikte değerlendirecek.':score>=80?'Tasarruf alanın güçlü, gider kontrolün iyi ve net borç baskın düşük görünüyor.':score>=65?'Finansal dengen genel olarak iyi; tasarruf ve gider oranını korumaya odaklanabilirsin.':score>=50?'Denge korunuyor ancak gider oranı, tasarruf veya borç baskısından en az biri dikkat gerektiriyor.':'Gider ve/veya borç baskısı yüksek. Öncelikle nakit dengesini güçlendirmek daha önemli.';
+  const explanation=score===null?'Henüz değerlendirilecek finansal kayıt yok. Gelir, gider veya borç/alacak eklediğinde skor burada güncellenecek.':score>=80?'Tasarruf alanın güçlü, gider kontrolün iyi ve net borç baskın düşük görünüyor.':score>=65?'Finansal dengen genel olarak iyi; tasarruf ve gider oranını korumaya odaklanabilirsin.':score>=50?'Denge korunuyor ancak gider oranı, tasarruf veya borç baskısından en az biri dikkat gerektiriyor.':'Gider ve/veya borç baskısı yüksek. Öncelikle nakit dengesini güçlendirmek daha önemli.';
   const scoreValue=score===null?0:Math.max(0,Math.min(100,score));
-  return `<section class="card smart-card smart-health-card smart-health-hero"><div class="smart-section-title"><b>Finans Sağlık Skoru</b><span class="${cls}">${tone}</span></div><div class="smart-health-main"><div class="smart-health-ring ${score===null?'is-empty':''}" style="--score:${scoreValue*3.6}deg"><div class="smart-health-score"><b>${score===null?'—':score}</b><small>/ 100</small></div></div><div class="smart-health-copy"><b>${esc(tone)}</b><p>${esc(explanation)}</p><button class="smart-detail-btn" type="button" onclick="openFinancialScoreDetail()">Detaylı Analiz <span>→</span></button></div></div><div class="smart-health-bars"><div><span>Tasarruf</span><b>${t.income?`%${Math.max(-100,Math.min(100,savings))}`:'—'}</b><i><em style="width:${score===null?0:Math.max(0,Math.min(100,savings*2))}%"></em></i></div><div><span>Gider kontrolü</span><b>${t.income?`%${Math.max(0,100-expenseRate)}`:'—'}</b><i><em style="width:${t.income?Math.max(0,Math.min(100,100-expenseRate)):0}%"></em></i></div><div><span>Net borç baskısı</span><b>${t.income?money(netDebt):'—'}</b><i><em style="width:${t.income?Math.max(0,Math.min(100,100-(netDebt/t.income*100))):0}%"></em></i></div></div><div class="smart-health-safe">🔒 Skor yalnızca mevcut finans verilerini değerlendirir; hiçbir kaydı veya bakiyeyi değiştirmez.</div></section>`;
+  return `<section class="card smart-card smart-health-card smart-health-hero"><div class="smart-section-title"><b>Finans Sağlık Skoru</b><span class="${cls}">${tone}</span></div><div class="smart-health-main"><div class="smart-health-ring ${score===null?'is-empty':''}" style="--score:${scoreValue*3.6}deg"><div class="smart-health-score"><b>${score===null?'—':score}</b><small>/ 100</small></div></div><div class="smart-health-copy"><b>${esc(tone)}</b><p>${esc(explanation)}</p><button class="smart-detail-btn" type="button" onclick="openFinancialScoreDetail()">Detaylı Analiz <span>→</span></button></div></div><div class="smart-health-bars"><div><span>Tasarruf</span><b>${t.income?`%${Math.max(-100,Math.min(100,savings))}`:'Veri yok'}</b><i><em style="width:${score===null?0:Math.max(0,Math.min(100,savings*2))}%"></em></i></div><div><span>Gider kontrolü</span><b>${t.income?`%${Math.max(0,100-expenseRate)}`:'Veri yok'}</b><i><em style="width:${t.income?Math.max(0,Math.min(100,100-expenseRate)):0}%"></em></i></div><div><span>Net borç baskısı</span><b>${hasAnyData?money(netDebt):'Veri yok'}</b><i><em style="width:${t.income?Math.max(0,Math.min(100,100-(netDebt/t.income*100))):0}%"></em></i></div></div><div class="smart-health-safe">🔒 Skor yalnızca mevcut finans verilerini değerlendirir; hiçbir kaydı veya bakiyeyi değiştirmez.</div></section>`;
 }
 
 function smartCenter(){
@@ -7587,7 +7620,7 @@ function smartCenter(){
   const now=new Date(), analysis=smartPeriodSummary(state.smartPeriod), current=analysis.current, previous=analysis.previous;
   const t=analysis.summary, prev=analysis.previousSummary, count=t.financialCount, transferCount=t.transfers;
   const expenseRatio=t.income?Math.round(t.expense/t.income*100):0, savingsRate=t.income?Math.round(t.net/t.income*100):0;
-  const cats={};current.forEach(x=>{const v=Number(x[1])||0;if(v<0){const k=String(x[0]||'Diğer');cats[k]=(cats[k]||0)+Math.abs(v)}});
+  const cats={};current.forEach(x=>{if(!isReportChartTx(x))return;const v=Number(x[1])||0;if(v<0){const k=String(x[0]||'Diğer');cats[k]=(cats[k]||0)+Math.abs(v)}});
   const topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0]||null;
   const debtBorç=state.debts.filter(d=>d[0]==='Borç'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
   const debtAlacak=state.debts.filter(d=>d[0]==='Alacak'&&!isDebtSettled(d)).reduce((a,d)=>a+Math.abs(Number(d[1])||0),0);
